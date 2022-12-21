@@ -6,7 +6,7 @@
   <groupId>londonSafeTravel.libCommon</groupId>
   <artifactId>libCommon</artifactId>
 
-  <version>0.0.1</version>
+  <version>0.0.2</version>
   <packaging>jar</packaging>
 
   <name>libCommon</name>
@@ -35,5 +35,7 @@
       <artifactId>osmosis-pbf</artifactId>
       <version>0.46</version>
     </dependency>
+
+
   </dependencies>
 </project>

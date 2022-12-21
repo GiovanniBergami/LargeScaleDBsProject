@@ -29,6 +29,7 @@ public class ManagePoint {
             }
             return null;
         }
+        
 
         public static void main(String[] argv){
             InsertGraph test= new InsertGraph("neo4j://localhost:7687", "neo4j", "pass");
