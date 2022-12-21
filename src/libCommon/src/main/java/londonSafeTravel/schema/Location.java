@@ -1,13 +1,11 @@
 package londonSafeTravel.schema;
 public class Location {
-    private String name;
     private double longitude;
     private double latitude;
 
     // create and initialize a point with given name and
     // (latitude, longitude) specified in degrees
-    public Location(String name, double latitude, double longitude) {
-        this.name = name;
+    public Location(double latitude, double longitude) {
         this.latitude  = latitude;
         this.longitude = longitude;
     }
@@ -33,14 +31,29 @@ public class Location {
 
     // return string representation of this point
     public String toString() {
-        return name + " (" + latitude + ", " + longitude + ")";
+        return " (" + latitude + ", " + longitude + ")";
     }
 
+    public double getLongitude() {
+        return longitude;
+    }
+
+    public double getLatitude() {
+        return latitude;
+    }
+
+    public void setLongitude(double longitude) {
+        this.longitude = longitude;
+    }
+
+    public void setLatitude(double latitude) {
+        this.latitude = latitude;
+    }
 
     // test client
     public static void main(String[] args) {
-        Location loc1 = new Location("PRINCETON_NJ", 40.366633, 74.640832);
-        Location loc2 = new Location("ITHACA_NY",    42.443087, 76.488707);
+        Location loc1 = new Location(40.366633, 74.640832);
+        Location loc2 = new Location(42.443087, 76.488707);
         double distance = loc1.distanceTo(loc2);
         System.out.printf("%6.3f miles from\n", distance);
         System.out.println(loc1 + " to " + loc2);
