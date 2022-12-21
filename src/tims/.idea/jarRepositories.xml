@@ -26,5 +26,10 @@
       <option name="name" value="local-maven-repo" />
       <option name="url" value="file:////home/dario/Documenti/x270/unipi/large dbs/progetto0/src/tims/../libCommon" />
     </remote-repository>
+    <remote-repository>
+      <option name="id" value="local-maven-repo" />
+      <option name="name" value="local-maven-repo" />
+      <option name="url" value="file:////home/dario/Documenti/unipi/large dbs/progetto0/src/tims/../libCommon" />
+    </remote-repository>
   </component>
 </project>
