@@ -25,6 +25,12 @@
       <version>3.8.1</version>
       <scope>test</scope>
     </dependency>
+    // dependency for mongo
+    <dependency>
+      <groupId>org.mongodb</groupId>
+      <artifactId>mongodb-driver-sync</artifactId>
+      <version>4.7.2</version>
+    </dependency>
     <dependency>
       <groupId>org.neo4j.driver</groupId>
       <artifactId>neo4j-java-driver</artifactId>
@@ -35,7 +41,6 @@
       <artifactId>osmosis-pbf</artifactId>
       <version>0.46</version>
     </dependency>
-
-
   </dependencies>
+
 </project>
