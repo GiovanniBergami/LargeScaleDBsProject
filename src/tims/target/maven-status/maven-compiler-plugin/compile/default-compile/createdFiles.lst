@@ -1,2 +1,6 @@
-londonSafeTravel/driver/tims/RoadDisruptionUpdate$Geometry.class
+londonSafeTravel/driver/tims/geo/Polygon.class
+londonSafeTravel/driver/tims/RoadDisruptionUpdate$1.class
+londonSafeTravel/driver/tims/geo/GeoObject.class
 londonSafeTravel/driver/tims/RoadDisruptionUpdate.class
+londonSafeTravel/driver/tims/geo/Point.class
+londonSafeTravel/driver/tims/geo/Multipolygon.class
