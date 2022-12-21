@@ -10,14 +10,10 @@ import java.util.Date;
 import com.google.gson.Gson;
 
 import com.google.gson.reflect.TypeToken;
+import londonSafeTravel.driver.tims.geo.GeoObject;
 import londonSafeTravel.schema.Location;
 
 public class RoadDisruptionUpdate {
-    static class Geometry
-    {
-        Collection<Collection<Location>> coordinates;
-    }
-
     String id;
     String category;
     String subCategory;
@@ -30,19 +26,18 @@ public class RoadDisruptionUpdate {
     String levelOfInterest;
     String status;
 
-    Location point;
-    Geometry geometry;
+    GeoObject geography;
+    GeoObject geometry;
 
     public static void main(String[] argv) throws FileNotFoundException {
-        System.out.println(argv.length);
-        System.out.println(argv[0]);
-        return;
-        //if(argv.length < 2)
-        //    throw new IllegalArgumentException("Usage: exe file.json");
+        if(argv.length == 0)
+            throw new IllegalArgumentException("Usage: exe file.json");
 
-       // Type collectionType = new TypeToken<ArrayList<RoadDisruptionUpdate>>(){}.getType();
-       // Collection<RoadDisruptionUpdate> updates = new Gson().fromJson(new FileReader(argv[1]), collectionType);
+        Type collectionType = new TypeToken<ArrayList<RoadDisruptionUpdate>>(){}.getType();
+        Collection<RoadDisruptionUpdate> updates = new Gson().fromJson(new FileReader(argv[0]), collectionType);
 
-
+        updates.forEach(roadDisruptionUpdate -> {
+            System.out.println(roadDisruptionUpdate.category);
+        });
     }
 }
