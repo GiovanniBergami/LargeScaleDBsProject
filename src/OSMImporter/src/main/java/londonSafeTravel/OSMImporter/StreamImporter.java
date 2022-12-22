@@ -25,7 +25,7 @@ public class StreamImporter {
     public static void main(String[] argv) throws FileNotFoundException, XMLStreamException {
         XMLInputFactory factory = XMLInputFactory.newInstance();
         XMLStreamReader r = factory.createXMLStreamReader(new FileReader("greater-london-latest.osm"));
-        HashMap<Integer, Location> map=new HashMap<Integer, Location>();
+        HashMap<Long, Location> map=new HashMap<Long, Location>();
 
         for(r.next(); r.hasNext(); r.next())
         {
@@ -36,30 +36,13 @@ public class StreamImporter {
                 continue;
 
             final String currentNamespace = r.getNamespaceURI();
-            System.out.println(r.getAttributeValue(currentNamespace, "id"));
-            System.out.println(r.getAttributeValue(currentNamespace, "lat"));
-
+            double lat = Double.parseDouble(r.getAttributeValue(currentNamespace, "lat"));
+            double lon = Double.parseDouble(r.getAttributeValue(currentNamespace, "lon"));
+            Location location=new Location(lat,lon);
+            Long id=Long.parseLong(r.getAttributeValue(currentNamespace, "id"));
+            map.put(id,location);
+            System.out.println("Inserito punto con id: "+id);
+            System.out.println("La sua location è "+map.get(id));
         }
     }
- /*
-public static void main(String[] argv) throws ParserConfigurationException, IOException, SAXException, XMLStreamException {
-    XMLInputFactory factory = XMLInputFactory.newInstance();
-    XMLStreamReader r = factory.createXMLStreamReader(new FileReader("greater-london-latest.osm"));
-    HashMap<Integer, Location> map=new HashMap<Integer, Location>();
-    while(r.hasNext()){
-        r.next();
-        if(r.hasName()){
-            double lat = Double.parseDouble(r.getAttributeValue(3));
-            double lon = Double.parseDouble(r.getAttributeValue(4));
-            Location loc = new Location(lat,lon);
-            map.put(Integer.parseInt(r.getAttributeValue(0)),loc);
-            System.out.println(r.getName());
-        }
-    }
-    System.out.println("Esco");
-    for(Integer key : map.keySet()) {
-        System.out.println(map.get(key));
-    }
-
-    }*/
 }
