@@ -1,4 +1,6 @@
-use londonSafeTravel
+#!/usr/bin/mongosh
+
+use("londonSafeTravel");
 
 db.PointOfInterest.insertOne({
 	id: 12345,
@@ -19,3 +21,5 @@ db.PointOfInterest.insertOne({
                 coordinates: [10.0, 5.0]
         }
 });
+
+db.PointOfInterest.createIndex( { coordinates : "2dsphere" });
