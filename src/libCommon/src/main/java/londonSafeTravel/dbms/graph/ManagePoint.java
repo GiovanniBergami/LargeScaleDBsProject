@@ -33,9 +33,9 @@ public class ManagePoint {
 
         public static void main(String[] argv){
             InsertGraph test= new InsertGraph("neo4j://localhost:7687", "neo4j", "pass");
-            double latitude=100.00;
-            double longitude=200.00;
-            int id=1;
+            double latitude=101.00;
+            double longitude=201.00;
+            int id=2;
             Point p=new Point(id,latitude,longitude);
             test.addNode(p);
         }
