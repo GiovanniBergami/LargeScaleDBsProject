@@ -26,15 +26,19 @@ public class StreamImporter {
         XMLInputFactory factory = XMLInputFactory.newInstance();
         XMLStreamReader r = factory.createXMLStreamReader(new FileReader("greater-london-latest.osm"));
         HashMap<Integer, Location> map=new HashMap<Integer, Location>();
-        while(r.hasNext())
+
+        for(r.next(); r.hasNext(); r.next())
         {
-            r.next();
-            if(r.hasName()) {
-                if(Objects.equals(r.getLocalName(), "node")) {
-                    System.out.println(r.getName());
-                    System.out.println("Attributi: "+r.getAttributeName(0)+"= "+r.getAttributeValue(0));
-                }
-            }
+            if(! r.isStartElement())
+                continue;
+
+            if(! r.hasName() || ! Objects.equals(r.getLocalName(), "node"))
+                continue;
+
+            final String currentNamespace = r.getNamespaceURI();
+            System.out.println(r.getAttributeValue(currentNamespace, "id"));
+            System.out.println(r.getAttributeValue(currentNamespace, "lat"));
+
         }
     }
  /*

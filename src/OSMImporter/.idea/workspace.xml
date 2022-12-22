@@ -4,7 +4,11 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="b91d1e49-3303-4bf0-a3f8-bbe106a6c309" name="Changes" comment="" />
+    <list default="true" id="b91d1e49-3303-4bf0-a3f8-bbe106a6c309" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/londonSafeTravel/OSMImporter/StreamImporter.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/londonSafeTravel/OSMImporter/StreamImporter.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/londonSafeTravel/OSMImporter/StreamImporter.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/londonSafeTravel/OSMImporter/StreamImporter.class" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -32,7 +36,14 @@
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
     "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true"
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "WebServerToolWindowFactoryState": "false",
+    "last_opened_file_path": "/home/dario/Documenti/x270/unipi/large dbs/progetto0/src/OSMImporter",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "vue.rearranger.settings.migration": "true"
   }
 }]]></component>
   <component name="RunManager" selected="Application.StreamImporter">
@@ -78,8 +89,12 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1671618442694</updated>
+      <workItem from="1671699137963" duration="1400000" />
     </task>
     <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
     <option name="TAB_STATES">
