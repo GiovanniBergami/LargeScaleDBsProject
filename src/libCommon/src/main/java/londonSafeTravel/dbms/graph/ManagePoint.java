@@ -19,11 +19,11 @@ public class ManagePoint {
 
         public void addNode(final Point p){
             try(Session session = driver.session()){
-                session.writeTransaction(tx-> createPlaceNode(tx,p.id, p.location.getLatitude(), p.location.getLongitude()));
+                session.writeTransaction(tx-> createPlaceNode(tx, p.getId(), p.location.getLatitude(), p.location.getLongitude()));
             }
         }
 
-        public Void createPlaceNode(Transaction tx, Integer id, double lat, double longitude){
+        public Void createPlaceNode(Transaction tx, long id, double lat, double longitude){
             try( Session session=driver.session() ) {
                 tx.run("CREATE (p:Point{id:$id, lat:$lat, longitude:$longitude})", parameters("id", id, "lat", lat, "longitude", longitude));
             }
