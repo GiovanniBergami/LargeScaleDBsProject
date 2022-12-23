@@ -4,7 +4,12 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="b91d1e49-3303-4bf0-a3f8-bbe106a6c309" name="Changes" comment="fixed" />
+    <list default="true" id="b91d1e49-3303-4bf0-a3f8-bbe106a6c309" name="Changes" comment="fixed">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/londonSafeTravel/OSMImporter/StreamImporter.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/londonSafeTravel/OSMImporter/StreamImporter.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/londonSafeTravel/OSMImporter/WayImporter.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/londonSafeTravel/OSMImporter/WayImporter.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../libCommon/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../libCommon/.idea/misc.xml" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -100,6 +105,7 @@
       <option name="presentableId" value="Default" />
       <updated>1671618442694</updated>
       <workItem from="1671699137963" duration="1740000" />
+      <workItem from="1671826901490" duration="200000" />
     </task>
     <task id="LOCAL-00001" summary="fixed">
       <created>1671700553099</created>
