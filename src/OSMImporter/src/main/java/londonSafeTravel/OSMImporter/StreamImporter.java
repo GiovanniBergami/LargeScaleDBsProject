@@ -7,9 +7,7 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.events.XMLEvent;
 import java.io.*;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Objects;
+import java.util.*;
 
 import javax.xml.parsers.*;
 
@@ -27,6 +25,35 @@ import org.xml.sax.SAXException;
 public class StreamImporter {
     private static HashMap<Long, Point> map;
 
+    private final static HashSet<String> highwayTarget = new HashSet<>(){{
+        add("motorway");
+        add("trunk");
+        add("primary");
+        add("secondary");
+        add("tertiary");
+        add("unclassified");
+        add("residential");
+        add("motorway_link");
+        add("trunk_link");
+        add("primary_link");
+        add("secondary_link");
+        add("tertiary_link");
+        add("living_street");
+        add("service");
+        add("pedestrian");
+        add("track");
+        add("bus_guideway");
+        add("escape");
+        add("raceway");
+        add("road");
+        add("busway");
+        add("footway");
+        add("bridleway");
+        add("steps");
+        add("corridor");
+        add("path");
+        add("cycleway");
+    }};
 
     public static void main(String[] argv) throws FileNotFoundException, XMLStreamException {
         XMLInputFactory factory = XMLInputFactory.newInstance();
@@ -82,7 +109,7 @@ public class StreamImporter {
                 }
             }
             //System.out.println(locations.size()+" "+tags.get("highway")+" "+tags.get("maxspeed"));
-            if (!tags.containsKey("highway") || !Objects.equals(tags.get("highway"), "primary"))
+            if (!tags.containsKey("highway") || !highwayTarget.contains(tags.get("highway")))
                 continue;
 
             for (int i = 1; i < locations.size(); i++) {
@@ -97,7 +124,7 @@ public class StreamImporter {
                 ways.add(w);
             }
 
-            if(ways.size() > 1500) {
+            if(ways.size() > 10000) {
                 total += ways.size();
                 System.out.println("About to push " + ways.size() + "\ttotal " + total);
                 manageWay.addWays(ways);
