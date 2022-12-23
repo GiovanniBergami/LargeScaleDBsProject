@@ -18,11 +18,16 @@
     <dependency>
         <groupId>londonSafeTravel.libCommon</groupId>
         <artifactId>libCommon</artifactId>
-        <version>0.0.2</version>
+        <version>0.0.3</version>
 
         <scope>system</scope>
-        <systemPath>${project.basedir}/../libCommon/target/libCommon-0.0.2.jar</systemPath>
+        <systemPath>${project.basedir}/../libCommon/target/libCommon-0.0.3.jar</systemPath>
     </dependency>
+        <dependency>
+            <groupId>org.neo4j.driver</groupId>
+            <artifactId>neo4j-java-driver</artifactId>
+            <version>4.4.0</version>
+        </dependency>
     </dependencies>
 
 </project>
