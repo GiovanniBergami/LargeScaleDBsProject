@@ -10,20 +10,19 @@ import org.neo4j.driver.Transaction;
 import static org.neo4j.driver.Values.parameters;
 
 public class ManagePoint {
-    public static class InsertGraph {
         private final Driver driver;
 
-        public InsertGraph(String uri, String user, String password){
+        public ManagePoint(String uri, String user, String password){
             driver = GraphDatabase.driver(uri, AuthTokens.basic(user, password));
         }
 
         public void addNode(final Point p){
             try(Session session = driver.session()){
-                session.writeTransaction(tx-> createPlaceNode(tx,p.id, p.location.getLatitude(), p.location.getLongitude()));
+                session.writeTransaction(tx-> createPlaceNode(tx, p.getId(), p.location.getLatitude(), p.location.getLongitude()));
             }
         }
 
-        public Void createPlaceNode(Transaction tx, Integer id, double lat, double longitude){
+        public Void createPlaceNode(Transaction tx, long id, double lat, double longitude){
             try( Session session=driver.session() ) {
                 tx.run("CREATE (p:Point{id:$id, lat:$lat, longitude:$longitude})", parameters("id", id, "lat", lat, "longitude", longitude));
             }
@@ -32,12 +31,11 @@ public class ManagePoint {
         
 
         public static void main(String[] argv){
-            InsertGraph test= new InsertGraph("neo4j://localhost:7687", "neo4j", "pass");
-            double latitude=100.00;
-            double longitude=200.00;
-            int id=1;
+            ManagePoint test= new ManagePoint("neo4j://localhost:7687", "neo4j", "pass");
+            double latitude=102.00;
+            double longitude=202.00;
+            int id=3;
             Point p=new Point(id,latitude,longitude);
             test.addNode(p);
         }
-    }
 }
