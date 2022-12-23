@@ -3,7 +3,7 @@ package londonSafeTravel.schema.graph;
 import londonSafeTravel.schema.Location;
 
 public class Point {
-    private long id;
+    private final long id;
     public Location location;
 
     public Point(long id, double latitude, double longitude){
