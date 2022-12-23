@@ -86,7 +86,7 @@ public class StreamImporter {
         ManageWay manageWay = new ManageWay("neo4j://localhost:7687", "neo4j", "pass");
 
         ArrayList<Way> ways = new ArrayList<>();
-        long total = 0;
+        long total = 0, totalWays = 0;
         final long cardinalityOverStime = 513192L;
         for (r.next(); r.hasNext(); r.next()) {
             if (!r.hasName())
@@ -125,10 +125,11 @@ public class StreamImporter {
                 ways.add(w);
             }
 
+            totalWays ++;
             if(ways.size() > 10000) {
                 total += ways.size();
                 System.out.println("About to push " + ways.size() + "\ttotal " + total + "\tso circa " +
-                        (100.0 * (double)total / (double)cardinalityOverStime) + " %");
+                        (100.0 * (double)totalWays / (double)cardinalityOverStime) + " %");
                 manageWay.addWays(ways);
                 ways.clear();
             }
