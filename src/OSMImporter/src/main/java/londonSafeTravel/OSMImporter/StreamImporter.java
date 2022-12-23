@@ -83,7 +83,7 @@ public class StreamImporter {
         // Flusso per seconda passata: le vie
         r = factory.createXMLStreamReader(new FileReader("greater-london-latest.osm"));
 
-        ManageWay manageWay = new ManageWay("neo4j://localhost:7687", "neo4j", "pass");
+        ManageWay manageWay = new ManageWay("neo4j://localhost:7687/test0", "neo4j", "pass");
 
         ArrayList<Way> ways = new ArrayList<>();
         long total = 0, totalWays = 0;
