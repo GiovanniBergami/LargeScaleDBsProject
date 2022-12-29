@@ -14,6 +14,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
 
+
+/**
+ * @deprecated
+ */
 public class WayImporter {
     public static void main(String[] argv) throws FileNotFoundException, XMLStreamException {
         XMLInputFactory factory = XMLInputFactory.newInstance();
