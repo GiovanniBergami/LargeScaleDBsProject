@@ -2,6 +2,7 @@ package londonSafeTravel.schema.document;
 
 import londonSafeTravel.schema.Location;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 
@@ -28,7 +29,7 @@ public class Disruption {
 
     public String subCategory;
     public String severity;
-    public Collection<Update> updates;
+    public ArrayList<Update> updates;
 
     public Collection<Street> streets;
     public Boolean closure; // se stazione (0,1), se in street esiste una closure(0,1)
