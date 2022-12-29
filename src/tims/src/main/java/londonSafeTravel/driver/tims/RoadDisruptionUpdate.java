@@ -39,5 +39,11 @@ public class RoadDisruptionUpdate {
         updates.forEach(roadDisruptionUpdate -> {
             System.out.println(roadDisruptionUpdate.category);
         });
+
+        // Check if this disruption is in the db
+        // if not -> create it
+        // if yes -> update it
+
+        // riondskljfnsdklòj with graph database get() and set()
     }
 }

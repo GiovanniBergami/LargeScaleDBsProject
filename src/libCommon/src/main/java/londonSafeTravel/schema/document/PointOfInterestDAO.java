@@ -17,7 +17,6 @@ import java.util.Collection;
 import static com.mongodb.client.model.Filters.geoWithin;
 
 public class PointOfInterestDAO {
-    private PointOfInterest poi = new PointOfInterest();
     private ConnectionMongoDB connection = new ConnectionMongoDB();
 
     private MongoDatabase db = connection.giveDB();

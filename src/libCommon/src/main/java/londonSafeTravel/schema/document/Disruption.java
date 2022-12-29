@@ -17,7 +17,8 @@ public class Disruption {
         public Boolean closure;
     }
     public String id;
-    public enum Type{PUBLIC_TRANSPORT, ROAD};
+    public enum Type{PUBLIC_TRANSPORT, ROAD}; // da rivedere
+    public String type;
     public Date start;
     public Date end;
     public Location coordinates;

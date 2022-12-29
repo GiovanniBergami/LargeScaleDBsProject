@@ -3,15 +3,15 @@ package londonSafeTravel.schema.graph;
 import londonSafeTravel.schema.Location;
 
 public class Point {
-    public int id;
+    private final long id;
     public Location location;
 
-    public Point(int id, double latitude, double longitude){
+    public Point(long id, double latitude, double longitude){
         this.id=id;
         this.location=new Location(latitude,longitude);
     }
 
-    public int getId() {
+    public long getId() {
         return id;
     }
 
