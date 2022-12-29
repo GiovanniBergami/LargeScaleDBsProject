@@ -8,12 +8,12 @@ import java.util.Date;
 
 public class Disruption {
 
-    public class Update{
+    public static class Update{
         public Date start;
         public Date end;
         public String message;
     }
-    public class Street{
+    public static class Street{
         public String name;
         public Boolean closure;
     }
