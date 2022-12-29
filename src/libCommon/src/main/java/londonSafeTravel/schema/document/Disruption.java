@@ -33,4 +33,9 @@ public class Disruption {
 
     public Collection<Street> streets;
     public Boolean closure; // se stazione (0,1), se in street esiste una closure(0,1)
+
+    public Disruption()
+    {
+        updates = new ArrayList<>();
+    }
 }
