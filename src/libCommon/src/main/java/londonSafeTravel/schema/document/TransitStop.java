@@ -1,5 +1,7 @@
 package londonSafeTravel.schema.document;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.Date;
 
@@ -13,12 +15,14 @@ public class TransitStop {
         public String line;
     }
 
-    public class TerminatedDisruption{
+    public static class TerminatedDisruption{
         public String id;
 
-        public Date start;
-        public Date end;
+        public LocalDateTime start;
+        public LocalDateTime end;
         public String typeDisruption;
+
+        public String category;
         // etc ... s
     }
 
@@ -27,4 +31,12 @@ public class TransitStop {
     public Collection<Timetable> timeTables;
     public Collection<Route> routes;
     public Collection<TerminatedDisruption> terminatedDisruptions;
+    public static void main(String[] argv) {
+
+        LocalDate testino = LocalDate.now();
+        System.out.println(testino.getDayOfWeek());
+
+
+    }
+
 }
