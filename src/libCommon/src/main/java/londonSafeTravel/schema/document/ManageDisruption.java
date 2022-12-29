@@ -13,7 +13,7 @@ import static com.mongodb.client.model.Filters.*;
 
 import com.mongodb.client.model.*;
 
-
+import java.util.Collection;
 
 
 public class ManageDisruption {
@@ -50,7 +50,9 @@ public class ManageDisruption {
     }
 
     public void set(Disruption d){
-        Document resultDoc = (Document) collection.find(eq("id", d.id)).first();
+        var docs = collection.find(eq("id", d.id));
+
+        Document resultDoc = (Document) docs.first();
         try {
         if (resultDoc == null) {
 
