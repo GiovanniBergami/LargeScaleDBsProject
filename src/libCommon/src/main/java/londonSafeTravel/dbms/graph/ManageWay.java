@@ -56,6 +56,21 @@ public class ManageWay {
             return null;
         }
 
+    private Collection<Way> elementsInGivenArea(double maxLat, double maxLon, double minLat, double minLon){
+        try(Session session = driver.session()){
+            return session.readTransaction((TransactionWork<List<Way>>)tx->{
+                Result result=tx.run("WITH" +
+                        "  point({longitude: $minLon, latitude: $minLat}) AS lowerLeft," +
+                        "  point({longitude: $maxLon, latitude: $maxLat}) AS upperRight" +
+                        "MATCH (p:Point)" +
+                        "WHERE point.withinBBox(p.coord, lowerLeft, upperRight)" +
+                        "MATCH(p)-[w]->(q:Point)"+
+                        "RETURN p,q,w", parameters("minLon",minLon, "minLat",minLat, "maxLon",maxLon, "maxLat", maxLat));
+                return null;
+            }) ;
+        }
+    }
+
     public static void main(String[] argv){
         ManageWay test= new ManageWay("neo4j://localhost:7687", "neo4j", "pass");
         Point p1=new Point(2,101.00,201.00);

@@ -4,12 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="b91d1e49-3303-4bf0-a3f8-bbe106a6c309" name="Changes" comment="fixed">
-      <change beforePath="$PROJECT_DIR$/../../schema/geoindex.cypher" beforeDir="false" afterPath="$PROJECT_DIR$/../../schema/geoindex.cypher" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/londonSafeTravel/OSMImporter/StreamImporter.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/londonSafeTravel/OSMImporter/StreamImporter.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/londonSafeTravel/OSMImporter/StreamImporter.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/londonSafeTravel/OSMImporter/StreamImporter.class" afterDir="false" />
-    </list>
+    <list default="true" id="b91d1e49-3303-4bf0-a3f8-bbe106a6c309" name="Changes" comment="fixed" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
