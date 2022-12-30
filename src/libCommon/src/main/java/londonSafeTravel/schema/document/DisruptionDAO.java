@@ -19,9 +19,8 @@ import java.util.List;
 
 
 import static com.mongodb.client.model.Aggregates.*;
-import static com.mongodb.client.model.Filters.geoWithin;
+import static com.mongodb.client.model.Filters.*;
 import static com.mongodb.client.model.Projections.*;
-
 
 
 
@@ -44,10 +43,16 @@ public class DisruptionDAO {
 
     public static void main(String[] argv) {
         DisruptionDAO disDAO = new DisruptionDAO();
-
+        /* test query2
         disDAO.query2(-1, 100, -1, 90).forEach(d -> {
             System.out.println(d.toJson());
         });
+         */
+
+       disDAO.queryHeatmap(1, 1, "burst pipe").forEach(d -> {
+           System.out.println(d.toJson());
+       });
+
     }
 
     /* Find the most common disruption in a given area (for each severity) */
@@ -79,19 +84,25 @@ public class DisruptionDAO {
 
         // Create the group stage
         Bson groupStage = Aggregates.group(
-                "$severity",
-                Accumulators.sum("count", 1),
-                Accumulators.first("type", "$category")
+                new Document("severity","$severity").append("category", "$category"),
+                Accumulators.sum("count", 1)
         );
+        Bson groupStage2 = Aggregates.group(
+                "$_id.severity",
+                Accumulators.max("count", "$count"),
+                Accumulators.first("type","$_id.category"),
+                Accumulators.first("severity", "$_id.severity")
+        );
+
         // Create the sort stage
         Bson sortStage = Aggregates.sort(Sorts.descending("count"));
 
         // Projèct
 
-        Bson project = project(fields(excludeId(),include("_id", "type")));
+        Bson project = project(fields(excludeId(),include("severity","type" ,"count" )));
 
         // Combine the stages into a pipeline
-        List<Bson> pipeline = Arrays.asList(Aggregates.match(inSquare), groupStage, sortStage,project);
+        List<Bson> pipeline = Arrays.asList(Aggregates.match(inSquare), groupStage,groupStage2, sortStage,project);
 
         // Execute the aggregation
         Collection<Document> result = collection.aggregate(pipeline).into(new ArrayList<>());
@@ -100,6 +111,37 @@ public class DisruptionDAO {
 
     }
 
+    /*
+    Build a heatmap of a certain class of disruption
+     */
+
+    public Collection<Document> queryHeatmap(double lenLat, double lenLong, String classDisruption){
+        Bson match = match(eq("category", classDisruption));
+        Bson computeBuckets = new Document("$project", new Document()
+                .append("latB", new Document("$floor", new Document("$divide", Arrays.asList(
+                        new Document("$arrayElemAt", Arrays.asList("$coordinates.coordinates", 0)),
+                        lenLat
+                ))))
+                .append("lngB", new Document("$floor", new Document("$divide", Arrays.asList(
+                        new Document("$arrayElemAt", Arrays.asList("$coordinates.coordinates", 1)),
+                        lenLong
+                )))));
+        Bson groupStage = Aggregates.group(
+                new Document("latB","$latB").append("lngB", "$lngB"),
+                Accumulators.sum("count", 1)
+        );
+        Bson project = project(fields(include( "count" )));
+        // Create the pipeline
+        List<Bson> pipeline = Arrays.asList(
+                    match,computeBuckets, groupStage, project
+        );
+
+// Execute the aggregation
+        Collection<Document> result = collection.aggregate(pipeline).into(new ArrayList<>());
+
+
+        return result;
+    }
 
 
 
