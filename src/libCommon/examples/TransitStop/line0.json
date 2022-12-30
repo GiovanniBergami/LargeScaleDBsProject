@@ -1,0 +1,49 @@
+[{
+  "id": 105,
+  "name": "Line 5",
+  "routes": [
+    {
+      "id": 2312,
+      "name": "North-bound",
+      "originationName" : "AAA",
+      "destinationName" : "BBB",
+      "stops": [555]
+    }, {
+      "id": 2313,
+      "name": "South-bound",
+      "originationName" : "BBB",
+      "destinationName" : "AAA",
+      "stops": [555]
+    }
+  ],
+  "terminatedClosureDisruptions": [
+    {
+      "id": 1,
+      "start": new Date("2022-01-05T14:30:00Z"),
+      "end": new Date("2022-01-05T16:00:00Z"),
+      "typeDisruption": "closure"
+    }
+  ]
+}, {
+  "id": 1212,
+  "name": "Line 2",
+  "routes": [
+    {
+      "id": 1212,
+      "line": "Line 2",
+      "name": "West-bound",
+      "originationName" : "CCC",
+      "destinationName" : "DDD",
+      "stops": [555]
+    }
+  ],
+  "terminatedClosureDisruptions": [
+    {
+      "id": 1,
+      "start": new Date("2022-01-05T14:30:00Z"),
+      "end": new Date("2022-01-05T16:00:00Z"),
+      "typeDisruption": "closure"
+    }
+  ]
+}
+]

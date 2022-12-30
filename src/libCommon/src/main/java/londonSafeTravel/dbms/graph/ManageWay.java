@@ -26,10 +26,12 @@ public class ManageWay {
         private Void createWays(Transaction tx, Collection<Way> ways){
             ways.forEach(way -> {
                 tx.run(
-                        "MERGE (p1: Point {id: $id1, coord: point({longitude: $lon1, latitude: $lat1})})"+
-                                "-[:CONNECTS {name: $name}]->"+
-                                "(p2: Point {id: $id2, coord: point({longitude: $lon2, latitude: $lat2})})" +
-                                "MERGE (p2)-[:CONNECTS {name: $name}]->(p1)", // @TODO Se oneway=yes and foot=no allora non serve l'inverso!
+                        "MERGE (p1: Point {id: $id1})" +
+                                "MERGE (p2: Point {id: $id2})" +
+                                "MERGE (p1)-[:CONNECTS {name: $name}]->(p2)"+
+                                "MERGE (p2)-[:CONNECTS {name: $name}]->(p1)"+
+                                "SET p1.coord = point({longitude: $lon1, latitude: $lat1})" +
+                                "SET p2.coord = point({longitude: $lon2, latitude: $lat2})", // @TODO Se oneway=yes and foot=no allora non serve l'inverso!
                         parameters(
                                 "id1", way.p1.getId(),
                                 "lat1", way.p1.getLocation().getLatitude(),

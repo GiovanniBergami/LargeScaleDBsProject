@@ -126,12 +126,14 @@ public class StreamImporter {
             }
 
             totalWays ++;
-            if(ways.size() > 10000) {
+            if(ways.size() > 20000) {
                 total += ways.size();
                 System.out.println("About to push " + ways.size() + "\ttotal " + total + "\tso circa " +
                         (100.0 * (double)totalWays / (double)cardinalityOverStime) + " %");
                 manageWay.addWays(ways);
                 ways.clear();
+
+                System.out.println("done");
             }
         }
 
