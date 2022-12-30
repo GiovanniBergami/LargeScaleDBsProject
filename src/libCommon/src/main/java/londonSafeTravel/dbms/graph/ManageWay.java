@@ -2,9 +2,9 @@ package londonSafeTravel.dbms.graph;
 
 import londonSafeTravel.schema.graph.Point;
 import londonSafeTravel.schema.graph.Way;
+
 import org.neo4j.driver.*;
 
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
@@ -19,11 +19,11 @@ public class ManageWay {
         }
 
         public void addWays(Collection<Way> ways) {
-            try(Session session = driver.session()){
-                session.writeTransaction(tx -> createWays(tx, ways));
+            try(var session = driver.session()){
+                session.executeWriteWithoutResult(tx -> createWays(tx, ways));
             }
         }
-        private Void createWays(Transaction tx, Collection<Way> ways){
+        private void createWays(TransactionContext tx, Collection<Way> ways){
             ways.forEach(way -> {
                 tx.run(
                         "MERGE (p1: Point {id: $id1})" +
@@ -55,7 +55,6 @@ public class ManageWay {
 //                                "name",name,"maxSpeed", maxSpeed)
 //                );
 //            }
-            return null;
         }
 
     public static void main(String[] argv){

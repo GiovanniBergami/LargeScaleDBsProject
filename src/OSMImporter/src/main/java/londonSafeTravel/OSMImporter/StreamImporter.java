@@ -128,8 +128,20 @@ public class StreamImporter {
             totalWays ++;
             if(ways.size() > 20000) {
                 total += ways.size();
+
                 System.out.println("About to push " + ways.size() + "\ttotal " + total + "\tso circa " +
                         (100.0 * (double)totalWays / (double)cardinalityOverStime) + " %");
+
+                ways.sort(new Comparator<Way>() {
+                    @Override
+                    public int compare(Way lhs, Way rhs) {
+                        // -1 - less than, 1 - greater than, 0 - equal, all inversed for descending
+                        return lhs.p1.getId() > lhs.p1.getId() ? -1 : (lhs.p1.getId() < rhs.p1.getId()) ? 1 : 0;
+                    }
+                });
+
+                System.out.println("sorted!");
+
                 manageWay.addWays(ways);
                 ways.clear();
 

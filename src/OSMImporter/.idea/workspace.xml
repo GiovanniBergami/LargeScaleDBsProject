@@ -4,24 +4,46 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="b91d1e49-3303-4bf0-a3f8-bbe106a6c309" name="Changes" comment="fixed">
+    <list default="true" id="b91d1e49-3303-4bf0-a3f8-bbe106a6c309" name="Changes" comment="fixed neo4j's constrains">
       <change beforePath="$PROJECT_DIR$/../../schema/geoindex.cypher" beforeDir="false" afterPath="$PROJECT_DIR$/../../schema/geoindex.cypher" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/londonSafeTravel/OSMImporter/StreamImporter.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/londonSafeTravel/OSMImporter/StreamImporter.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/londonSafeTravel/OSMImporter/StreamImporter.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/londonSafeTravel/OSMImporter/StreamImporter.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../libCommon/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../libCommon/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../libCommon/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../libCommon/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../libCommon/src/main/java/londonSafeTravel/dbms/graph/ManagePoint.java" beforeDir="false" afterPath="$PROJECT_DIR$/../libCommon/src/main/java/londonSafeTravel/dbms/graph/ManagePoint.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../libCommon/src/main/java/londonSafeTravel/dbms/graph/ManageWay.java" beforeDir="false" afterPath="$PROJECT_DIR$/../libCommon/src/main/java/londonSafeTravel/dbms/graph/ManageWay.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../libCommon/target/classes/londonSafeTravel/dbms/graph/ManagePoint.class" beforeDir="false" afterPath="$PROJECT_DIR$/../libCommon/target/classes/londonSafeTravel/dbms/graph/ManagePoint.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../libCommon/target/classes/londonSafeTravel/dbms/graph/ManageWay.class" beforeDir="false" afterPath="$PROJECT_DIR$/../libCommon/target/classes/londonSafeTravel/dbms/graph/ManageWay.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../libCommon/target/classes/londonSafeTravel/schema/Location.class" beforeDir="false" afterPath="$PROJECT_DIR$/../libCommon/target/classes/londonSafeTravel/schema/Location.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../libCommon/target/classes/londonSafeTravel/schema/document/ConnectionMongoDB.class" beforeDir="false" afterPath="$PROJECT_DIR$/../libCommon/target/classes/londonSafeTravel/schema/document/ConnectionMongoDB.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../libCommon/target/classes/londonSafeTravel/schema/document/Disruption$Street.class" beforeDir="false" afterPath="$PROJECT_DIR$/../libCommon/target/classes/londonSafeTravel/schema/document/Disruption$Street.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../libCommon/target/classes/londonSafeTravel/schema/document/Disruption$Type.class" beforeDir="false" afterPath="$PROJECT_DIR$/../libCommon/target/classes/londonSafeTravel/schema/document/Disruption$Type.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../libCommon/target/classes/londonSafeTravel/schema/document/Disruption$Update.class" beforeDir="false" afterPath="$PROJECT_DIR$/../libCommon/target/classes/londonSafeTravel/schema/document/Disruption$Update.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../libCommon/target/classes/londonSafeTravel/schema/document/Disruption.class" beforeDir="false" afterPath="$PROJECT_DIR$/../libCommon/target/classes/londonSafeTravel/schema/document/Disruption.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../libCommon/target/classes/londonSafeTravel/schema/document/DisruptionDAO.class" beforeDir="false" afterPath="$PROJECT_DIR$/../libCommon/target/classes/londonSafeTravel/schema/document/DisruptionDAO.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../libCommon/target/classes/londonSafeTravel/schema/document/Line$Route.class" beforeDir="false" afterPath="$PROJECT_DIR$/../libCommon/target/classes/londonSafeTravel/schema/document/Line$Route.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../libCommon/target/classes/londonSafeTravel/schema/document/Line.class" beforeDir="false" afterPath="$PROJECT_DIR$/../libCommon/target/classes/londonSafeTravel/schema/document/Line.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../libCommon/target/classes/londonSafeTravel/schema/document/PointOfInterest.class" beforeDir="false" afterPath="$PROJECT_DIR$/../libCommon/target/classes/londonSafeTravel/schema/document/PointOfInterest.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../libCommon/target/classes/londonSafeTravel/schema/document/PointOfInterestDAO.class" beforeDir="false" afterPath="$PROJECT_DIR$/../libCommon/target/classes/londonSafeTravel/schema/document/PointOfInterestDAO.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../libCommon/target/libCommon-0.0.3.jar" beforeDir="false" afterPath="$PROJECT_DIR$/../libCommon/target/libCommon-0.0.3.jar" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../libCommon/target/surefire-reports/TEST-org.example.AppTest.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../libCommon/target/surefire-reports/TEST-org.example.AppTest.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../libCommon/target/surefire-reports/org.example.AppTest.txt" beforeDir="false" afterPath="$PROJECT_DIR$/../libCommon/target/surefire-reports/org.example.AppTest.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../libCommon/target/classes/londonSafeTravel/schema/document/Route.class" beforeDir="false" afterPath="$PROJECT_DIR$/../libCommon/target/classes/londonSafeTravel/schema/document/Route.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../libCommon/target/classes/londonSafeTravel/schema/document/TransitStop$Route.class" beforeDir="false" afterPath="$PROJECT_DIR$/../libCommon/target/classes/londonSafeTravel/schema/document/TransitStop$Route.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../libCommon/target/classes/londonSafeTravel/schema/document/TransitStop$TerminatedDisruption.class" beforeDir="false" afterPath="$PROJECT_DIR$/../libCommon/target/classes/londonSafeTravel/schema/document/TransitStop$TerminatedDisruption.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../libCommon/target/classes/londonSafeTravel/schema/document/TransitStop$Timetable.class" beforeDir="false" afterPath="$PROJECT_DIR$/../libCommon/target/classes/londonSafeTravel/schema/document/TransitStop$Timetable.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../libCommon/target/classes/londonSafeTravel/schema/document/TransitStop.class" beforeDir="false" afterPath="$PROJECT_DIR$/../libCommon/target/classes/londonSafeTravel/schema/document/TransitStop.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../libCommon/target/classes/londonSafeTravel/schema/graph/Point.class" beforeDir="false" afterPath="$PROJECT_DIR$/../libCommon/target/classes/londonSafeTravel/schema/graph/Point.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../libCommon/target/classes/londonSafeTravel/schema/graph/Way.class" beforeDir="false" afterPath="$PROJECT_DIR$/../libCommon/target/classes/londonSafeTravel/schema/graph/Way.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../libCommon/target/classes/org/example/App.class" beforeDir="false" afterPath="$PROJECT_DIR$/../libCommon/target/classes/org/example/App.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../libCommon/target/libCommon-0.0.3.jar" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../libCommon/target/maven-archiver/pom.properties" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../libCommon/target/maven-status/maven-compiler-plugin/compile/default-compile/createdFiles.lst" beforeDir="false" afterPath="$PROJECT_DIR$/../libCommon/target/maven-status/maven-compiler-plugin/compile/default-compile/createdFiles.lst" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../libCommon/target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst" beforeDir="false" afterPath="$PROJECT_DIR$/../libCommon/target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../libCommon/target/maven-status/maven-compiler-plugin/testCompile/default-testCompile/createdFiles.lst" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../libCommon/target/maven-status/maven-compiler-plugin/testCompile/default-testCompile/inputFiles.lst" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../libCommon/target/surefire-reports/TEST-org.example.AppTest.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../libCommon/target/surefire-reports/org.example.AppTest.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../libCommon/target/test-classes/org/example/AppTest.class" beforeDir="false" afterPath="$PROJECT_DIR$/../libCommon/target/test-classes/org/example/AppTest.class" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -125,6 +147,7 @@
       <workItem from="1671826901490" duration="528000" />
       <workItem from="1671827436582" duration="146000" />
       <workItem from="1671827602532" duration="6061000" />
+      <workItem from="1672420029667" duration="1207000" />
     </task>
     <task id="LOCAL-00001" summary="fixed">
       <created>1671700553099</created>
@@ -133,7 +156,14 @@
       <option name="project" value="LOCAL" />
       <updated>1671700553099</updated>
     </task>
-    <option name="localTasksCounter" value="2" />
+    <task id="LOCAL-00002" summary="fixed neo4j's constrains">
+      <created>1672414038069</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1672414038069</updated>
+    </task>
+    <option name="localTasksCounter" value="3" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -152,7 +182,8 @@
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="fixed" />
-    <option name="LAST_COMMIT_MESSAGE" value="fixed" />
+    <MESSAGE value="fixed neo4j's constrains" />
+    <option name="LAST_COMMIT_MESSAGE" value="fixed neo4j's constrains" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />
