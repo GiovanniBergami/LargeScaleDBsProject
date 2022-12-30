@@ -55,11 +55,14 @@ public class StreamImporter {
         add("cycleway");
     }};
 
+    private static final String filenameDefault = "examples/greater-london-latest.osm";
+
     public static void main(String[] argv) throws FileNotFoundException, XMLStreamException {
         XMLInputFactory factory = XMLInputFactory.newInstance();
+        final String filename = argv.length == 0 ? filenameDefault : argv[0];
 
         // Flusso per prima passata: i nodi
-        XMLStreamReader r = factory.createXMLStreamReader(new FileReader("examples/greater-london-latest.osm"));
+        XMLStreamReader r = factory.createXMLStreamReader(new FileReader(filename));
 
         // Tutti i nodi qua
         HashMap<Long, Point> map = new HashMap<Long, Point>();
@@ -81,7 +84,7 @@ public class StreamImporter {
         }
 
         // Flusso per seconda passata: le vie
-        r = factory.createXMLStreamReader(new FileReader("greater-london-latest.osm"));
+        r = factory.createXMLStreamReader(new FileReader(filename));
 
         ManageWay manageWay = new ManageWay("neo4j://localhost:7687", "neo4j", "pass");
 
@@ -126,7 +129,7 @@ public class StreamImporter {
             }
 
             totalWays ++;
-            if(ways.size() > 20000) {
+            if(ways.size() > 900) {
                 total += ways.size();
 
                 System.out.println("About to push " + ways.size() + "\ttotal " + total + "\tso circa " +
