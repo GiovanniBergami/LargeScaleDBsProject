@@ -9,6 +9,19 @@
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/londonSafeTravel/OSMImporter/StreamImporter.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/londonSafeTravel/OSMImporter/StreamImporter.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/londonSafeTravel/OSMImporter/StreamImporter.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/londonSafeTravel/OSMImporter/StreamImporter.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../libCommon/src/main/java/londonSafeTravel/dbms/graph/ManageWay.java" beforeDir="false" afterPath="$PROJECT_DIR$/../libCommon/src/main/java/londonSafeTravel/dbms/graph/ManageWay.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../libCommon/target/classes/londonSafeTravel/dbms/graph/ManageWay.class" beforeDir="false" afterPath="$PROJECT_DIR$/../libCommon/target/classes/londonSafeTravel/dbms/graph/ManageWay.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../libCommon/target/classes/londonSafeTravel/schema/document/ConnectionMongoDB.class" beforeDir="false" afterPath="$PROJECT_DIR$/../libCommon/target/classes/londonSafeTravel/schema/document/ConnectionMongoDB.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../libCommon/target/classes/londonSafeTravel/schema/document/Disruption$Street.class" beforeDir="false" afterPath="$PROJECT_DIR$/../libCommon/target/classes/londonSafeTravel/schema/document/Disruption$Street.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../libCommon/target/classes/londonSafeTravel/schema/document/Disruption$Type.class" beforeDir="false" afterPath="$PROJECT_DIR$/../libCommon/target/classes/londonSafeTravel/schema/document/Disruption$Type.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../libCommon/target/classes/londonSafeTravel/schema/document/Disruption$Update.class" beforeDir="false" afterPath="$PROJECT_DIR$/../libCommon/target/classes/londonSafeTravel/schema/document/Disruption$Update.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../libCommon/target/classes/londonSafeTravel/schema/document/Disruption.class" beforeDir="false" afterPath="$PROJECT_DIR$/../libCommon/target/classes/londonSafeTravel/schema/document/Disruption.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../libCommon/target/classes/londonSafeTravel/schema/document/Line$Route.class" beforeDir="false" afterPath="$PROJECT_DIR$/../libCommon/target/classes/londonSafeTravel/schema/document/Line$Route.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../libCommon/target/classes/londonSafeTravel/schema/document/Line.class" beforeDir="false" afterPath="$PROJECT_DIR$/../libCommon/target/classes/londonSafeTravel/schema/document/Line.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../libCommon/target/classes/londonSafeTravel/schema/document/PointOfInterestDAO.class" beforeDir="false" afterPath="$PROJECT_DIR$/../libCommon/target/classes/londonSafeTravel/schema/document/PointOfInterestDAO.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../libCommon/target/libCommon-0.0.3.jar" beforeDir="false" afterPath="$PROJECT_DIR$/../libCommon/target/libCommon-0.0.3.jar" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../libCommon/target/surefire-reports/TEST-org.example.AppTest.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../libCommon/target/surefire-reports/TEST-org.example.AppTest.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../libCommon/target/surefire-reports/org.example.AppTest.txt" beforeDir="false" afterPath="$PROJECT_DIR$/../libCommon/target/surefire-reports/org.example.AppTest.txt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -21,6 +34,9 @@
         <option value="Class" />
       </list>
     </option>
+  </component>
+  <component name="Git.Merge.Settings">
+    <option name="BRANCH" value="neo4jperformance" />
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/../.." />
