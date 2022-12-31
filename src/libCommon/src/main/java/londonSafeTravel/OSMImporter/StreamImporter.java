@@ -120,10 +120,7 @@ public class StreamImporter {
                 Point p1 = map.get(locations.get(i - 1));
                 Point p2 = map.get(locations.get(i));
 
-                Way w = new Way();
-                w.name = tags.get("name") == null ? "" : tags.get("name");
-                w.p1 = p1;
-                w.p2 = p2;
+                Way w = WaysFactory.getWay(tags, p1, p2);
 
                 ways.add(w);
             }
