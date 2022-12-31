@@ -30,6 +30,7 @@ public class WaysFactory {
     public static Way getWay(HashMap<String, String> tags, Point p1, Point p2)
     {
         Way w = new Way();
+        //w.id = Long.parseLong(tags.get("id"));
         w.p1 = p1;
         w.p2 = p2;
         w.name = Objects.requireNonNullElse(tags.get("name"), "");

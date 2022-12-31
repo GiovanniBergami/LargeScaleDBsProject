@@ -3,6 +3,7 @@ package londonSafeTravel.schema.graph;
 import java.util.HashMap;
 
 public class Way {
+    public long id;
     public Point p1;
     public Point p2;
     public String name;
