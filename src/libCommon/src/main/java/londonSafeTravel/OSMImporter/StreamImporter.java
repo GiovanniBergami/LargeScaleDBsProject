@@ -55,11 +55,14 @@ public class StreamImporter {
         add("cycleway");
     }};
 
+    private static final String filenameDefault = "examples/greater-london-latest.osm";
+
     public static void main(String[] argv) throws FileNotFoundException, XMLStreamException {
         XMLInputFactory factory = XMLInputFactory.newInstance();
+        final String filename = argv.length == 0 ? filenameDefault : argv[0];
 
         // Flusso per prima passata: i nodi
-        XMLStreamReader r = factory.createXMLStreamReader(new FileReader("greater-london-latest.osm"));
+        XMLStreamReader r = factory.createXMLStreamReader(new FileReader(filename));
 
         // Tutti i nodi qua
         HashMap<Long, Point> map = new HashMap<Long, Point>();
@@ -81,7 +84,7 @@ public class StreamImporter {
         }
 
         // Flusso per seconda passata: le vie
-        r = factory.createXMLStreamReader(new FileReader("greater-london-latest.osm"));
+        r = factory.createXMLStreamReader(new FileReader(filename));
 
         ManageWay manageWay = new ManageWay("neo4j://localhost:7687", "neo4j", "pass");
 
@@ -126,10 +129,22 @@ public class StreamImporter {
             }
 
             totalWays ++;
-            if(ways.size() > 20000) {
+            if(ways.size() > 900) {
                 total += ways.size();
+
                 System.out.println("About to push " + ways.size() + "\ttotal " + total + "\tso circa " +
                         (100.0 * (double)totalWays / (double)cardinalityOverStime) + " %");
+
+                ways.sort(new Comparator<Way>() {
+                    @Override
+                    public int compare(Way lhs, Way rhs) {
+                        // -1 - less than, 1 - greater than, 0 - equal, all inversed for descending
+                        return lhs.p1.getId() > lhs.p1.getId() ? -1 : (lhs.p1.getId() < rhs.p1.getId()) ? 1 : 0;
+                    }
+                });
+
+                System.out.println("sorted!");
+
                 manageWay.addWays(ways);
                 ways.clear();
 

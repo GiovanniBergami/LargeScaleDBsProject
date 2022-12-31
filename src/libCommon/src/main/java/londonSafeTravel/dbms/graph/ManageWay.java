@@ -2,9 +2,9 @@ package londonSafeTravel.dbms.graph;
 
 import londonSafeTravel.schema.graph.Point;
 import londonSafeTravel.schema.graph.Way;
+
 import org.neo4j.driver.*;
 
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
@@ -19,19 +19,19 @@ public class ManageWay {
         }
 
         public void addWays(Collection<Way> ways) {
-            try(Session session = driver.session()){
-                session.writeTransaction(tx -> createWays(tx, ways));
+            try(var session = driver.session()){
+                session.executeWriteWithoutResult(tx -> createWays(tx, ways));
             }
         }
-        private Void createWays(Transaction tx, Collection<Way> ways){
+        private void createWays(TransactionContext tx, Collection<Way> ways){
             ways.forEach(way -> {
                 tx.run(
                         "MERGE (p1: Point {id: $id1})" +
                                 "MERGE (p2: Point {id: $id2})" +
                                 "MERGE (p1)-[:CONNECTS {name: $name}]->(p2)"+
                                 "MERGE (p2)-[:CONNECTS {name: $name}]->(p1)"+
-                                "SET p1.coord = point({longitude: $lon1, latitude: $lat1})" +
-                                "SET p2.coord = point({longitude: $lon2, latitude: $lat2})", // @TODO Se oneway=yes and foot=no allora non serve l'inverso!
+                                "ON CREATE SET p1.coord = point({longitude: $lon1, latitude: $lat1})" +
+                                "ON CREATE SET p2.coord = point({longitude: $lon2, latitude: $lat2})", // @TODO Se oneway=yes and foot=no allora non serve l'inverso!
                         parameters(
                                 "id1", way.p1.getId(),
                                 "lat1", way.p1.getLocation().getLatitude(),
@@ -55,7 +55,6 @@ public class ManageWay {
 //                                "name",name,"maxSpeed", maxSpeed)
 //                );
 //            }
-            return null;
         }
 
     private Collection<Way> elementsInGivenArea(double maxLat, double maxLon, double minLat, double minLon){
