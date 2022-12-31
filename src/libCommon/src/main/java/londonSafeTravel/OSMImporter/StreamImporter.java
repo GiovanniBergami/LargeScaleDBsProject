@@ -57,6 +57,7 @@ public class StreamImporter {
 
     private static final String filenameDefault = "examples/greater-london-latest.osm";
 
+    // @TODO Implement ONE-WAY streets and default access restrictions!
     public static void main(String[] argv) throws FileNotFoundException, XMLStreamException {
         XMLInputFactory factory = XMLInputFactory.newInstance();
         final String filename = argv.length == 0 ? filenameDefault : argv[0];
