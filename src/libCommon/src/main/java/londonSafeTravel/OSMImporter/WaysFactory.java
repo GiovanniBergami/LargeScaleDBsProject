@@ -6,6 +6,7 @@ import londonSafeTravel.schema.graph.Way;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Objects;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class WaysFactory {
     private WaysFactory() {}
@@ -20,11 +21,48 @@ public class WaysFactory {
     }};
 
     private final static HashSet<String> noAccessValues = new HashSet<>(){{
-        add("no"); add("private"); add("destination");
+        add("no"); add("private"); add("destination"); add("use_sidepath");
+    }};
+
+    private final static HashSet<String> yesAccessValues = new HashSet<>(){{
+        add("yes"); add("designated"); add("dismount");
     }};
 
     private final static HashMap<String, Double> nationalSpeedLimits = new HashMap<>(){{
         put("motorway", 70.0 * CONVERT_MPH_MS); put("residential", 20.0 * CONVERT_MPH_MS); put("service", 15.0 * CONVERT_MPH_MS);
+    }};
+
+    private final static HashMap<String, HashSet<String>> defaultRestrictions = new HashMap<>(){{
+        put("motorway", new HashSet<>(){{
+            add("foot"); add("bicycle");
+        }});
+        put("pedestrian", new HashSet<>(){{
+            add("motor_vehicle");
+        }});
+        put("bus_guideway", new HashSet<>(){{
+            add("motor_vehicle"); add("bicycle");
+        }});
+        put("busway", new HashSet<>(){{
+            add("motor_vehicle"); add("bicycle");
+        }});
+        put("footway", new HashSet<>(){{
+            add("motor_vehicle"); add("bicycle");
+        }});
+        put("bridleway", new HashSet<>(){{
+            add("motor_vehicle"); /*add("bicycle");*/
+        }});
+        put("steps", new HashSet<>(){{
+            add("motor_vehicle"); add("bicycle");
+        }});
+        put("corridor", new HashSet<>(){{
+            add("motor_vehicle"); add("bicycle");
+        }});
+        put("path", new HashSet<>(){{
+            add("motor_vehicle");
+        }});
+        put("cycleway", new HashSet<>(){{
+            add("motor_vehicle");
+        }});
     }};
 
     public static Way getWay(HashMap<String, String> tags, Point p1, Point p2)
@@ -56,7 +94,13 @@ public class WaysFactory {
         double finalSpeedLimit = speedLimit;
         w.crossTimes = new HashMap<>();
         accessTags.forEach((mode, maxspeed) -> {
-            if(tags.containsKey(mode) && noAccessValues.contains(tags.get(mode)))
+            // No access
+            if(tags.containsKey(mode) && (
+                    noAccessValues.contains(tags.get(mode)) ||
+                            // If the road has a deafult access for this mode to NO and the segment doesn't have
+                            // a specific restriction
+                            (!yesAccessValues.contains(mode) && defaultRestrictions.containsKey(w.roadClass) &&
+                                    defaultRestrictions.get(w.roadClass).contains(mode))))
             {
                 w.crossTimes.put(mode, Double.POSITIVE_INFINITY);
                 return;
@@ -67,6 +111,17 @@ public class WaysFactory {
                     p1.location.metricNorm(p2.location) / finalSpeedLimit
             ));
         });
+
+        // ????
+        AtomicReference<Boolean> allInfinity = new AtomicReference<>(true);
+        accessTags.forEach((s, aDouble) -> {
+            if(aDouble != Double.POSITIVE_INFINITY)
+                allInfinity.set(false);
+        });
+
+        // We skip a way with no access
+        if(allInfinity.get())
+            return null;
 
         return w;
     }

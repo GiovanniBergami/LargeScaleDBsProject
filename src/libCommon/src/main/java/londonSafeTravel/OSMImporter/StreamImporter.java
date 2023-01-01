@@ -123,7 +123,8 @@ public class StreamImporter {
 
                 Way w = WaysFactory.getWay(tags, p1, p2);
 
-                ways.add(w);
+                if(w != null)
+                    ways.add(w);
             }
 
             totalWays ++;
