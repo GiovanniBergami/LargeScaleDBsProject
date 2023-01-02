@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.24 (TeX Live 2022/Arch Linux) (preloaded format=pdflatex 2022.11.8)  2 JAN 2023 12:08
+This is pdfTeX, Version 3.141592653-2.6-1.40.24 (TeX Live 2022/Arch Linux) (preloaded format=pdflatex 2022.11.8)  2 JAN 2023 16:51
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -383,24 +383,24 @@ LaTeX Warning: Unused global option(s):
 (./chapters/conlusions.aux) (./chapters/manual.aux))
 \openout1 = `report.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 44.
-LaTeX Font Info:    ... okay on input line 44.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 44.
-LaTeX Font Info:    ... okay on input line 44.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 44.
-LaTeX Font Info:    ... okay on input line 44.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 44.
-LaTeX Font Info:    ... okay on input line 44.
-LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 44.
-LaTeX Font Info:    ... okay on input line 44.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 44.
-LaTeX Font Info:    ... okay on input line 44.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 44.
-LaTeX Font Info:    ... okay on input line 44.
-LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 44.
-LaTeX Font Info:    ... okay on input line 44.
-LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 44.
-LaTeX Font Info:    ... okay on input line 44.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 46.
+LaTeX Font Info:    ... okay on input line 46.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 46.
+LaTeX Font Info:    ... okay on input line 46.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 46.
+LaTeX Font Info:    ... okay on input line 46.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 46.
+LaTeX Font Info:    ... okay on input line 46.
+LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 46.
+LaTeX Font Info:    ... okay on input line 46.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 46.
+LaTeX Font Info:    ... okay on input line 46.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 46.
+LaTeX Font Info:    ... okay on input line 46.
+LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 46.
+LaTeX Font Info:    ... okay on input line 46.
+LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 46.
+LaTeX Font Info:    ... okay on input line 46.
 \c@lstlisting=\count301
 
 (/usr/share/texmf-dist/tex/context/base/mkii/supp-pdf.mkii
@@ -467,7 +467,7 @@ e
 * \@reversemarginfalse
 * (1in=72.27pt=25.4mm, 1cm=28.453pt)
 
-Package hyperref Info: Link coloring OFF on input line 44.
+Package hyperref Info: Link coloring OFF on input line 46.
 (/usr/share/texmf-dist/tex/latex/hyperref/nameref.sty
 Package: nameref 2021-04-02 v2.47 Cross-referencing by name of section
 
@@ -479,9 +479,9 @@ Package: gettitlestring 2019/12/15 v1.6 Cleanup title references (HO)
 )
 \c@section@level=\count308
 )
-LaTeX Info: Redefining \ref on input line 44.
-LaTeX Info: Redefining \pageref on input line 44.
-LaTeX Info: Redefining \nameref on input line 44.
+LaTeX Info: Redefining \ref on input line 46.
+LaTeX Info: Redefining \pageref on input line 46.
+LaTeX Info: Redefining \nameref on input line 46.
 
 (./report.out) (./report.out)
 \@outlinefile=\write3
@@ -500,7 +500,7 @@ pdfTeX warning (ext4): destination with the same identifier (name{page.1}) has
 been already used, duplicate ignored
 <to be read again> 
                    \relax 
-l.49 \include{chapters/intro.tex}
+l.51 \include{chapters/intro.tex}
                                   [1
 
 ]
@@ -522,10 +522,10 @@ l.49 \include{chapters/intro.tex}
 Chapter 1.
 Package hyperref Info: bookmark level for unknown lstlisting defaults to 0 on i
 nput line 56.
-LaTeX Font Info:    Trying to load font information for T1+fvm on input line 56
+LaTeX Font Info:    Trying to load font information for T1+pcr on input line 56
 .
-(/usr/share/texmf-dist/tex/latex/bera/t1fvm.fd
-File: t1fvm.fd 2004/09/07 scalable font definitions for T1/fvm.
+(/usr/share/texmf-dist/tex/latex/psnfss/t1pcr.fd
+File: t1pcr.fd 2001/06/04 font definitions for T1/pcr.
 )
 (../../src/libCommon/examples/nodes.csv
 Overfull \hbox (10.6131pt too wide) in paragraph at lines 4--5
@@ -619,26 +619,26 @@ Package rerunfilecheck Info: File `report.out' has not changed.
 (rerunfilecheck)             Checksum: 1908EBF37CBCC4021AF87462D1DA3A24;2731.
  ) 
 Here is how much of TeX's memory you used:
- 14407 strings out of 478238
- 229075 string characters out of 5850456
+ 14414 strings out of 478238
+ 229194 string characters out of 5850456
  545347 words of memory out of 5000000
- 32335 multiletter control sequences out of 15000+600000
- 484336 words of font info for 59 fonts, out of 8000000 for 9000
+ 32341 multiletter control sequences out of 15000+600000
+ 484338 words of font info for 59 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  67i,6n,77p,299b,1243s stack positions out of 5000i,500n,10000p,200000b,80000s
 {/usr/share/texmf-dist/fonts/enc/dvips/cm-super/cm-super-t1.enc}{/usr/share/t
 exmf-dist/fonts/enc/dvips/base/8r.enc}{/usr/share/texmf-dist/fonts/enc/dvips/cm
--super/cm-super-ts1.enc}</usr/share/texmf-dist/fonts/type1/public/bera/fvmr8a.p
-fb></usr/share/texmf-dist/fonts/type1/public/cm-super/sfbx1000.pfb></usr/share/
-texmf-dist/fonts/type1/public/cm-super/sfbx1200.pfb></usr/share/texmf-dist/font
-s/type1/public/cm-super/sfbx1440.pfb></usr/share/texmf-dist/fonts/type1/public/
-cm-super/sfbx2074.pfb></usr/share/texmf-dist/fonts/type1/public/cm-super/sfbx24
-88.pfb></usr/share/texmf-dist/fonts/type1/public/cm-super/sfrm0900.pfb></usr/sh
-are/texmf-dist/fonts/type1/public/cm-super/sfrm1000.pfb></usr/share/texmf-dist/
-fonts/type1/public/cm-super/sfrm1200.pfb></usr/share/texmf-dist/fonts/type1/pub
-lic/cm-super/sfrm1728.pfb></usr/share/texmf-dist/fonts/type1/public/cm-super/sf
-ti1000.pfb>
-Output written on report.pdf (22 pages, 199040 bytes).
+-super/cm-super-ts1.enc}</usr/share/texmf-dist/fonts/type1/public/cm-super/sfbx
+1000.pfb></usr/share/texmf-dist/fonts/type1/public/cm-super/sfbx1200.pfb></usr/
+share/texmf-dist/fonts/type1/public/cm-super/sfbx1440.pfb></usr/share/texmf-dis
+t/fonts/type1/public/cm-super/sfbx2074.pfb></usr/share/texmf-dist/fonts/type1/p
+ublic/cm-super/sfbx2488.pfb></usr/share/texmf-dist/fonts/type1/public/cm-super/
+sfrm0900.pfb></usr/share/texmf-dist/fonts/type1/public/cm-super/sfrm1000.pfb></
+usr/share/texmf-dist/fonts/type1/public/cm-super/sfrm1200.pfb></usr/share/texmf
+-dist/fonts/type1/public/cm-super/sfrm1728.pfb></usr/share/texmf-dist/fonts/typ
+e1/public/cm-super/sfti1000.pfb></usr/share/texmf-dist/fonts/type1/urw/courier/
+ucrr8a.pfb>
+Output written on report.pdf (22 pages, 206012 bytes).
 PDF statistics:
  307 PDF objects out of 1000 (max. 8388607)
  257 compressed objects within 3 object streams
