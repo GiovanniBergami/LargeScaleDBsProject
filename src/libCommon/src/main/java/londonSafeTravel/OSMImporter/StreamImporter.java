@@ -8,6 +8,8 @@ import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.events.XMLEvent;
 import java.io.*;
 import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.xml.parsers.*;
 
@@ -23,7 +25,6 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 public class StreamImporter {
-    private static HashMap<Long, Point> map;
 
     private final static HashSet<String> highwayTarget = new HashSet<>(){{
         add("motorway");
@@ -57,6 +58,7 @@ public class StreamImporter {
 
     private static final String filenameDefault = "examples/greater-london-latest.osm";
 
+    // @TODO Implement ONE-WAY streets and default access restrictions!
     public static void main(String[] argv) throws FileNotFoundException, XMLStreamException {
         XMLInputFactory factory = XMLInputFactory.newInstance();
         final String filename = argv.length == 0 ? filenameDefault : argv[0];
@@ -86,9 +88,10 @@ public class StreamImporter {
         // Flusso per seconda passata: le vie
         r = factory.createXMLStreamReader(new FileReader(filename));
 
-        ManageWay manageWay = new ManageWay("neo4j://localhost:7687", "neo4j", "pass");
+        //ManageWay manageWay = new ManageWay("neo4j://localhost:7687", "neo4j", "pass");
 
         ArrayList<Way> ways = new ArrayList<>();
+        SortedMap<Long, Point> targetNodes = new TreeMap<>();
         long total = 0, totalWays = 0;
         final long cardinalityOverStime = 513192L;
         for (r.next(); r.hasNext(); r.next()) {
@@ -100,15 +103,23 @@ public class StreamImporter {
             if (!Objects.equals(r.getLocalName(), "way"))
                 continue;
 
+            final long wayID = Long.parseLong(r.getAttributeValue(currentNamespace, "id"));
+
             ArrayList<Long> locations = new ArrayList<>();
             HashMap<String, String> tags = new HashMap<>();
             for (r.next(); !(r.isEndElement() && Objects.equals(r.getLocalName(), "way")); r.next()) {
                 if (!r.isStartElement() || !r.hasName())
                     continue;
+
                 final String currentNamespaceIn = r.getNamespaceURI();
+                // What kind of element are we parsing rn?
                 if (Objects.equals(r.getLocalName(), "nd")) {
-                    locations.add(Long.parseLong(r.getAttributeValue(currentNamespaceIn, "ref")));
+                    // It's a node
+                    long id = Long.parseLong(r.getAttributeValue(currentNamespaceIn, "ref"));
+                    locations.add(id);
+                    targetNodes.put(id, map.get(id));
                 } else if (Objects.equals(r.getLocalName(), "tag")) {
+                    // It's a tag
                     tags.put(r.getAttributeValue(currentNamespaceIn, "k"), r.getAttributeValue(currentNamespaceIn, "v"));
                 }
             }
@@ -120,39 +131,76 @@ public class StreamImporter {
                 Point p1 = map.get(locations.get(i - 1));
                 Point p2 = map.get(locations.get(i));
 
-                Way w = new Way();
-                w.name = tags.get("name") == null ? "" : tags.get("name");
-                w.p1 = p1;
-                w.p2 = p2;
+                Way w = WaysFactory.getWay(tags, p1, p2, true);
+                Way w2 = WaysFactory.getWay(tags, p2, p1, false);
 
-                ways.add(w);
-            }
+                if(w != null)
+                {
+                    w.id = wayID;
+                    ways.add(w);
+                }
 
-            totalWays ++;
-            if(ways.size() > 900) {
-                total += ways.size();
-
-                System.out.println("About to push " + ways.size() + "\ttotal " + total + "\tso circa " +
-                        (100.0 * (double)totalWays / (double)cardinalityOverStime) + " %");
-
-                ways.sort(new Comparator<Way>() {
-                    @Override
-                    public int compare(Way lhs, Way rhs) {
-                        // -1 - less than, 1 - greater than, 0 - equal, all inversed for descending
-                        return lhs.p1.getId() > lhs.p1.getId() ? -1 : (lhs.p1.getId() < rhs.p1.getId()) ? 1 : 0;
-                    }
-                });
-
-                System.out.println("sorted!");
-
-                manageWay.addWays(ways);
-                ways.clear();
-
-                System.out.println("done");
+                if(w2 != null)
+                {
+                    w2.id = wayID;
+                    ways.add(w2);
+                }
             }
         }
 
-        if(ways.size() > 0)
-            manageWay.addWays(ways);
+        // Writing nodes
+        try(var nodesCSVWriter = new PrintWriter("examples/nodes.csv")) {
+            nodesCSVWriter.println(convertToCSV(new String[]{
+                    "id:ID", "latitude:double", "longitude:double", "coord:point{crs:WGS-84}", ":LABEL"}));
+            targetNodes.forEach((id, point) -> {
+                nodesCSVWriter.print(id);
+                nodesCSVWriter.print(",");
+                nodesCSVWriter.print(point.getLocation().getLatitude());
+                nodesCSVWriter.print(",");
+                nodesCSVWriter.print(point.getLocation().getLongitude());
+                nodesCSVWriter.print(",\"{latitude:");
+                nodesCSVWriter.print(point.getLocation().getLatitude());
+                nodesCSVWriter.print(", longitude:");
+                nodesCSVWriter.print(point.getLocation().getLongitude());
+                nodesCSVWriter.print("}\",\"Point\"");
+                nodesCSVWriter.println();
+            });
+        }
+
+        // Writing edges
+        try(var waysCSVWriter = new PrintWriter("examples/ways.csv")) {
+            waysCSVWriter.println(convertToCSV(new String[]
+                    {"p1:START_ID", "p2:END_ID", "id:long" ,"name", "class", "maxspeed:double",
+                            "crossTimeFoot:double", "crossTimeBicycle:double", "crossTimeMotorVehicle:double", ":TYPE"}
+            ));
+            ways.forEach(way -> {
+                waysCSVWriter.println(convertToCSV(new String[]{
+                        Long.toString(way.p1.getId()),
+                        Long.toString(way.p2.getId()),
+                        Long.toString(way.id),
+                        Objects.requireNonNullElse(way.name, "NoName"),
+                        way.roadClass,
+                        Double.toString(way.maxSpeed),
+                        Double.toString(way.crossTimes.get("foot")),
+                        Double.toString(way.crossTimes.get("bicycle")),
+                        Double.toString(way.crossTimes.get("motor_vehicle")),
+                        "CONNECTS"
+                }));
+            });
+        }
+    }
+
+    private static String escapeSpecialCharacters(String data) {
+        String escapedData = data.replaceAll("\\R", " ");
+        if (data.contains(",") || data.contains("\"") || data.contains("'")) {
+            data = data.replace("\"", "\"\"");
+            escapedData = "\"" + data + "\"";
+        }
+        return escapedData;
+    }
+    private static String convertToCSV(String[] data) {
+        return Stream.of(data)
+                .map(StreamImporter::escapeSpecialCharacters)
+                .collect(Collectors.joining(","));
     }
 }

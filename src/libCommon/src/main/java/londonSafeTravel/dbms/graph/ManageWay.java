@@ -28,10 +28,19 @@ public class ManageWay {
                 tx.run(
                         "MERGE (p1: Point {id: $id1})" +
                                 "MERGE (p2: Point {id: $id2})" +
-                                "MERGE (p1)-[:CONNECTS {name: $name}]->(p2)"+
-                                "MERGE (p2)-[:CONNECTS {name: $name}]->(p1)"+
+                                "MERGE (p1)-[:CONNECTS {" +
+                                "   name: $name, class: $class, maxspeed: $speed," +
+                                "   crossTimeFoot: $crossFoot, crossTimeBicycle: $crossBicycle, crossTimeMotorVehicle: $crossMotorVehicle" +
+                                "}]->(p2)"+
+                                "MERGE (p2)-[:CONNECTS {" +
+                                "   name: $name, class: $class, maxspeed: $speed," +
+                                "   crossTimeFoot: $crossFoot, crossTimeBicycle: $crossBicycle, crossTimeMotorVehicle: $crossMotorVehicle" +
+                                "}]->(p1)"+
                                 "ON CREATE SET p1.coord = point({longitude: $lon1, latitude: $lat1})" +
-                                "ON CREATE SET p2.coord = point({longitude: $lon2, latitude: $lat2})", // @TODO Se oneway=yes and foot=no allora non serve l'inverso!
+                                "ON CREATE SET p1.lat = $lat1 " +
+                                "ON CREATE SET p1.lon = $lon1 " +
+                                "ON CREATE SET p2.coord = point({longitude: $lon2, latitude: $lat2})" +
+                                "ON CREATE SET p2.lat = $lat2, p2.lon = $lon2", // @TODO Se oneway=yes and foot=no allora non serve l'inverso!
                         parameters(
                                 "id1", way.p1.getId(),
                                 "lat1", way.p1.getLocation().getLatitude(),
@@ -39,7 +48,13 @@ public class ManageWay {
                                 "id2", way.p2.getId(),
                                 "lat2", way.p2.getLocation().getLatitude(),
                                 "lon2", way.p2.getLocation().getLongitude(),
-                                "name", way.name
+                                //"wid", way.id,
+                                "name", way.name,
+                                "crossFoot", way.crossTimes.get("foot"),
+                                "crossBicycle", way.crossTimes.get("bicycle"),
+                                "crossMotorVehicle", way.crossTimes.get("motor_vehicle"),
+                                "speed", way.maxSpeed,
+                                "class", way.roadClass
                         )
                 );
             });
