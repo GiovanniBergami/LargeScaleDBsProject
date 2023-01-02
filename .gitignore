@@ -1,2 +1,4 @@
 .idea/
 *.osm
+ways.csv
+nodes.csv
