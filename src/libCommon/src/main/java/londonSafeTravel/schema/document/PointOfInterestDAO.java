@@ -6,6 +6,7 @@ import com.mongodb.client.MongoDatabase;
 
 import com.mongodb.client.model.geojson.Polygon;
 import com.mongodb.client.model.geojson.Position;
+import londonSafeTravel.driver.tims.RoadDisruptionUpdate;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 
@@ -16,7 +17,7 @@ import java.util.Collection;
 
 import static com.mongodb.client.model.Filters.geoWithin;
 
-public class PointOfInterestDAO {
+public class PointOfInterestDAO extends londonSafeTravel.driver.tims.geo.Polygon {
     private ConnectionMongoDB connection = new ConnectionMongoDB();
 
     private MongoDatabase db = connection.giveDB();

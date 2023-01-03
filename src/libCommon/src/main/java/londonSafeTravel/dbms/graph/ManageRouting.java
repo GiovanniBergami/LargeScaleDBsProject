@@ -1,5 +1,7 @@
 package londonSafeTravel.dbms.graph;
 
+import londonSafeTravel.schema.document.ManageDisruption;
+import londonSafeTravel.schema.document.PointOfInterestDAO;
 import org.neo4j.driver.*;
 
 import java.util.ArrayList;
@@ -7,7 +9,7 @@ import java.util.List;
 
 import static org.neo4j.driver.Values.parameters;
 
-public class ManageRouting {
+public class ManageRouting extends PointOfInterestDAO {
     private final Driver driver;
     // longitude, latitude (x, y)
     private final Query ROUTE_QUERY = new Query(

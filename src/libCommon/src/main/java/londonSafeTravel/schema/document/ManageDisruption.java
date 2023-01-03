@@ -3,12 +3,13 @@ package londonSafeTravel.schema.document;
 import com.mongodb.MongoException;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
+import londonSafeTravel.driver.tims.RoadDisruptionUpdate;
 
 
 import static com.mongodb.client.model.Filters.*;
 
 
-public class ManageDisruption {
+public class ManageDisruption extends RoadDisruptionUpdate {
 
     private ConnectionMongoDB connection = new ConnectionMongoDB();
     private MongoDatabase db = connection.giveDB();
