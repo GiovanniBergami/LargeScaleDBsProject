@@ -9,6 +9,10 @@ import java.util.stream.StreamSupport;
 
 public class GeoFactory {
 
+    public static Location fromFilosgangaToLocation(com.github.filosganga.geogson.model.Point p) {
+        return new Location(p.lat(), p.lon());
+    }
+
     public static Position convertToMongo(Location location) {
         return new Position(
                 location.getLongitude(),

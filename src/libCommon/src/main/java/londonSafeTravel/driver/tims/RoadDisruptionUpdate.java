@@ -1,22 +1,28 @@
 package londonSafeTravel.driver.tims;
 
+import com.github.filosganga.geogson.gson.GeometryAdapterFactory;
+import com.github.filosganga.geogson.model.Geometry;
+import com.github.filosganga.geogson.model.MultiPolygon;
+import com.github.filosganga.geogson.model.Point;
+import com.github.filosganga.geogson.model.Polygon;
+import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
+import londonSafeTravel.dbms.graph.ManagePoint;
+import londonSafeTravel.schema.GeoFactory;
+import londonSafeTravel.schema.Location;
+import londonSafeTravel.schema.document.Disruption;
+import londonSafeTravel.schema.document.ManageDisruption;
+
 import java.io.*;
 import java.lang.reflect.Type;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
-import com.github.filosganga.geogson.gson.GeometryAdapterFactory;
-import com.github.filosganga.geogson.model.*;
-
-import com.google.gson.GsonBuilder;
-import com.google.gson.reflect.TypeToken;
-import londonSafeTravel.schema.GeoFactory;
-import londonSafeTravel.schema.document.Disruption;
-import londonSafeTravel.schema.document.ManageDisruption;
-
 
 @SuppressWarnings("rawtypes")
 public class RoadDisruptionUpdate {
+    private static ManageDisruption manageDisruptionDocument;
+    private static ManagePoint manageDisruptionGraph;
     String id;
     String category;
     String subCategory;
@@ -28,18 +34,49 @@ public class RoadDisruptionUpdate {
     Date lastModifiedTime;
     String levelOfInterest;
     String status;
-
     Point geography;
     Geometry geometry;
-
     String severity;
 
-    private static class ProcessResult implements Serializable {
-        Date time = new Date(0);
-        HashSet<String> processed = new HashSet<>();
-    }
+    private static void addToGraph(RoadDisruptionUpdate roadDisruptionUpdate, Date t) {
+        londonSafeTravel.schema.graph.Disruption dg = new londonSafeTravel.schema.graph.Disruption();
 
-    private static ManageDisruption manageDisruptionDocument;
+        dg.id = roadDisruptionUpdate.id;
+        dg.severity = roadDisruptionUpdate.severity;
+
+        long ttl = roadDisruptionUpdate.endDateTime.toInstant().getEpochSecond() - t.toInstant().getEpochSecond();
+        if (ttl > 0)
+            dg.ttl = ttl;
+        else
+            dg.ttl = 10 * 60;
+
+        dg.centrum = GeoFactory.fromFilosgangaToLocation(roadDisruptionUpdate.geography);
+
+        // Compute a radius
+        if (roadDisruptionUpdate.geometry == null
+                || roadDisruptionUpdate.geometry.type() != Geometry.Type.POLYGON
+                || roadDisruptionUpdate.geometry.type() != Geometry.Type.MULTI_POLYGON
+                || (roadDisruptionUpdate.geometry.type() == Geometry.Type.MULTI_POLYGON &&
+                !((MultiPolygon) roadDisruptionUpdate.geometry).polygons().iterator().hasNext())) {
+            dg.radius = 20;
+            manageDisruptionGraph.createClosure(dg);
+            return;
+        }
+
+        dg.radius = 0;
+        Polygon poly = roadDisruptionUpdate.geometry.type() == Geometry.Type.POLYGON ?
+                (Polygon) roadDisruptionUpdate.geometry :
+                ((MultiPolygon) roadDisruptionUpdate.geometry).polygons().iterator().next();
+
+        poly.linearRings().forEach(linearRing -> linearRing.points().forEach(point -> {
+            Location location = GeoFactory.fromFilosgangaToLocation(point);
+            var dist = location.metricNorm(dg.centrum);
+            if (dist > dg.radius)
+                dg.radius = dist;
+        }));
+
+        manageDisruptionGraph.createClosure(dg);
+    }
 
     private static ProcessResult process(InputStreamReader fs, ProcessResult last, Date t) {
         Type collectionType = new TypeToken<ArrayList<RoadDisruptionUpdate>>() {
@@ -60,6 +97,9 @@ public class RoadDisruptionUpdate {
         updates.forEach(roadDisruptionUpdate -> {
             // Add this disruption to the explored set
             explored.add(roadDisruptionUpdate.id);
+
+            // Graph db
+            addToGraph(roadDisruptionUpdate, t);
 
             Disruption d = manageDisruptionDocument.get(roadDisruptionUpdate.id);
             if (d == null)
@@ -118,6 +158,9 @@ public class RoadDisruptionUpdate {
             Disruption toClose = manageDisruptionDocument.get(terminatedDisruptionID);
             toClose.end = t;
             manageDisruptionDocument.set(toClose);
+
+            // Drop it from graph database
+            manageDisruptionGraph.deleteClosure(terminatedDisruptionID);
         });
 
         ProcessResult r = new ProcessResult();
@@ -130,6 +173,7 @@ public class RoadDisruptionUpdate {
     public static void main(String[] argv) throws Exception {
         // Open connections to DBs
         manageDisruptionDocument = new ManageDisruption();
+        manageDisruptionGraph = new ManagePoint("neo4j://localhost:7687", "neo4j", "pass");
 
         ProcessResult state;
 
@@ -148,7 +192,7 @@ public class RoadDisruptionUpdate {
         if (argv.length == 0) {
             System.out.println("Reading from stdin");
             var ret = process(new InputStreamReader(System.in), state, new Date());
-            if(ret != null)
+            if (ret != null)
                 state = ret;
         } else
             for (String filename : argv) {
@@ -165,11 +209,16 @@ public class RoadDisruptionUpdate {
                     t = new Date();
                 }
                 var ret = process(new FileReader(filename), state, t);
-                if(ret != null)
+                if (ret != null)
                     state = ret;
             }
 
         // Save to disk
         new ObjectOutputStream(new FileOutputStream("tims.roads.ser")).writeObject(state);
+    }
+
+    private static class ProcessResult implements Serializable {
+        Date time = new Date(0);
+        HashSet<String> processed = new HashSet<>();
     }
 }
