@@ -9,7 +9,7 @@ import londonSafeTravel.driver.tims.RoadDisruptionUpdate;
 import static com.mongodb.client.model.Filters.*;
 
 
-public class ManageDisruption extends RoadDisruptionUpdate {
+public class ManageDisruption {
 
     private ConnectionMongoDB connection = new ConnectionMongoDB();
     private MongoDatabase db = connection.giveDB();

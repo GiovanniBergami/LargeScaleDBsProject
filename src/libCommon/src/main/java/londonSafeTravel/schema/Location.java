@@ -1,6 +1,20 @@
 package londonSafeTravel.schema;
 
+import java.util.List;
+
 public class Location {
+    public static class Polygon {
+        public Polygon(List<Location> outer, List<Location> inner) {
+            this.outer = outer;
+            this.inner = inner;
+        }
+
+        public Polygon() {};
+
+        public List<Location> outer;
+        public List<Location> inner;
+    }
+
     private double longitude;
     private double latitude;
 

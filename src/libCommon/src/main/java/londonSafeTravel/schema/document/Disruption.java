@@ -1,5 +1,7 @@
 package londonSafeTravel.schema.document;
 
+import com.mongodb.client.model.geojson.Geometry;
+import com.mongodb.client.model.geojson.Point;
 import londonSafeTravel.schema.Location;
 import org.bson.BsonElement;
 import org.bson.codecs.pojo.annotations.BsonProperty;
@@ -30,9 +32,9 @@ public class Disruption {
     @BsonProperty
     public Date end;
     @BsonProperty
-    public Location coordinates;
+    public Point coordinates;
     @BsonProperty
-    public Collection<Location> boundaries;
+    public Geometry boundaries;
 
     @BsonProperty
     public String category;

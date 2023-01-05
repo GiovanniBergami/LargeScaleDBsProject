@@ -9,7 +9,7 @@ import java.util.List;
 
 import static org.neo4j.driver.Values.parameters;
 
-public class ManageRouting extends PointOfInterestDAO {
+public class ManageRouting {
     private final Driver driver;
     // longitude, latitude (x, y)
     private final Query ROUTE_QUERY = new Query(

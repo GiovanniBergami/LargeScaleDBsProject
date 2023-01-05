@@ -25,7 +25,7 @@ import static com.mongodb.client.model.Projections.*;
 
 
 
-public class DisruptionDAO extends ManageRouting {
+public class DisruptionDAO {
     private ConnectionMongoDB connection = new ConnectionMongoDB();
     private MongoDatabase db = connection.giveDB();
     private MongoCollection collection = db.getCollection("Disruption");

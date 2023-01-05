@@ -17,7 +17,7 @@ import java.util.Collection;
 
 import static com.mongodb.client.model.Filters.geoWithin;
 
-public class PointOfInterestDAO extends londonSafeTravel.driver.tims.geo.Polygon {
+public class PointOfInterestDAO {
     private ConnectionMongoDB connection = new ConnectionMongoDB();
 
     private MongoDatabase db = connection.giveDB();

@@ -2,21 +2,20 @@ package londonSafeTravel.driver.tims;
 
 import java.io.*;
 import java.lang.reflect.Type;
-import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.time.format.DateTimeFormatter;
 import java.util.*;
-import java.util.concurrent.atomic.AtomicReference;
 
-import com.google.gson.Gson;
+import com.github.filosganga.geogson.gson.GeometryAdapterFactory;
+import com.github.filosganga.geogson.model.*;
 
+import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
-import londonSafeTravel.driver.tims.geo.GeoObject;
+import londonSafeTravel.schema.GeoFactory;
 import londonSafeTravel.schema.document.Disruption;
 import londonSafeTravel.schema.document.ManageDisruption;
 
-import static java.time.format.DateTimeFormatter.ISO_DATE_TIME;
 
+@SuppressWarnings("rawtypes")
 public class RoadDisruptionUpdate {
     String id;
     String category;
@@ -30,20 +29,24 @@ public class RoadDisruptionUpdate {
     String levelOfInterest;
     String status;
 
-    GeoObject geography;
-    GeoObject geometry;
+    Point geography;
+    Geometry geometry;
 
     String severity;
 
-    private static class ProcessResult {
+    private static class ProcessResult implements Serializable {
         Date time = new Date(0);
         HashSet<String> processed = new HashSet<>();
     }
 
+    private static ManageDisruption manageDisruptionDocument;
+
     private static ProcessResult process(InputStreamReader fs, ProcessResult last, Date t) {
         Type collectionType = new TypeToken<ArrayList<RoadDisruptionUpdate>>() {
         }.getType();
-        Collection<RoadDisruptionUpdate> updates = new Gson().fromJson(fs, collectionType);
+        Collection<RoadDisruptionUpdate> updates = new GsonBuilder()
+                .registerTypeAdapterFactory(new GeometryAdapterFactory())
+                .create().fromJson(fs, collectionType);
 
         HashSet<String> explored = new HashSet<>();
 
@@ -54,14 +57,11 @@ public class RoadDisruptionUpdate {
             throw new RuntimeException(
                     "I can only go forward in time! Current file was at " + t + " I can only go after " + last.time);
 
-        ManageDisruption m = new ManageDisruption();
         updates.forEach(roadDisruptionUpdate -> {
-            final Date time = roadDisruptionUpdate.currentUpdateDateTime;
-
             // Add this disruption to the explored set
             explored.add(roadDisruptionUpdate.id);
 
-            Disruption d = m.get(roadDisruptionUpdate.id);
+            Disruption d = manageDisruptionDocument.get(roadDisruptionUpdate.id);
             if (d == null)
                 d = new Disruption();
 
@@ -71,6 +71,19 @@ public class RoadDisruptionUpdate {
             d.severity = roadDisruptionUpdate.severity;
             d.start = roadDisruptionUpdate.startDateTime;
             d.end = roadDisruptionUpdate.endDateTime;
+
+
+            d.coordinates = new com.mongodb.client.model.geojson.Point(
+                    GeoFactory.fromFilosgangaToMongo(roadDisruptionUpdate.geography));
+
+            if (roadDisruptionUpdate.geometry == null)
+                d.boundaries = null;
+            else if (roadDisruptionUpdate.geometry.type() == Geometry.Type.POLYGON)
+                d.boundaries = GeoFactory.fromFilosgangaToMongo((Polygon) roadDisruptionUpdate.geometry);
+            else if (roadDisruptionUpdate.geometry.type() == Geometry.Type.MULTI_POLYGON)
+                d.boundaries = GeoFactory.fromFilosgangaToMongo((MultiPolygon) roadDisruptionUpdate.geometry);
+            else
+                System.err.println(d.id + "\tUnknown type " + roadDisruptionUpdate.geometry.type());
 
             // @FIXME Why??
             if (d.updates == null)
@@ -90,7 +103,7 @@ public class RoadDisruptionUpdate {
                 update.end = roadDisruptionUpdate.currentUpdateDateTime;
             }
 
-            m.set(d);
+            manageDisruptionDocument.set(d);
         });
 
         // Now we close disruptions that haven't been updated.
@@ -102,9 +115,9 @@ public class RoadDisruptionUpdate {
         frontier.forEach(terminatedDisruptionID -> {
             System.out.println("Closing disruption " + terminatedDisruptionID + " time " + t);
 
-            Disruption toClose = m.get(terminatedDisruptionID);
+            Disruption toClose = manageDisruptionDocument.get(terminatedDisruptionID);
             toClose.end = t;
-            m.set(toClose);
+            manageDisruptionDocument.set(toClose);
         });
 
         ProcessResult r = new ProcessResult();
@@ -115,6 +128,9 @@ public class RoadDisruptionUpdate {
     }
 
     public static void main(String[] argv) throws Exception {
+        // Open connections to DBs
+        manageDisruptionDocument = new ManageDisruption();
+
         ProcessResult state;
 
         // DEPRECATED IDK IDCz
@@ -146,8 +162,7 @@ public class RoadDisruptionUpdate {
                     System.err.println(e.getMessage());
                     System.err.println("Unable to parse " +
                             filename.substring(pos + 1, ext) + " as date, using current date :P");
-                    return;
-                    //t = new Date();
+                    t = new Date();
                 }
                 var ret = process(new FileReader(filename), state, t);
                 if(ret != null)
