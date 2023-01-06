@@ -11,7 +11,8 @@ public class Server {
         HttpServer server = HttpServer.create(new InetSocketAddress("0.0.0.0", 8080), 0);
         ThreadPoolExecutor threadPoolExecutor = (ThreadPoolExecutor) Executors.newFixedThreadPool(8);
 
-        server.createContext("/query.json", new  QueryPointHandler());
+        server.createContext("/query.json", new QueryPointHandler());
+        server.createContext("/route.json", new RoutingHandler());
         server.setExecutor(threadPoolExecutor);
         server.start();
     }

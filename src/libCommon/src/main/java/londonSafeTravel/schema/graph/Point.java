@@ -3,6 +3,14 @@ package londonSafeTravel.schema.graph;
 import londonSafeTravel.schema.Location;
 
 public class Point {
+    @Override
+    public String toString() {
+        return "Point{" +
+                "id=" + id +
+                ", location=" + location +
+                '}';
+    }
+
     private final long id;
     public Location location;
 

@@ -19,15 +19,15 @@ public class ManageRouting {
                     "CALL gds.shortestPath.astar.stream('myGraph', { " +
                     "	sourceNode: start, " +
                     "	targetNode: end, " +
-                    "	latitudeProperty: 'lat', " +
-                    "	longitudeProperty: 'lon', " +
+                    "	latitudeProperty: 'latitude', " +
+                    "	longitudeProperty: 'longitude', " +
                     "	relationshipWeightProperty: 'crossTimeMotorVehicle', " +
                     "	relationshipTypes: ['CONNECTS'], " +
                     "	concurrency: 4" +
                     "	}) " +
                     "YIELD index, sourceNode, targetNode, totalCost, nodeIds, costs, path  " +
                     "UNWIND range(0, size(nodes(path)) - 1) AS i " +
-                    "RETURN gds.util.asNode(nodeIds[i]).id AS id " +
+                    "RETURN gds.util.asNode(nodeIds[i]) AS waypoint " +
                     "ORDER BY index"
     );
 
@@ -35,16 +35,20 @@ public class ManageRouting {
         driver = GraphDatabase.driver(uri, AuthTokens.basic(user, password));
     }
 
-    public List<Long> route(long start, long end)
+    public List<Point> route(long start, long end)
     {
         try(var session = driver.session()){
-            List<Long> hops = new ArrayList<>();
+            List<Point> hops = new ArrayList<>();
             var res = session.run(ROUTE_QUERY.withParameters(parameters(
                     "start", start,
                     "end", end
             )));
             res.forEachRemaining(record -> {
-                hops.add(record.get("id").asLong());
+                hops.add(new Point(
+                        record.get("waypoint").get("id").asLong(),
+                        record.get("waypoint").get("coord").asPoint().y(),
+                        record.get("waypoint").get("coord").asPoint().x()
+                ));
             });
             return hops;
         }
@@ -53,24 +57,34 @@ public class ManageRouting {
     //Inserisco una query per trovare il nodo più vicino ad un dato punto. Utile quando l'utente clicca sulla mappa
     //e vogliamo stabilire nodo di partenza e di arrivo.
     private final Query NEAREST_NODE = new Query(
-        "MATCH (n:Node)" +
-                "RETURN n " +
-                "ORDER BY distance(point({latitude: $lat, longitude: $lng}), n.location) "+
+        "MATCH (p:Point)" +
+                "RETURN p " +
+                "ORDER BY point.distance(point({latitude: $lat, longitude: $lng}), p.coord) "+
                 "LIMIT 1"
     );
 
 
-    public long NearestNode(double lat, double lng){
+    public Point nearestNode(double lat, double lng){
         try(var session = driver.session()){
             var p = session.run(NEAREST_NODE.withParameters(parameters("lat",lat,"lng",lng)));
-            Point p1 = (Point)p;
-            return p1.getId();
+            if(!p.hasNext())
+                return null;
+
+            var record = p.single().get(0);
+
+            return new Point(
+                    record.get("id").asLong(),
+                    record.get("coord").asPoint().y(),
+                    record.get("coord").asPoint().x()
+            );
         }
     }
 
     public static void main(String argv[])
     {
         ManageRouting test= new ManageRouting("neo4j://localhost:7687", "neo4j", "pass");
+
+        System.out.println(test.nearestNode(0,0));
 
         test.route(4835478720L, 389139L).forEach(hop -> {
             System.out.println("id " + hop);
