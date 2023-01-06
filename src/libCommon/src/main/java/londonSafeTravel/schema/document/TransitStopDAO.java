@@ -5,7 +5,7 @@ import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Accumulators;
 import com.mongodb.client.model.Aggregates;
 import com.mongodb.client.model.Sorts;
-import org.apache.xerces.impl.xpath.regex.Match;
+
 import org.bson.Document;
 import org.bson.conversions.Bson;
 
@@ -15,6 +15,7 @@ import java.util.Collection;
 import java.util.List;
 
 import static com.mongodb.client.model.Filters.*;
+import com.mongodb.client.model.Filters;
 import static com.mongodb.client.model.Aggregates.*;
 
 
@@ -32,6 +33,19 @@ public class TransitStopDAO {
     che la linea sia coinvolta in una closure
     dove 1 = evento certo, 0 = evento impossibile
      */
+
+    public Collection<Document> query4(int day){
+
+        Bson filter = Filters.expr(new Document("$eq", Arrays.asList(
+                new Document("$dayOfWeek", "$date"), day)));
+        Bson match = match(ne("TerminatedDisruption.id", null));
+        Bson groupStage = Aggregates.group(
+                "routes.line",
+                Accumulators.sum("count", 1)
+        );
+
+        return null;
+    }
 
   /*
   Per ogni classe di public transportation disruption
