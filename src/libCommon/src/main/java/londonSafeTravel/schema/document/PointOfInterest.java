@@ -7,6 +7,4 @@ public class PointOfInterest {
     public String name;
     public String type;
     Location coordinates;
-
-
 }
