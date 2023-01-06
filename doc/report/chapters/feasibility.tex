@@ -1,0 +1,59 @@
+% !TeX root = ../report.tex
+
+\part{Feasibility}
+\chapter{Data sources}
+
+We’re combining data from three sources and two organizations:
+
+\begin{itemize}
+	\item Transport for London TIMS
+	\item Transport for London public disruptions API
+	\item OpenStreetMap
+\end{itemize}
+
+\paragraph{Introduction}
+At the very beginning, we made a feasibility study of the project idea, in 
+order to identify both the pros and the critical aspects of the application, 
+considering the time and technical constraints at the time and thinking how to 
+possibly improve our work in future.
+
+\section{Transport for London}
+
+\paragraph{Scraping}
+Transport for London provides data at regular intervals – every five 
+minutes –  and in a standardized format; this kind of data, especially when 
+scrapped during an adequate period of time can provide a good amount of 
+information to be analyzed by our application. Those analyses become of 
+particular interest when we consider that Transport for London provides 
+data with a great amount of detail, including things such as minor collisions 
+and broken traffic lights. In our particular case we collected data for circa a 
+month using TLF’s JSON API with a simple shell script that was being executed 
+automatically by a SystemD timer every ten minutes.
+
+\paragraph{schema}
+The main challenge was to find a “schema” for the document database to store in 
+an unified way, that is to share the same MongoDB collection, between road 
+disruptions and public transportation disruptions; as it could be useful for 
+certain operations to have an unified view of such data.
+
+\section{OpenStreetMap}
+
+\paragraph{Scraping}
+Since the map’s data would be used only for routing purposes, we don’t need all 
+the information provided by OpenStreetMap; so, to reduce the dimension of the 
+data and maintain only the useful information, we decided to do some pruning of 
+the network graph, in particular we removed useless nodes such as buildings, 
+waterways, trees, parks and so on.
+
+\paragraph{Schema}
+The main challenge was to find a good representation of OpenStreetMap’s data 
+for our chosen graph database (neo4j) because it has to represents facts like 
+one ways streets, access restrictions and the elements’ geographical positions; 
+we iterate over several possible schemas for the graph database and over many 
+different ways to import the raw data into it.
+
+\begin{figure}[H]
+	\lstinputlisting[lastline=5]{../../src/libCommon/examples/nodes.csv}
+	\caption{Example of intersections}
+\end{figure}
+

@@ -1,0 +1,49 @@
+[
+  {
+    "idPoi": 555,
+    "name": "King's Street 2",
+    "routes": [
+      {
+        "id": 2312,
+        "line": "Line 5",
+        "name": "North-bound"
+      },
+      {
+        "id": 2313,
+        "line": "Line 5",
+        "name": "South-bound"
+      },
+      {
+        "id": 1212,
+        "line": "Line 2",
+        "name": "West-bound"
+      }
+    ],
+    "terminatedDisruptions": [
+      {
+        "id": 1,
+        "start": "2022-01-05T14:30:00Z",
+        "end": "2022-01-05T16:00:00Z",
+        "typeDisruption": "closure"
+      },
+      {
+        "id": 5,
+        "start": "2022-02-05T14:30:00Z",
+        "end": "2022-02-05T16:00:00Z",
+        "typeDisruption": "delay"
+      }
+    ]
+  },
+  {
+    "idPoi": 444,
+    "name": "Queen's Street 2",
+    "routes": [
+      {
+        "id": 1234,
+        "line": "Line 8",
+        "name": "Landini"
+      }
+    ],
+    "terminatedDisruptions": []
+  }
+]

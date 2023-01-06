@@ -6,6 +6,7 @@ import com.mongodb.client.MongoDatabase;
 
 import com.mongodb.client.model.geojson.Polygon;
 import com.mongodb.client.model.geojson.Position;
+import londonSafeTravel.driver.tims.RoadDisruptionUpdate;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 
@@ -61,8 +62,4 @@ public class PointOfInterestDAO {
                 });
         return results;
     }
-
-
-
-
 }

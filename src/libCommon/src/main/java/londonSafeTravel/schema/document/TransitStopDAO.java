@@ -20,7 +20,7 @@ import static com.mongodb.client.model.Aggregates.*;
 
 
 
-public class TransitStopDAO {
+public class TransitStopDAO extends PointOfInterestDAO {
 
     private ConnectionMongoDB connection = new ConnectionMongoDB();
     private MongoDatabase db = connection.giveDB();

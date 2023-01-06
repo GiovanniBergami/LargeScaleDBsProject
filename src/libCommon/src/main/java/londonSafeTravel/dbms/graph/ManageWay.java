@@ -2,9 +2,9 @@ package londonSafeTravel.dbms.graph;
 
 import londonSafeTravel.schema.graph.Point;
 import londonSafeTravel.schema.graph.Way;
+
 import org.neo4j.driver.*;
 
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
@@ -19,17 +19,28 @@ public class ManageWay {
         }
 
         public void addWays(Collection<Way> ways) {
-            try(Session session = driver.session()){
-                session.writeTransaction(tx -> createWays(tx, ways));
+            try(var session = driver.session()){
+                session.executeWriteWithoutResult(tx -> createWays(tx, ways));
             }
         }
-        private Void createWays(Transaction tx, Collection<Way> ways){
+        private void createWays(TransactionContext tx, Collection<Way> ways){
             ways.forEach(way -> {
                 tx.run(
-                        "MERGE (p1: Point {id: $id1, coord: point({longitude: $lon1, latitude: $lat1})})"+
-                                "-[:CONNECTS {name: $name}]->"+
-                                "(p2: Point {id: $id2, coord: point({longitude: $lon2, latitude: $lat2})})" +
-                                "MERGE (p2)-[:CONNECTS {name: $name}]->(p1)", // @TODO Se oneway=yes and foot=no allora non serve l'inverso!
+                        "MERGE (p1: Point {id: $id1})" +
+                                "MERGE (p2: Point {id: $id2})" +
+                                "MERGE (p1)-[:CONNECTS {" +
+                                "   name: $name, class: $class, maxspeed: $speed," +
+                                "   crossTimeFoot: $crossFoot, crossTimeBicycle: $crossBicycle, crossTimeMotorVehicle: $crossMotorVehicle" +
+                                "}]->(p2)"+
+                                "MERGE (p2)-[:CONNECTS {" +
+                                "   name: $name, class: $class, maxspeed: $speed," +
+                                "   crossTimeFoot: $crossFoot, crossTimeBicycle: $crossBicycle, crossTimeMotorVehicle: $crossMotorVehicle" +
+                                "}]->(p1) "+
+                                "ON CREATE SET p1.coord = point({longitude: $lon1, latitude: $lat1}) " +
+                                "ON CREATE SET p1.lat = $lat1 " +
+                                "ON CREATE SET p1.lon = $lon1 " +
+                                "ON CREATE SET p2.coord = point({longitude: $lon2, latitude: $lat2})" +
+                                "ON CREATE SET p2.lat = $lat2, p2.lon = $lon2", // @TODO Se oneway=yes and foot=no allora non serve l'inverso!
                         parameters(
                                 "id1", way.p1.getId(),
                                 "lat1", way.p1.getLocation().getLatitude(),
@@ -37,7 +48,13 @@ public class ManageWay {
                                 "id2", way.p2.getId(),
                                 "lat2", way.p2.getLocation().getLatitude(),
                                 "lon2", way.p2.getLocation().getLongitude(),
-                                "name", way.name
+                                //"wid", way.id,
+                                "name", way.name,
+                                "crossFoot", way.crossTimes.get("foot"),
+                                "crossBicycle", way.crossTimes.get("bicycle"),
+                                "crossMotorVehicle", way.crossTimes.get("motor_vehicle"),
+                                "speed", way.maxSpeed,
+                                "class", way.roadClass
                         )
                 );
             });
@@ -53,8 +70,22 @@ public class ManageWay {
 //                                "name",name,"maxSpeed", maxSpeed)
 //                );
 //            }
-            return null;
         }
+
+    private Collection<Way> elementsInGivenArea(double maxLat, double maxLon, double minLat, double minLon){
+        try(Session session = driver.session()){
+            return session.readTransaction((TransactionWork<List<Way>>)tx->{
+                Result result=tx.run("WITH" +
+                        "  point({longitude: $minLon, latitude: $minLat}) AS lowerLeft, " +
+                        "  point({longitude: $maxLon, latitude: $maxLat}) AS upperRight " +
+                        "MATCH (p:Point) " +
+                        "WHERE point.withinBBox(p.coord, lowerLeft, upperRight) " +
+                        "MATCH(p)-[w]->(q:Point) "+
+                        "RETURN p,q,w", parameters("minLon",minLon, "minLat",minLat, "maxLon",maxLon, "maxLat", maxLat));
+                return null;
+            }) ;
+        }
+    }
 
     public static void main(String[] argv){
         ManageWay test= new ManageWay("neo4j://localhost:7687", "neo4j", "pass");
