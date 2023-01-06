@@ -1,5 +1,6 @@
 package londonSafeTravel.dbms.graph;
 
+import londonSafeTravel.schema.graph.Point;
 import org.neo4j.driver.*;
 
 import java.util.ArrayList;
@@ -44,6 +45,24 @@ public class ManageRouting {
                 hops.add(record.get("id").asLong());
             });
             return hops;
+        }
+    }
+
+    //Inserisco una query per trovare il nodo più vicino ad un dato punto. Utile quando l'utente clicca sulla mappa
+    //e vogliamo stabilire nodo di partenza e di arrivo.
+    private final Query NEAREST_NODE = new Query(
+        "MATCH (n:Node)" +
+                "RETURN n " +
+                "ORDER BY distance(point({latitude: $lat, longitude: $lng}), n.location) "+
+                "LIMIT 1"
+    );
+
+
+    public long NearestNode(double lat, double lng){
+        try(var session = driver.session()){
+            var p = session.run(NEAREST_NODE.withParameters(parameters("lat",lat,"lng",lng)));
+            Point p1 = (Point)p;
+            return p1.getId();
         }
     }
 
