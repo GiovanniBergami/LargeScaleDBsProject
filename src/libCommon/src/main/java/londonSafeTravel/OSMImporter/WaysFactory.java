@@ -161,6 +161,7 @@ public class WaysFactory {
         });
 
         // ????
+        // @FIXME
         AtomicReference<Boolean> allInfinity = new AtomicReference<>(true);
         accessTags.forEach((s, aDouble) -> {
             if (aDouble != Double.POSITIVE_INFINITY)
