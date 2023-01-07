@@ -14,6 +14,10 @@ public class ManagePoint {
         driver = GraphDatabase.driver(uri, AuthTokens.basic(user, password));
     }
 
+    public ManagePoint(Driver driver) {
+        this.driver = driver;
+    }
+
     public void addNode(final Point p) {
         try (Session session = driver.session()) {
             session.executeWriteWithoutResult(tx -> createPlaceNode(tx, p.getId(), p.location.getLatitude(), p.location.getLongitude()));

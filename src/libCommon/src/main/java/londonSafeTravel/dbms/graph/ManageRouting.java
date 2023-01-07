@@ -35,6 +35,10 @@ public class ManageRouting {
         driver = GraphDatabase.driver(uri, AuthTokens.basic(user, password));
     }
 
+    public ManageRouting(Driver driver) {
+        this.driver = driver;
+    }
+
     public List<Point> route(long start, long end)
     {
         try(var session = driver.session()){
