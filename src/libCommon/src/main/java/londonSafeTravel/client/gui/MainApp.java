@@ -1,27 +1,37 @@
-package londonSafeTravel.client;
+package londonSafeTravel.client.gui;
 
-import javax.swing.*;
-import javax.swing.event.MouseInputListener;
-
+import londonSafeTravel.client.QueryPointRequest;
+import londonSafeTravel.client.RoutingRequest;
 import org.jxmapviewer.JXMapViewer;
 import org.jxmapviewer.OSMTileFactoryInfo;
 import org.jxmapviewer.input.CenterMapListener;
 import org.jxmapviewer.input.PanKeyListener;
 import org.jxmapviewer.input.PanMouseInputListener;
 import org.jxmapviewer.input.ZoomMouseWheelListenerCursor;
-import org.jxmapviewer.painter.CompoundPainter;
 import org.jxmapviewer.painter.Painter;
 import org.jxmapviewer.viewer.*;
 
+import javax.swing.*;
+import javax.swing.event.MouseInputListener;
 import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.geom.Point2D;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
+public class MainApp {
+    private static final double MAX_LAT = 51.7314463;
+    private static final double MIN_LAT = 51.2268448;
+    private static final double MAX_LON = 0.399670;
+    private static final double MIN_LON = -0.6125035;
 
-public class testMapSwing {
+    private JTextField textFieldSearch;
+    private JButton buttonSearch;
+    private JPanel rootPanel;
+    private JXMapViewer mapViewer;
+
     public static class SwingWaypoint extends DefaultWaypoint {
         private final JButton button;
         private final String text;
@@ -145,30 +155,21 @@ public class testMapSwing {
             }
         }
     }
-    public static void main(String[] args)
-    {
-        JXMapViewer mapViewer = new JXMapViewer();
 
+    public MainApp() {
         // Create a TileFactoryInfo for OpenStreetMap
         TileFactoryInfo info = new OSMTileFactoryInfo();
         DefaultTileFactory tileFactory = new DefaultTileFactory(info);
         mapViewer.setTileFactory(tileFactory);
 
-        // Use 8 threads in parallel to load the tiles
-        tileFactory.setThreadPoolSize(8);
+        // Use 2 threads in parallel to load the tiles
+        tileFactory.setThreadPoolSize(2);
 
         // Set the focus
         GeoPosition london = new GeoPosition(51.5067, -0.1269);
 
         mapViewer.setZoom(7);
         mapViewer.setAddressLocation(london);
-
-        // Display the viewer in a JFrame
-        JFrame frame = new JFrame("JXMapviewer2 Example 1");
-        frame.getContentPane().add(mapViewer);
-        frame.setSize(800, 600);
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setVisible(true);
 
         // Add interactions
         MouseInputListener mia = new PanMouseInputListener(mapViewer);
@@ -179,56 +180,102 @@ public class testMapSwing {
         mapViewer.addKeyListener(new PanKeyListener(mapViewer));
 
 
+        mapViewer.addMouseListener(new MouseListener() {
+            londonSafeTravel.schema.graph.Point start = null;
+            londonSafeTravel.schema.graph.Point end = null;
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                if(e.getButton() != MouseEvent.BUTTON3)
+                    return;
+
+                System.out.println("CLICK!");
+
+                var coordinates = mapViewer.convertPointToGeoPosition(e.getPoint());
+                if(coordinates.getLatitude() > MAX_LAT || coordinates.getLatitude() < MIN_LAT ||
+                    coordinates.getLongitude() > MAX_LON || coordinates.getLongitude() < MIN_LON)
+                {
+                    System.out.println("Skipping click outside of bounds");
+                    return;
+                }
+
+
+                QueryPointRequest request = null;
+                try {
+                    request = new QueryPointRequest(
+                            "localhost:8080", coordinates.getLatitude(), coordinates.getLongitude());
+                } catch (Exception ex) {
+                    throw new RuntimeException(ex);
+                }
+
+                if(start == null)
+                    start = request.getPoint();
+                else {
+                    end = request.getPoint();
+                    System.out.println("Routing begins!");
+
+                    // Create a track from the geo-positions
+                    try {
+                        List<GeoPosition> track = new RoutingRequest(
+                                "localhost:8080", start.getId(), end.getId()).getRouteGeo();
+
+                        System.out.println("Routing completed " + track.size() + " hops!");
+
+                        // Set the focus
+                        mapViewer.zoomToBestFit(new HashSet<GeoPosition>(track), 0.7);
+
+                        RoutePainter routePainter = new RoutePainter(track);
+                        mapViewer.setOverlayPainter(routePainter);
+
+                        // Set the focus
+                        mapViewer.zoomToBestFit(new HashSet<GeoPosition>(track), 0.7);
+                    } catch (Exception ex) {
+                        throw new RuntimeException(ex);
+                    }
+                    start = null;
+                    end = null;
+                }
+            }
+
+            @Override
+            public void mousePressed(MouseEvent e) {
+
+            }
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+
+            }
+
+            @Override
+            public void mouseEntered(MouseEvent e) {
+
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+
+            }
+        });
+
         tileFactory.addTileListener(new TileListener() {
 
             @Override
             public void tileLoaded(Tile tile) {
-                if (tileFactory.getPendingTiles() == 0) {
-                    System.out.println("All tiles loaded!");
-                }
+                //if (tileFactory.getPendingTiles() == 0) {
+                //    System.out.println("All tiles loaded!");
+                //}
 
             }
         });
         mapViewer.setTileFactory(tileFactory);
 
-        GeoPosition test1 = new GeoPosition(51.524358,-0.1529847);
-        GeoPosition test2 = new GeoPosition(51.5248246,-0.1532934);
-        GeoPosition test3 = new GeoPosition(51.52565,-0.1541197);
+    }
 
-        // Create a track from the geo-positions
-        List<GeoPosition> track = Arrays.asList(test1, test2, test3);
-
-        // Set the focus
-        mapViewer.zoomToBestFit(new HashSet<GeoPosition>(track), 0.7);
-
-
-        RoutePainter routePainter = new RoutePainter(track);
-
-        // Set the focus
-        mapViewer.zoomToBestFit(new HashSet<GeoPosition>(track), 0.7);
-
-
-        // Create waypoints from the geo-positions
-        Set<SwingWaypoint> waypoints = new HashSet<SwingWaypoint>(Arrays.asList(
-                new SwingWaypoint("test1", test1),
-                new SwingWaypoint("test2", test2),
-                new SwingWaypoint("test3", test3)));
-
-        // Set the overlay painter
-        WaypointPainter<SwingWaypoint> swingWaypointPainter = new SwingWaypointOverlayPainter();
-        swingWaypointPainter.setWaypoints(waypoints);
-        mapViewer.setOverlayPainter(swingWaypointPainter);
-
-        // Add the JButtons to the map viewer
-        for (SwingWaypoint w : waypoints) {
-            mapViewer.add(w.getButton());
-        }
-
-        // Display the viewer in a JFrame
-
-        frame.getContentPane().add(mapViewer);
-        frame.setSize(800, 600);
+    public static void main(String[] args) {
+        JFrame frame = new JFrame("MainApp");
+        frame.setContentPane(new MainApp().rootPanel);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.pack();
         frame.setVisible(true);
     }
 }
