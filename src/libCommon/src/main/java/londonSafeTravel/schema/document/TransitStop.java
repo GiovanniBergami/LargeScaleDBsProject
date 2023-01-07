@@ -28,7 +28,7 @@ public class TransitStop {
 
     public String idPOI; // POI's id to refer to POI
     public String name;
-    public Collection<Timetable> timeTables;
+    public Collection<Timetable> timeTables; //@fix me
     public Collection<Route> routes;
     public Collection<TerminatedDisruption> terminatedDisruptions;
     public static void main(String[] argv) {
