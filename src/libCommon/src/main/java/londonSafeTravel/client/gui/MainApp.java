@@ -308,25 +308,51 @@ public class MainApp {
 
                     mapViewer.setOverlayPainter(swingWaypointPainter);
 
-                    mapViewer.addMouseListener(new MouseAdapter() {
+                    var mouseListener = new MouseAdapter() {
+                        private boolean isOnWaypoint(Point point, DisruptionWaypoint waypoint) {
+                            var gp_pt = mapViewer.getTileFactory().geoToPixel(
+                                    waypoint.getPosition(), mapViewer.getZoom()
+                            );
+
+                            //convert to screen
+                            Rectangle rect = mapViewer.getViewportBounds();
+                            Point converted_gp_pt = new Point(
+                                    (int) gp_pt.getX() - rect.x - 5,
+                                    (int) gp_pt.getY() - rect.y - 35);
+
+                            // hitbox
+                            Rectangle hitbox = new Rectangle(converted_gp_pt, new Dimension(10, 40));
+
+                            return hitbox.contains(point);
+                        }
                         @Override
                         public void mouseClicked(MouseEvent me) {
                             for(var waypoint : waypoints) {
-                                var gp_pt = mapViewer.getTileFactory().geoToPixel(
-                                        waypoint.getPosition(), mapViewer.getZoom()
-                                );
-
-                                //convert to screen
-                                Rectangle rect = mapViewer.getViewportBounds();
-                                Point converted_gp_pt = new Point((int) gp_pt.getX() - rect.x,
-                                        (int) gp_pt.getY() - rect.y);
                                 //check if near the mouse
-                                if (converted_gp_pt.distance(me.getPoint()) < 10)
-                                    JOptionPane.showMessageDialog(mapViewer, "You clicked on " + waypoint.getText());
+                                if (isOnWaypoint(me.getPoint(), waypoint))
+                                    JOptionPane.showMessageDialog(
+                                            mapViewer,
+                                            "You clicked on " + waypoint.getText());
 
                             }
                         }
-                    });
+
+                        @Override
+                        public void mouseMoved(MouseEvent me) {
+                            for(var waypoint : waypoints) {
+                                if (!isOnWaypoint(me.getPoint(), waypoint))
+                                    continue;
+
+                                mapViewer.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+                                return;
+                            }
+
+                            mapViewer.setCursor(Cursor.getDefaultCursor());
+                        }
+                    };
+
+                    mapViewer.addMouseListener(mouseListener);
+                    mapViewer.addMouseMotionListener(mouseListener);
                 }
             }
         });
