@@ -16,11 +16,6 @@ public class QueryDisruptionHandler implements HttpHandler {
 
     @Override
     public void handle(HttpExchange exchange) throws IOException {
-        if(!exchange.getRequestMethod().equals("GET")) {
-            exchange.sendResponseHeaders(400, 0);
-            exchange.close();
-            return;
-        }
         var disruptions = manageDisruption.findDisruption();
         String json = new Gson().toJson(disruptions);
 
