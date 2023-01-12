@@ -31,6 +31,7 @@ public class MainApp {
     private JButton buttonSearch;
     private JPanel rootPanel;
     private JXMapViewer mapViewer;
+    private JButton buttonRefresh;
 
     public static class SwingWaypoint extends DefaultWaypoint {
         private final JButton button;
