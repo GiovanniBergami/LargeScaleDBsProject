@@ -89,4 +89,8 @@ public class GlobalPainter extends AbstractPainter<JXMapViewer> {
         this.disruptions.clear();
         this.disruptions.addAll(disruptions);
     }
+
+    public void removeDisruptions() {
+        this.disruptions.clear();
+    }
 }

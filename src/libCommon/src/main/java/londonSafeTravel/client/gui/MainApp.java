@@ -158,6 +158,9 @@ public class MainApp {
                     mapViewer.removeMouseListener(mouseListener);
                     mapViewer.removeMouseMotionListener(mouseListener);
 
+                    globalPainter.removeDisruptions();
+                    mapViewer.updateUI();
+
                     return;
                 }
 
@@ -175,6 +178,7 @@ public class MainApp {
                         .collect(Collectors.toSet());
 
                 globalPainter.setDisruptions(waypoints);
+                mapViewer.updateUI();
 
                 mouseListener = new MouseAdapter() {
                     private boolean isOnWaypoint(Point point, DisruptionWaypoint waypoint) {
