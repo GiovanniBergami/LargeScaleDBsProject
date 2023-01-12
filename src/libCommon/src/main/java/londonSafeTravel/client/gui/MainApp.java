@@ -1,5 +1,6 @@
 package londonSafeTravel.client.gui;
 
+import londonSafeTravel.client.DisruptionsRequest;
 import londonSafeTravel.client.QueryPointRequest;
 import londonSafeTravel.client.RoutingRequest;
 import londonSafeTravel.schema.graph.Disruption;
@@ -276,16 +277,16 @@ public class MainApp {
             @Override
             public void itemStateChanged(ItemEvent e) {
                 if(e.getStateChange() == ItemEvent.SELECTED){
-                    QueryDisruptionsRequest request = null;
+                    DisruptionsRequest request = null;
                     try {
-                        request = new QueryDisruptionsRequest(
+                        request = new DisruptionsRequest(
                                 "localhost:8080");
                     } catch (Exception ex) {
                         throw new RuntimeException(ex);
                     }
                     ArrayList<Disruption> disruptions = null;
                     try {
-                        disruptions = new QueryDisruptionsRequest(
+                        disruptions = new DisruptionsRequest(
                                 "localhost:8080").getDisruptions();
                     } catch (Exception ex) {
                         throw new RuntimeException(ex);
@@ -294,12 +295,38 @@ public class MainApp {
                     disruptions.forEach(disruption -> {
                         System.out.println(disruption.id + disruption.centrum);
                     });
-                    Set waypoints = disruptions.stream().map(disruption -> {
-                        return new SwingWaypoint(disruption.id, new GeoPosition(disruption.centrum.getLatitude(),disruption.centrum.getLongitude()));
-                    }).collect(Collectors.toSet());
-                    WaypointPainter swingWaypointPainter = new SwingWaypointOverlayPainter();
+                    Set<DisruptionWaypoint> waypoints = disruptions.stream().map(
+                            disruption -> new DisruptionWaypoint(
+                                    disruption.id,
+                                    new GeoPosition(
+                                            disruption.centrum.getLatitude(),
+                                            disruption.centrum.getLongitude())))
+                            .collect(Collectors.toSet());
+
+                    var swingWaypointPainter = new WaypointPainter<DefaultWaypoint>();
                     swingWaypointPainter.setWaypoints(waypoints);
+
                     mapViewer.setOverlayPainter(swingWaypointPainter);
+
+                    mapViewer.addMouseListener(new MouseAdapter() {
+                        @Override
+                        public void mouseClicked(MouseEvent me) {
+                            for(var waypoint : waypoints) {
+                                var gp_pt = mapViewer.getTileFactory().geoToPixel(
+                                        waypoint.getPosition(), mapViewer.getZoom()
+                                );
+
+                                //convert to screen
+                                Rectangle rect = mapViewer.getViewportBounds();
+                                Point converted_gp_pt = new Point((int) gp_pt.getX() - rect.x,
+                                        (int) gp_pt.getY() - rect.y);
+                                //check if near the mouse
+                                if (converted_gp_pt.distance(me.getPoint()) < 10)
+                                    JOptionPane.showMessageDialog(mapViewer, "You clicked on " + waypoint.getText());
+
+                            }
+                        }
+                    });
                 }
             }
         });

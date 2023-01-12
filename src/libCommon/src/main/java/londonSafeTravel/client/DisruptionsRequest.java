@@ -1,9 +1,8 @@
-package londonSafeTravel.client.gui;
+package londonSafeTravel.client;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import londonSafeTravel.schema.graph.Disruption;
-import londonSafeTravel.schema.graph.Point;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -11,12 +10,11 @@ import java.lang.reflect.Type;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.List;
 
-public class QueryDisruptionsRequest {
+public class DisruptionsRequest {
     private ArrayList<Disruption> disruptions;
 
-    public QueryDisruptionsRequest(String hostname) throws Exception {
+    public DisruptionsRequest(String hostname) throws Exception {
         HttpURLConnection con = (HttpURLConnection) new URL(
                 "http://" + hostname + "/disruptions.json").openConnection();
 
