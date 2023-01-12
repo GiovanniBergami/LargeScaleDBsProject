@@ -1,5 +1,6 @@
 package londonSafeTravel.client.gui;
 
+import londonSafeTravel.schema.graph.Disruption;
 import org.jxmapviewer.JXMapViewer;
 import org.jxmapviewer.viewer.DefaultWaypoint;
 import org.jxmapviewer.viewer.DefaultWaypointRenderer;
@@ -15,7 +16,7 @@ import java.awt.geom.Point2D;
 import java.util.Objects;
 
 public class DisruptionWaypoint extends DefaultWaypoint {
-    private final JButton button;
+    private final Disruption disruption;
 
     public String getText() {
         return text;
@@ -23,46 +24,17 @@ public class DisruptionWaypoint extends DefaultWaypoint {
 
     private final String text;
 
-    public DisruptionWaypoint(String text, GeoPosition coord) {
-        super(coord);
-        this.text = text;
-
-        button = new JButton(text.substring(0, 1));
-        button.setSize(24, 24);
-        button.setPreferredSize(new Dimension(24, 24));
-        button.addMouseListener(new ShowDisruptionEventListener());
-        button.setVisible(true);
-
-        button.setIcon(new ImageIcon(
-                Objects.requireNonNull(DefaultWaypointRenderer.class.getResource("/images/standard_waypoint.png")
-                )));
+    public DisruptionWaypoint(Disruption d) {
+        super(
+                new GeoPosition(
+                        d.centrum.getLatitude(),
+                        d.centrum.getLongitude())
+        );
+        this.disruption = d;
+        this.text = d.id;
     }
-    JButton getButton() {
-        return button;
-    }
-
-    private class ShowDisruptionEventListener implements MouseListener {
-
-        @Override
-        public void mouseClicked(MouseEvent e) {
-            JOptionPane.showMessageDialog(button, "You clicked on " + text);
-        }
-
-        @Override
-        public void mousePressed(MouseEvent e) {
-        }
-
-        @Override
-        public void mouseReleased(MouseEvent e) {
-        }
-
-        @Override
-        public void mouseEntered(MouseEvent e) {
-        }
-
-        @Override
-        public void mouseExited(MouseEvent e) {
-        }
+    Disruption getDisruption() {
+        return disruption;
     }
 
     /*public static class DisruptionWaypointOverlayPainter extends WaypointPainter<DisruptionWaypoint> {

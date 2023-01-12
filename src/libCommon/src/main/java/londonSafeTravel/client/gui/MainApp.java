@@ -295,12 +295,9 @@ public class MainApp {
                     disruptions.forEach(disruption -> {
                         System.out.println(disruption.id + disruption.centrum);
                     });
-                    Set<DisruptionWaypoint> waypoints = disruptions.stream().map(
-                            disruption -> new DisruptionWaypoint(
-                                    disruption.id,
-                                    new GeoPosition(
-                                            disruption.centrum.getLatitude(),
-                                            disruption.centrum.getLongitude())))
+                    Set<DisruptionWaypoint> waypoints = disruptions
+                            .stream()
+                            .map(DisruptionWaypoint::new)
                             .collect(Collectors.toSet());
 
                     var swingWaypointPainter = new WaypointPainter<DefaultWaypoint>();
@@ -329,11 +326,12 @@ public class MainApp {
                         public void mouseClicked(MouseEvent me) {
                             for(var waypoint : waypoints) {
                                 //check if near the mouse
-                                if (isOnWaypoint(me.getPoint(), waypoint))
-                                    JOptionPane.showMessageDialog(
-                                            mapViewer,
-                                            "You clicked on " + waypoint.getText());
+                                if (!isOnWaypoint(me.getPoint(), waypoint))
+                                    continue;
 
+                                var dialog = new DisruptionDialog(waypoint.getDisruption());
+                                //@todo dimensions and default position!
+                                dialog.setVisible(true);
                             }
                         }
 
