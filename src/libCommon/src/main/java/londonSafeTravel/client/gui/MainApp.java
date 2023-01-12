@@ -2,6 +2,7 @@ package londonSafeTravel.client.gui;
 
 import londonSafeTravel.client.QueryPointRequest;
 import londonSafeTravel.client.RoutingRequest;
+import londonSafeTravel.schema.graph.Disruption;
 import org.jxmapviewer.JXMapViewer;
 import org.jxmapviewer.OSMTileFactoryInfo;
 import org.jxmapviewer.input.CenterMapListener;
@@ -14,12 +15,11 @@ import org.jxmapviewer.viewer.*;
 import javax.swing.*;
 import javax.swing.event.MouseInputListener;
 import java.awt.*;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
+import java.awt.event.*;
 import java.awt.geom.Point2D;
-import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.*;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class MainApp {
     private static final double MAX_LAT = 51.7314463;
@@ -32,6 +32,7 @@ public class MainApp {
     private JPanel rootPanel;
     private JXMapViewer mapViewer;
     private JButton buttonRefresh;
+    private JCheckBox showDisruptionsCheckBox;
 
     public static class SwingWaypoint extends DefaultWaypoint {
         private final JButton button;
@@ -46,7 +47,6 @@ public class MainApp {
             button.addMouseListener(new SwingWaypointMouseListener());
             button.setVisible(true);
         }
-
         JButton getButton() {
             return button;
         }
@@ -272,6 +272,37 @@ public class MainApp {
         });
         mapViewer.setTileFactory(tileFactory);
 
+        showDisruptionsCheckBox.addItemListener(new ItemListener() {
+            @Override
+            public void itemStateChanged(ItemEvent e) {
+                if(e.getStateChange() == ItemEvent.SELECTED){
+                    QueryDisruptionsRequest request = null;
+                    try {
+                        request = new QueryDisruptionsRequest(
+                                "localhost:8080");
+                    } catch (Exception ex) {
+                        throw new RuntimeException(ex);
+                    }
+                    ArrayList<Disruption> disruptions = null;
+                    try {
+                        disruptions = new QueryDisruptionsRequest(
+                                "localhost:8080").getDisruptions();
+                    } catch (Exception ex) {
+                        throw new RuntimeException(ex);
+                    }
+
+                    disruptions.forEach(disruption -> {
+                        System.out.println(disruption.id + disruption.centrum);
+                    });
+                    Set waypoints = disruptions.stream().map(disruption -> {
+                        return new SwingWaypoint(disruption.id, new GeoPosition(disruption.centrum.getLatitude(),disruption.centrum.getLongitude()));
+                    }).collect(Collectors.toSet());
+                    WaypointPainter swingWaypointPainter = new SwingWaypointOverlayPainter();
+                    swingWaypointPainter.setWaypoints(waypoints);
+                    mapViewer.setOverlayPainter(swingWaypointPainter);
+                }
+            }
+        });
     }
 
     public static void main(String[] args) {
