@@ -35,6 +35,10 @@ public class ManageRouting {
         driver = GraphDatabase.driver(uri, AuthTokens.basic(user, password));
     }
 
+    public ManageRouting(Driver driver) {
+        this.driver = driver;
+    }
+
     public List<Point> route(long start, long end)
     {
         try(var session = driver.session()){
@@ -57,10 +61,12 @@ public class ManageRouting {
     //Inserisco una query per trovare il nodo più vicino ad un dato punto. Utile quando l'utente clicca sulla mappa
     //e vogliamo stabilire nodo di partenza e di arrivo.
     private final Query NEAREST_NODE = new Query(
-        "MATCH (p:Point)" +
-                "RETURN p " +
-                "ORDER BY point.distance(point({latitude: $lat, longitude: $lng}), p.coord) "+
-                "LIMIT 1"
+            """
+                    WITH point({latitude: $lat, longitude: $lng}) AS q\s
+                    MATCH (p:Point)
+                    WHERE point.distance(q, p.coord) < 25
+                    RETURN p, point.distance(q, p.coord)
+                    ORDER BY point.distance(q, p.coord) LIMIT 1"""
     );
 
 
