@@ -43,6 +43,12 @@ public class ManagePoint {
             "WHERE point.distance(p.coord, d.centrum) <= d.radius\n" +
             "MERGE (p)-[:IS_DISRUPTED {severity: $severity}]->(d)\n"
     );
+
+    private static final Query FindActiveDisruptions = new Query(
+            "MERGE (d:Disruption)" +
+                    "return d"
+    );
+
     public void createClosure(Disruption disruption) {
         try (Session session = driver.session()) {
             session.executeWriteWithoutResult(transactionContext -> {

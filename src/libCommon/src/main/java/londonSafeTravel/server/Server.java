@@ -13,6 +13,7 @@ public class Server {
 
         server.createContext("/query.json", new QueryPointHandler());
         server.createContext("/route.json", new RoutingHandler());
+        server.createContext("/disruptions.json", new QueryDisruptionHandler());
         
         server.setExecutor(threadPoolExecutor);
         server.start();
