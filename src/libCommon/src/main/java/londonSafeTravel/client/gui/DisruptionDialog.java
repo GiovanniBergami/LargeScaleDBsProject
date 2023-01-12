@@ -3,6 +3,7 @@ package londonSafeTravel.client.gui;
 import londonSafeTravel.schema.graph.Disruption;
 
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.*;
 
 public class DisruptionDialog extends JDialog {
@@ -20,6 +21,7 @@ public class DisruptionDialog extends JDialog {
         setContentPane(contentPane);
         setModal(true);
         getRootPane().setDefaultButton(buttonOK);
+        setMinimumSize(new Dimension(400, 600));
 
         disruptionID.setText(disruption.id);
         severityTextField1.setText(disruption.severity);

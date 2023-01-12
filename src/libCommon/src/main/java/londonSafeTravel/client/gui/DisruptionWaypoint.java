@@ -36,22 +36,4 @@ public class DisruptionWaypoint extends DefaultWaypoint {
     Disruption getDisruption() {
         return disruption;
     }
-
-    /*public static class DisruptionWaypointOverlayPainter extends WaypointPainter<DisruptionWaypoint> {
-
-        @Override
-        protected void doPaint(Graphics2D g, JXMapViewer jxMapViewer, int width, int height) {
-            for (var disruptionWaypoint : getWaypoints()) {
-                Point2D point = jxMapViewer.getTileFactory().geoToPixel(
-                        disruptionWaypoint.getPosition(), jxMapViewer.getZoom());
-                Rectangle rectangle = jxMapViewer.getViewportBounds();
-
-                int buttonX = (int)(point.getX() - rectangle.getX());
-                int buttonY = (int)(point.getY() - rectangle.getY());
-
-                JButton button = disruptionWaypoint.getButton();
-                button.setLocation(buttonX - button.getWidth() / 2, buttonY - button.getHeight() / 2);
-            }
-        }
-    }*/
 }
