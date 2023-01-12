@@ -11,6 +11,6 @@ CALL gds.graph.project(
   'CONNECTS',
   {
     nodeProperties: ['latitude', 'longitude'],
-    relationshipProperties: ['crossTimeMotorVehicle', 'crossTimeBicycle']
+    relationshipProperties: ['crossTimeMotorVehicle', 'crossTimeBicycle', 'crossTimeFoot']
   }
 );

@@ -6,6 +6,7 @@ import com.sun.net.httpserver.HttpHandler;
 import londonSafeTravel.dbms.graph.ManageRouting;
 import londonSafeTravel.schema.graph.Point;
 import org.apache.hc.core5.http.NameValuePair;
+import org.apache.hc.core5.net.URIBuilder;
 import org.apache.hc.core5.net.URLEncodedUtils;
 
 import java.io.IOException;
@@ -19,17 +20,10 @@ public class RoutingHandler implements HttpHandler {
     }
     @Override
     public void handle(HttpExchange exchange) throws IOException {
-        long start = -1;
-        long end = -1;
+        var uriParsed = new URIBuilder(exchange.getRequestURI());
 
-        List<NameValuePair> params = URLEncodedUtils.parse(exchange.getRequestURI(), StandardCharsets.UTF_8);
-
-        for(var pair : params) {
-            if(pair.getName().equals("start"))
-                start = Long.parseLong(pair.getValue());
-            else if(pair.getName().equals("end"))
-                end = Long.parseLong(pair.getValue());
-        }
+        long start = Long.parseLong(uriParsed.getFirstQueryParam("start").getValue());
+        long end = Long.parseLong(uriParsed.getFirstQueryParam("end").getValue());
 
         // @TODO Handle errors here
         System.out.println(start + "\t" + end);

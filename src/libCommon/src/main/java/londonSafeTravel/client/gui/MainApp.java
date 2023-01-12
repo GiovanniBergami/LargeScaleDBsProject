@@ -212,6 +212,8 @@ public class MainApp {
                 else {
                     end = request.getPoint();
                     System.out.println("Routing begins!");
+                    System.out.println(start);
+                    System.out.println(end);
 
                     // Create a track from the geo-positions
                     try {
