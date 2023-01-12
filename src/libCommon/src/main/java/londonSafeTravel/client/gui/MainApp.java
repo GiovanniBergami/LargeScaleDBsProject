@@ -35,128 +35,7 @@ public class MainApp {
     private JButton buttonRefresh;
     private JCheckBox showDisruptionsCheckBox;
 
-    public static class SwingWaypoint extends DefaultWaypoint {
-        private final JButton button;
-        private final String text;
-
-        public SwingWaypoint(String text, GeoPosition coord) {
-            super(coord);
-            this.text = text;
-            button = new JButton(text.substring(0, 1));
-            button.setSize(24, 24);
-            button.setPreferredSize(new Dimension(24, 24));
-            button.addMouseListener(new SwingWaypointMouseListener());
-            button.setVisible(true);
-        }
-        JButton getButton() {
-            return button;
-        }
-
-        private class SwingWaypointMouseListener implements MouseListener {
-
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                JOptionPane.showMessageDialog(button, "You clicked on " + text);
-            }
-
-            @Override
-            public void mousePressed(MouseEvent e) {
-            }
-
-            @Override
-            public void mouseReleased(MouseEvent e) {
-            }
-
-            @Override
-            public void mouseEntered(MouseEvent e) {
-            }
-
-            @Override
-            public void mouseExited(MouseEvent e) {
-            }
-        }
-    }
-    public static class SwingWaypointOverlayPainter extends WaypointPainter<SwingWaypoint> {
-
-        @Override
-        protected void doPaint(Graphics2D g, JXMapViewer jxMapViewer, int width, int height) {
-            for (SwingWaypoint swingWaypoint : getWaypoints()) {
-                Point2D point = jxMapViewer.getTileFactory().geoToPixel(
-                        swingWaypoint.getPosition(), jxMapViewer.getZoom());
-                Rectangle rectangle = jxMapViewer.getViewportBounds();
-                int buttonX = (int)(point.getX() - rectangle.getX());
-                int buttonY = (int)(point.getY() - rectangle.getY());
-                JButton button = swingWaypoint.getButton();
-                button.setLocation(buttonX - button.getWidth() / 2, buttonY - button.getHeight() / 2);
-            }
-        }
-    }
-    public static class RoutePainter implements Painter<JXMapViewer> {
-        private Color color = Color.RED;
-        private boolean antiAlias = true;
-
-        private List<GeoPosition> track;
-
-        /**
-         * @param track the track
-         */
-        public RoutePainter(List<GeoPosition> track) {
-            // copy the list so that changes in the
-            // original list do not have an effect here
-            this.track = new ArrayList<GeoPosition>(track);
-        }
-
-        @Override
-        public void paint(Graphics2D g, JXMapViewer map, int w, int h) {
-            g = (Graphics2D) g.create();
-
-            // convert from viewport to world bitmap
-            Rectangle rect = map.getViewportBounds();
-            g.translate(-rect.x, -rect.y);
-
-            if (antiAlias)
-                g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-
-            // do the drawing
-            g.setColor(Color.BLACK);
-            g.setStroke(new BasicStroke(4));
-
-            drawRoute(g, map);
-
-            // do the drawing again
-            g.setColor(color);
-            g.setStroke(new BasicStroke(2));
-
-            drawRoute(g, map);
-
-            g.dispose();
-        }
-
-        /**
-         * @param g   the graphics object
-         * @param map the map
-         */
-        private void drawRoute(Graphics2D g, JXMapViewer map) {
-            int lastX = 0;
-            int lastY = 0;
-
-            boolean first = true;
-
-            for (GeoPosition gp : track) {
-                // convert geo-coordinate to world bitmap pixel
-                Point2D pt = map.getTileFactory().geoToPixel(gp, map.getZoom());
-
-                if (first) {
-                    first = false;
-                } else {
-                    g.drawLine(lastX, lastY, (int) pt.getX(), (int) pt.getY());
-                }
-
-                lastX = (int) pt.getX();
-                lastY = (int) pt.getY();
-            }
-        }
-    }
+    private GlobalPainter globalPainter;
 
     public MainApp() {
         // Create a TileFactoryInfo for OpenStreetMap
@@ -164,14 +43,14 @@ public class MainApp {
         DefaultTileFactory tileFactory = new DefaultTileFactory(info);
         mapViewer.setTileFactory(tileFactory);
 
-        // Use 2 threads in parallel to load the tiles
-        tileFactory.setThreadPoolSize(2);
+        // Create painter
+        globalPainter = new GlobalPainter();
 
-        // Set the focus
-        GeoPosition london = new GeoPosition(51.5067, -0.1269);
+        // Use 3 threads in parallel to load the tiles
+        tileFactory.setThreadPoolSize(3);
 
-        mapViewer.setZoom(7);
-        mapViewer.setAddressLocation(london);
+        mapViewer.setZoom(6);
+        mapViewer.setAddressLocation(new GeoPosition(51.5067, -0.1269)); // London
 
         // Add interactions
         MouseInputListener mia = new PanMouseInputListener(mapViewer);
@@ -180,7 +59,7 @@ public class MainApp {
         mapViewer.addMouseListener(new CenterMapListener(mapViewer));
         mapViewer.addMouseWheelListener(new ZoomMouseWheelListenerCursor(mapViewer));
         mapViewer.addKeyListener(new PanKeyListener(mapViewer));
-
+        mapViewer.setOverlayPainter(globalPainter);
 
         mapViewer.addMouseListener(new MouseListener() {
             londonSafeTravel.schema.graph.Point start = null;
@@ -220,18 +99,15 @@ public class MainApp {
                     // Create a track from the geo-positions
                     try {
                         List<GeoPosition> track = new RoutingRequest(
-                                "localhost:8080", start.getId(), end.getId()).getRouteGeo();
+                                "localhost:8080", start.getId(), end.getId()
+                        ).getRouteGeo();
 
                         System.out.println("Routing completed " + track.size() + " hops!");
 
                         // Set the focus
-                        mapViewer.zoomToBestFit(new HashSet<GeoPosition>(track), 0.7);
+                        mapViewer.zoomToBestFit(new HashSet<>(track), 0.7);
 
-                        RoutePainter routePainter = new RoutePainter(track);
-                        mapViewer.setOverlayPainter(routePainter);
-
-                        // Set the focus
-                        mapViewer.zoomToBestFit(new HashSet<GeoPosition>(track), 0.7);
+                        globalPainter.setRoute(track);
                     } catch (Exception ex) {
                         throw new RuntimeException(ex);
                     }
@@ -275,7 +151,6 @@ public class MainApp {
 
         showDisruptionsCheckBox.addItemListener(new ItemListener() {
             MouseAdapter mouseListener;
-            WaypointPainter<DefaultWaypoint> swingWaypointPainter;
 
             @Override
             public void itemStateChanged(ItemEvent e) {
@@ -283,7 +158,6 @@ public class MainApp {
                     mapViewer.removeMouseListener(mouseListener);
                     mapViewer.removeMouseMotionListener(mouseListener);
 
-                    swingWaypointPainter.setVisible(false);
                     return;
                 }
 
@@ -300,10 +174,7 @@ public class MainApp {
                         .map(DisruptionWaypoint::new)
                         .collect(Collectors.toSet());
 
-                swingWaypointPainter = new WaypointPainter<DefaultWaypoint>();
-                swingWaypointPainter.setWaypoints(waypoints);
-
-                mapViewer.setOverlayPainter(swingWaypointPainter);
+                globalPainter.setDisruptions(waypoints);
 
                 mouseListener = new MouseAdapter() {
                     private boolean isOnWaypoint(Point point, DisruptionWaypoint waypoint) {
