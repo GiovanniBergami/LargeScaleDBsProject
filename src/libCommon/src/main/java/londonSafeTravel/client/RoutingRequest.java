@@ -19,9 +19,9 @@ import java.util.stream.Collectors;
 public class RoutingRequest {
     List<Point> route;
 
-    public RoutingRequest(String hostname, long start, long end) throws Exception {
+    public RoutingRequest(String hostname, long start, long end, String type) throws Exception {
         HttpURLConnection con = (HttpURLConnection) new URL(
-                "http://" + hostname + "/route.json?start=" + start + "&end=" + end
+                "http://" + hostname + "/route.json?start=" + start + "&end=" + end + "&type=" + type
         ).openConnection();
 
         con.setRequestProperty("User-Agent", "Mozilla/5.0");

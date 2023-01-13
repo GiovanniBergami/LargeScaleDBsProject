@@ -27,6 +27,8 @@ public class RoutingHandler implements HttpHandler {
         String type = uriParsed.getFirstQueryParam("type") != null ?
                 uriParsed.getFirstQueryParam("type").getValue() : "car";
 
+        System.out.println(uriParsed.getFirstQueryParam("type"));
+
         // @TODO Handle errors here
         System.out.println(start + "\t" + end);
         var route = manageRouting.route(start, end, type);

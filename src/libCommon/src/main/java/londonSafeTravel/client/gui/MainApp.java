@@ -38,6 +38,18 @@ public class MainApp {
 
     private GlobalPainter globalPainter;
 
+    private String getSelectedMode() {
+        String type="";
+        if(motorVehicles.isSelected())
+            type = "car";
+        else if(bicycle.isSelected())
+            type = "bicycle";
+        else if(foot.isSelected())
+            type = "foot";
+
+        return type;
+    }
+
     public MainApp() {
         // Create a TileFactoryInfo for OpenStreetMap
         TileFactoryInfo info = new OSMTileFactoryInfo();
@@ -80,18 +92,12 @@ public class MainApp {
                     return;
                 }
 
-                String type="";
-                if(motorVehicles.isSelected())
-                    type = "car";
-                else if(bicycle.isSelected())
-                    type = "bicycle";
-                else if(foot.isSelected())
-                    type = "foot";
+
 
                 QueryPointRequest request = null;
                 try {
                     request = new QueryPointRequest(
-                            "localhost:8080", coordinates.getLatitude(), coordinates.getLongitude(), type);
+                            "localhost:8080", coordinates.getLatitude(), coordinates.getLongitude(), getSelectedMode());
                 } catch (Exception ex) {
                     throw new RuntimeException(ex);
                 }
@@ -107,7 +113,7 @@ public class MainApp {
                     // Create a track from the geo-positions
                     try {
                         List<GeoPosition> track = new RoutingRequest(
-                                "localhost:8080", start.getId(), end.getId()
+                                "localhost:8080", start.getId(), end.getId(), getSelectedMode()
                         ).getRouteGeo();
 
                         System.out.println("Routing completed " + track.size() + " hops!");

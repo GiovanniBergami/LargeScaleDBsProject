@@ -42,8 +42,6 @@ class QueryPointHandler implements HttpHandler {
         String type = uriParsed.getFirstQueryParam("type") != null ?
                 uriParsed.getFirstQueryParam("type").getValue() : "car";
 
-        System.out.println(type);
-
         Point target = manageRouting.nearestNode(lat, lon, type);
         String json = new Gson().toJson(target);
 
