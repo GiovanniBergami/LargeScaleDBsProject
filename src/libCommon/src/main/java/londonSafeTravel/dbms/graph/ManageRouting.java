@@ -1,7 +1,5 @@
 package londonSafeTravel.dbms.graph;
 
-import londonSafeTravel.schema.document.ManageDisruption;
-import londonSafeTravel.schema.document.PointOfInterestDAO;
 import londonSafeTravel.schema.graph.Point;
 import org.neo4j.driver.*;
 

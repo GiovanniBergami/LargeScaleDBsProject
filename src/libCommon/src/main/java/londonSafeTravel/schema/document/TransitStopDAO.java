@@ -6,6 +6,7 @@ import com.mongodb.client.model.Accumulators;
 import com.mongodb.client.model.Aggregates;
 import com.mongodb.client.model.Sorts;
 
+import londonSafeTravel.dbms.document.PointOfInterestDAO;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 
@@ -22,9 +23,12 @@ import static com.mongodb.client.model.Aggregates.*;
 
 public class TransitStopDAO extends PointOfInterestDAO {
 
-    private ConnectionMongoDB connection = new ConnectionMongoDB();
-    private MongoDatabase db = connection.giveDB();
+    private MongoDatabase db = super.connection.giveDB();
     private MongoCollection collection = db.getCollection("TransitStop");
+
+    public TransitStopDAO(ConnectionMongoDB connection) {
+        super(connection);
+    }
 
 
     /*

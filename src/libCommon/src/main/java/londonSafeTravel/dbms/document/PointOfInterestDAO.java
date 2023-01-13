@@ -1,4 +1,4 @@
-package londonSafeTravel.schema.document;
+package londonSafeTravel.dbms.document;
 
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
@@ -6,7 +6,8 @@ import com.mongodb.client.MongoDatabase;
 
 import com.mongodb.client.model.geojson.Polygon;
 import com.mongodb.client.model.geojson.Position;
-import londonSafeTravel.driver.tims.RoadDisruptionUpdate;
+import londonSafeTravel.schema.document.ConnectionMongoDB;
+import londonSafeTravel.schema.document.poi.PointOfInterest;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 
@@ -18,33 +19,35 @@ import java.util.Collection;
 import static com.mongodb.client.model.Filters.geoWithin;
 
 public class PointOfInterestDAO {
-    private ConnectionMongoDB connection = new ConnectionMongoDB();
+    protected ConnectionMongoDB connection;
+    private final MongoCollection<PointOfInterest> collection;
 
-    private MongoDatabase db = connection.giveDB();
-    private MongoCollection collection = db.getCollection("PointOfInterest");
+    public PointOfInterestDAO(ConnectionMongoDB connection) {
+        this.connection = connection;
+        MongoDatabase db = connection.giveDB();
+        this.collection = db.getCollection("PointOfInterest", PointOfInterest.class);
+    }
 
     public void printAll() {
-
         try (
-                MongoCursor<Document> cursor = collection.find().iterator()) {
+                MongoCursor<PointOfInterest> cursor = collection.find().iterator()) {
             while (cursor.hasNext()) {
-                System.out.println(cursor.next().toJson());
+                System.out.println(cursor.next());
             }
         }
-
     }
 
     public static void main(String[] argv)
     {
-        PointOfInterestDAO poiDAO = new PointOfInterestDAO();
+        PointOfInterestDAO poiDAO = new PointOfInterestDAO(new ConnectionMongoDB());
 
         poiDAO.query1(-1, 100, -1, 90).forEach(d -> {
-            System.out.println(d.toJson());
+            System.out.println(d.name);
         });
     }
 
 
-    public Collection<Document> query1(double minLong, double maxLong, double minLat, double maxLat)
+    public Collection<PointOfInterest> query1(double minLong, double maxLong, double minLat, double maxLat)
     {
         Polygon region = new Polygon(Arrays.asList(
                 new Position(minLong, minLat),
@@ -55,11 +58,8 @@ public class PointOfInterestDAO {
         ));
 
         Bson myMatch = geoWithin("coordinates", region);
-        ArrayList<Document> results = new ArrayList<>();
-        collection.find(myMatch)
-                .forEach(doc -> {
-                    results.add((Document) doc);
-                });
+        ArrayList<PointOfInterest> results = new ArrayList<>();
+        collection.find(myMatch).forEach(results::add);
         return results;
     }
 }

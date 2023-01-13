@@ -2,17 +2,23 @@ package londonSafeTravel.OSMImporter.POI;
 
 import londonSafeTravel.schema.Location;
 
+import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
+import java.io.FileReader;
 import java.util.*;
 
 public class POIFactory {
-    private static HashMap<String, HashSet<String>> targets = new HashMap<>(){{
+    /**
+     * Filters for this POIs <tag, value> if value is null, it'll take all elements tag=*
+     */
+    private static final HashMap<String, HashSet<String>> targets = new HashMap<>(){{
         put("historic", null);
         put("landmark", new HashSet<>() {{
             add("statue"); add("memorial_plaque");
         }});
         put("memorial", null);
+        put("tourism", null);
     }};
 
     private static boolean isEndTag(XMLStreamReader reader, String type) {
@@ -26,8 +32,8 @@ public class POIFactory {
 
         POI current = type.equals("node") ? new Point() : new Way();
 
+        final String currentNamespace = reader.getNamespaceURI();
         if(type.equals("node")) {
-            final String currentNamespace = reader.getNamespaceURI();
             final double lat = Double.parseDouble(reader.getAttributeValue(currentNamespace, "lat"));
             final double lon = Double.parseDouble(reader.getAttributeValue(currentNamespace, "lon"));
             final long id = Long.parseLong(reader.getAttributeValue(currentNamespace, "id"));
@@ -35,6 +41,8 @@ public class POIFactory {
             map.put(id, new Location(lat, lon));
             ((Point)current).setCentrum(new Location(lat, lon));
         }
+
+        current.osmID = Long.parseLong(reader.getAttributeValue(currentNamespace, "id"));
 
         List<Long> locations = new ArrayList<>();
         HashMap<String, String> tags = new HashMap<>();
@@ -59,7 +67,7 @@ public class POIFactory {
         boolean ok = false;
         for (Map.Entry<String, String> tag : tags.entrySet()) {
             var e = targets.get(tag.getKey());
-            if(e == null || e.contains(tag.getValue())) {
+            if(targets.containsKey(tag.getKey()) && (e == null || e.contains(tag.getValue()))) {
                 ok = true;
 
                 current.className = tag.getKey();
@@ -73,19 +81,39 @@ public class POIFactory {
             return null;
 
         current.name = tags.get("name");
+        current.osmTags = tags;
 
         if(type.equals("way")) {
             Way w = (Way) current;
-            w.setPerimeter(null); //@todo
+            for(Long id : locations) {
+                w.addPerimeterPoint(map.get(id));
+            }
         }
-
-
 
         return current;
     }
 
-    public static void main(String[] argv) {
+    private static final String filenameDefault = "examples/greater-london-latest.osm";
+
+    public static void main(String[] argv) throws Exception {
+        XMLInputFactory factory = XMLInputFactory.newInstance();
+        final String filename = argv.length == 0 ? filenameDefault : argv[0];
+
+        XMLStreamReader r = factory.createXMLStreamReader(new FileReader(filename));
+
         HashMap<Long, Location> map = new HashMap<>();
 
+        for (r.next(); r.hasNext(); r.next()) {
+            if (!r.isStartElement())
+                continue;
+
+            var poi = parse(r, map);
+            if(poi == null)
+                continue;
+
+            System.out.println(
+                    poi.osmID + "\t" + (poi instanceof Point) + "\t" +
+                           poi.className + "\t" + poi.name + "\t" + poi.getCentrum());
+        }
     }
 }
