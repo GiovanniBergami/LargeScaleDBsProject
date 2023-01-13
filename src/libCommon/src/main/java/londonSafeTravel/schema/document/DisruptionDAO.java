@@ -50,7 +50,7 @@ public class DisruptionDAO {
         });
          */
 
-       disDAO.queryHeatmap(1, 1, "burst pipe").forEach(d -> {
+       disDAO.queryHeatmap(0.05, 0.05, "Works").forEach(d -> {
            System.out.println(d.toJson());
        });
 
@@ -119,14 +119,14 @@ public class DisruptionDAO {
     public Collection<Document> queryHeatmap(double lenLat, double lenLong, String classDisruption){
         Bson match = match(eq("category", classDisruption));
         Bson computeBuckets = new Document("$project", new Document()
-                .append("latB", new Document("$floor", new Document("$divide", Arrays.asList(
+                .append("latB", new Document("$multiply", Arrays.asList( new Document("$floor", new Document("$divide", Arrays.asList(
                         new Document("$arrayElemAt", Arrays.asList("$coordinates.coordinates", 0)),
-                        lenLat
-                ))))
-                .append("lngB", new Document("$floor", new Document("$divide", Arrays.asList(
+                        lenLat))), lenLat
+                )))
+                .append("lngB", new Document("$multiply", Arrays.asList( new Document("$floor", new Document("$divide", Arrays.asList(
                         new Document("$arrayElemAt", Arrays.asList("$coordinates.coordinates", 1)),
-                        lenLong
-                )))));
+                        lenLong))),lenLong
+                ))));
         Bson groupStage = Aggregates.group(
                 new Document("latB","$latB").append("lngB", "$lngB"),
                 Accumulators.sum("count", 1)
@@ -140,16 +140,10 @@ public class DisruptionDAO {
 // Execute the aggregation
         Collection<Document> result = collection.aggregate(pipeline).into(new ArrayList<>());
 
-
         return result;
     }
-
-
-
     /*
     Per ogni linea trovare per ogni giorno della settimana il numero di closures e la probabilità
     che essa sia coinvolta in una closure dove 1 = evento certo, 0 = evento impossibile
      */
-
-
 }
