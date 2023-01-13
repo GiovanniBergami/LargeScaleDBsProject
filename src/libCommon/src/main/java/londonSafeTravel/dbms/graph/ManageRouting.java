@@ -62,17 +62,26 @@ public class ManageRouting {
     //e vogliamo stabilire nodo di partenza e di arrivo.
     private final Query NEAREST_NODE = new Query(
             """
-                    WITH point({latitude: $lat, longitude: $lng}) AS q\s
+                    WITH point({latitude: 51.5765977, longitude: -0.2361256}) AS q
                     MATCH (p:Point)
-                    WHERE point.distance(q, p.coord) < 25
+                    MATCH (p)-[w:CONNECTS]->(r:Point)
+                    WHERE point.distance(q, p.coord) < 100 AND
+                    CASE 
+                        WHEN $type = 'foot' THEN w.crossTimeFoot <> Infinity
+                        WHEN $type = 'bicycle' THEN w.crossTimeBicycle <> Infinity
+                        WHEN $type = 'car' THEN w.crossTimeMotorVehicle <> Infinity
+                    END
                     RETURN p, point.distance(q, p.coord)
-                    ORDER BY point.distance(q, p.coord) LIMIT 1"""
+                    ORDER BY point.distance(q, p.coord) LIMIT 1 """
     );
 
-
     public Point nearestNode(double lat, double lng){
+        return nearestNode(lat, lng, "car");
+    }
+
+    public Point nearestNode(double lat, double lng, String type){
         try(var session = driver.session()){
-            var p = session.run(NEAREST_NODE.withParameters(parameters("lat",lat,"lng",lng)));
+            var p = session.run(NEAREST_NODE.withParameters(parameters("lat",lat,"lng", lng, "type", type)));
             if(!p.hasNext())
                 return null;
 

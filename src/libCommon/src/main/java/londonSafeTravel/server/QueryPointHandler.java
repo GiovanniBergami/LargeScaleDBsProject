@@ -36,15 +36,18 @@ class QueryPointHandler implements HttpHandler {
         List<NameValuePair> params = URLEncodedUtils.parse(exchange.getRequestURI(), StandardCharsets.UTF_8);
         double lat = 0;
         double lon = 0;
+        String type = "";
 
         for(var pair : params) {
             if(pair.getName().equals("latitude"))
                 lat = Double.parseDouble(pair.getValue());
             else if(pair.getName().equals("longitude"))
                 lon = Double.parseDouble(pair.getValue());
+            else if(pair.getName().equals("type"))
+                type = pair.getValue();
         }
 
-        Point target = manageRouting.nearestNode(lat, lon);
+        Point target = manageRouting.nearestNode(lat, lon, type);
         String json = new Gson().toJson(target);
 
         exchange.getResponseHeaders().set("Content-Type", "application/json");

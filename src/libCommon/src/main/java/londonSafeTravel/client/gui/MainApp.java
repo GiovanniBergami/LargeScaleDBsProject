@@ -10,14 +10,12 @@ import org.jxmapviewer.input.CenterMapListener;
 import org.jxmapviewer.input.PanKeyListener;
 import org.jxmapviewer.input.PanMouseInputListener;
 import org.jxmapviewer.input.ZoomMouseWheelListenerCursor;
-import org.jxmapviewer.painter.Painter;
 import org.jxmapviewer.viewer.*;
 
 import javax.swing.*;
 import javax.swing.event.MouseInputListener;
 import java.awt.*;
 import java.awt.event.*;
-import java.awt.geom.Point2D;
 import java.util.*;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -34,6 +32,9 @@ public class MainApp {
     private JXMapViewer mapViewer;
     private JButton buttonRefresh;
     private JCheckBox showDisruptionsCheckBox;
+    private JRadioButton foot;
+    private JRadioButton bicycle;
+    private JRadioButton motorVehicles;
 
     private GlobalPainter globalPainter;
 
@@ -79,11 +80,18 @@ public class MainApp {
                     return;
                 }
 
+                String type="";
+                if(motorVehicles.isSelected())
+                    type = "car";
+                else if(bicycle.isSelected())
+                    type = "bicycle";
+                else if(foot.isSelected())
+                    type = "foot";
 
                 QueryPointRequest request = null;
                 try {
                     request = new QueryPointRequest(
-                            "localhost:8080", coordinates.getLatitude(), coordinates.getLongitude());
+                            "localhost:8080", coordinates.getLatitude(), coordinates.getLongitude(), type);
                 } catch (Exception ex) {
                     throw new RuntimeException(ex);
                 }
