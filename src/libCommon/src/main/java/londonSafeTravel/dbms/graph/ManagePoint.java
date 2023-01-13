@@ -38,6 +38,9 @@ public class ManagePoint {
             "SET d.severity = $severity\n" +
             "SET d.ttl = $ttl \n" +
             "SET d.category = $category SET d.subCategory = $subcategory \n"+
+            "SET d.location = $location\n" +
+            "SET d.levelOfInterest = $levelOfInterest\n" +
+            "SET d.comment = $comment\n" +
             "WITH d\n" +
             "MATCH (p: Point)\n" +
             "WHERE point.distance(p.coord, d.centrum) <= d.radius\n" +
@@ -60,7 +63,10 @@ public class ManagePoint {
                         "ttl", disruption.ttl,
                         "severity", disruption.severity,
                         "category", disruption.category,
-                        "subcategory", disruption.subCategory
+                        "subcategory", disruption.subCategory,
+                        "location", disruption.location,
+                        "levelOfInterest", disruption.levelOfInterest,
+                        "comment", disruption.comment
                 ));
                 transactionContext.run(q);
             });
