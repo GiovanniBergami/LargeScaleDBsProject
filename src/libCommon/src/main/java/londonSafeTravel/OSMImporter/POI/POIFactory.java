@@ -1,6 +1,10 @@
 package londonSafeTravel.OSMImporter.POI;
 
+import londonSafeTravel.dbms.document.PointOfInterestDAO;
+import londonSafeTravel.schema.GeoFactory;
 import londonSafeTravel.schema.Location;
+import londonSafeTravel.schema.document.ConnectionMongoDB;
+import londonSafeTravel.schema.document.poi.PointOfInterest;
 
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
@@ -23,6 +27,16 @@ public class POIFactory {
 
     private static boolean isEndTag(XMLStreamReader reader, String type) {
         return reader.isEndElement() && Objects.equals(reader.getLocalName(), type) ;
+    }
+
+    public static PointOfInterest convertToMong(POI poi) {
+        var mongoPoint = new PointOfInterest();
+
+        mongoPoint.poiID = String.valueOf(poi.osmID);
+        mongoPoint.coordinates = GeoFactory.convertToMongo(poi.getCentrum());
+
+
+        return mongoPoint;
     }
 
     public static POI parse(XMLStreamReader reader, HashMap<Long, Location> map) throws Exception {
@@ -103,6 +117,8 @@ public class POIFactory {
 
         HashMap<Long, Location> map = new HashMap<>();
 
+        PointOfInterestDAO poiDAO = new PointOfInterestDAO(new ConnectionMongoDB());
+
         for (r.next(); r.hasNext(); r.next()) {
             if (!r.isStartElement())
                 continue;
@@ -110,6 +126,8 @@ public class POIFactory {
             var poi = parse(r, map);
             if(poi == null)
                 continue;
+
+
 
             System.out.println(
                     poi.osmID + "\t" + (poi instanceof Point) + "\t" +

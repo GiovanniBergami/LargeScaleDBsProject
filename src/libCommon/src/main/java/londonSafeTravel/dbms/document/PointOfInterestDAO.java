@@ -46,6 +46,10 @@ public class PointOfInterestDAO {
         });
     }
 
+    public void insert(PointOfInterest poi) {
+        collection.insertOne(poi);
+    }
+
 
     public Collection<PointOfInterest> query1(double minLong, double maxLong, double minLat, double maxLat)
     {
