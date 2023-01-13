@@ -4,14 +4,9 @@ import com.google.gson.Gson;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import londonSafeTravel.dbms.graph.ManageRouting;
-import londonSafeTravel.schema.graph.Point;
-import org.apache.hc.core5.http.NameValuePair;
 import org.apache.hc.core5.net.URIBuilder;
-import org.apache.hc.core5.net.URLEncodedUtils;
 
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.util.List;
 
 public class RoutingHandler implements HttpHandler {
     ManageRouting manageRouting;

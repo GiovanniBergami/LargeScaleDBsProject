@@ -7,7 +7,6 @@ import londonSafeTravel.schema.document.ConnectionMongoDB;
 import londonSafeTravel.schema.document.poi.PointOfInterest;
 
 import javax.xml.stream.XMLInputFactory;
-import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import java.io.FileReader;
 import java.util.*;
@@ -29,12 +28,13 @@ public class POIFactory {
         return reader.isEndElement() && Objects.equals(reader.getLocalName(), type) ;
     }
 
-    public static PointOfInterest convertToMong(POI poi) {
+    public static PointOfInterest convertToMongo(POI poi) {
         var mongoPoint = new PointOfInterest();
 
         mongoPoint.poiID = String.valueOf(poi.osmID);
         mongoPoint.coordinates = GeoFactory.convertToMongo(poi.getCentrum());
-
+        mongoPoint.name = poi.name;
+        mongoPoint.type = "osm-poi";
 
         return mongoPoint;
     }
@@ -127,7 +127,7 @@ public class POIFactory {
             if(poi == null)
                 continue;
 
-
+            poiDAO.insert(convertToMongo(poi));
 
             System.out.println(
                     poi.osmID + "\t" + (poi instanceof Point) + "\t" +
