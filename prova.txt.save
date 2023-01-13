@@ -1,0 +1,20 @@
+
+TransiStop{
+
+...
+
+routes:[
+{
+	...
+	line
+},
+{
+	...
+	line
+},
+
+
+]
+
+
+}
