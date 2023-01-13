@@ -7,6 +7,7 @@ import org.neo4j.driver.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import static org.neo4j.driver.Values.parameters;
 
@@ -21,7 +22,7 @@ public class ManageRouting {
                     "	targetNode: end, " +
                     "	latitudeProperty: 'latitude', " +
                     "	longitudeProperty: 'longitude', " +
-                    "	relationshipWeightProperty: 'crossTimeMotorVehicle', " +
+                    "	relationshipWeightProperty: $type, " +
                     "	relationshipTypes: ['CONNECTS'], " +
                     "	concurrency: 4" +
                     "	}) " +
@@ -39,13 +40,21 @@ public class ManageRouting {
         this.driver = driver;
     }
 
-    public List<Point> route(long start, long end)
+    public List<Point> route(long start, long end, String type)
     {
+        if(Objects.equals(type, "car"))
+            type = "crossTimeMotorVehicle";
+        else if( Objects.equals(type, "bicycle"))
+            type = "crossTimeBicycle";
+        else if(Objects.equals(type, "foot"))
+            type = "crossTimeFoot";
+
         try(var session = driver.session()){
             List<Point> hops = new ArrayList<>();
             var res = session.run(ROUTE_QUERY.withParameters(parameters(
                     "start", start,
-                    "end", end
+                    "end", end,
+                    "type", type
             )));
             res.forEachRemaining(record -> {
                 hops.add(new Point(
@@ -101,7 +110,7 @@ public class ManageRouting {
 
         System.out.println(test.nearestNode(0,0));
 
-        test.route(4835478720L, 389139L).forEach(hop -> {
+        test.route(4835478720L, 389139L, "car").forEach(hop -> {
             System.out.println("id " + hop);
         });
     }
