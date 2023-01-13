@@ -25,4 +25,8 @@ class Way extends POI{
         this.perimeter.clear();
         this.perimeter.addAll(perimeter);
     }
+
+    public List<Location> getPerimeter() {
+        return perimeter;
+    }
 }

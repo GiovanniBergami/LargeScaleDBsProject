@@ -5,6 +5,7 @@ import londonSafeTravel.schema.GeoFactory;
 import londonSafeTravel.schema.Location;
 import londonSafeTravel.schema.document.ConnectionMongoDB;
 import londonSafeTravel.schema.document.poi.PointOfInterest;
+import londonSafeTravel.schema.document.poi.PointOfInterestOSM;
 
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamReader;
@@ -29,12 +30,14 @@ public class POIFactory {
     }
 
     public static PointOfInterest convertToMongo(POI poi) {
-        var mongoPoint = new PointOfInterest();
+        var mongoPoint = new PointOfInterestOSM();
 
         mongoPoint.poiID = String.valueOf(poi.osmID);
         mongoPoint.coordinates = GeoFactory.convertToMongo(poi.getCentrum());
         mongoPoint.name = poi.name;
-        mongoPoint.type = "osm-poi";
+        mongoPoint.tags = poi.osmTags;
+        if(poi instanceof  Way)
+            mongoPoint.perimeter = GeoFactory.convertToMongo(((Way)poi).getPerimeter());
 
         return mongoPoint;
     }
