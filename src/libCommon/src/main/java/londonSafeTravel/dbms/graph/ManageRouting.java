@@ -62,7 +62,7 @@ public class ManageRouting {
     //e vogliamo stabilire nodo di partenza e di arrivo.
     private final Query NEAREST_NODE = new Query(
             """
-                    WITH point({latitude: 51.5765977, longitude: -0.2361256}) AS q
+                    WITH point({latitude: $lat, longitude: $lng}) AS q
                     MATCH (p:Point)
                     MATCH (p)-[w:CONNECTS]->(r:Point)
                     WHERE point.distance(q, p.coord) < 100 AND
