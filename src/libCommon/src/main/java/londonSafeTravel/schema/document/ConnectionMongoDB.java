@@ -11,8 +11,9 @@ import org.bson.codecs.pojo.PojoCodecProvider;
 public class ConnectionMongoDB {
 
     static final private String uri = "mongodb://localhost:27017";
-    private final MongoClient myClient = MongoClients.create(uri);
     private final MongoDatabase database = myClient.getDatabase("londonSafeTravel");
+
+    private static final MongoClient myClient = MongoClients.create(uri);
 
     public MongoDatabase giveDB(){
         CodecRegistry defaultCodecRegistry = MongoClientSettings.getDefaultCodecRegistry();
