@@ -19,9 +19,9 @@ public class QueryPointRequest {
 
     private Point point;
 
-    public QueryPointRequest(String hostname, double latitude, double longitude) throws Exception {
+    public QueryPointRequest(String hostname, double latitude, double longitude, String type) throws Exception {
         HttpURLConnection con = (HttpURLConnection) new URL(
-                "http://" + hostname + "/query.json?latitude=" + latitude + "&longitude=" + longitude
+                "http://" + hostname + "/query.json?latitude=" + latitude + "&longitude=" + longitude +"&type="+type
         ).openConnection();
 
         con.setRequestProperty("User-Agent", "Mozilla/5.0");

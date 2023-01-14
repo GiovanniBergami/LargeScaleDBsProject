@@ -11,4 +11,7 @@ public class Disruption {
 
     public String category;
     public String subCategory;
+    public String location;
+    public String levelOfInterest;
+    public String comment;
 }

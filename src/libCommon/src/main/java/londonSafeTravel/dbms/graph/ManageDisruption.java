@@ -38,6 +38,10 @@ public class ManageDisruption {
                 d.radius = record.get("d").get("radius").asDouble();
                 d.severity = record.get("d").get("severity").asString();
                 d.ttl = record.get("d").get("ttl").asLong();
+                d.category = record.get("d").get("category").asString();
+                d.subCategory = record.get("d").get("subCategory").asString();
+                d.comment = record.get("d").get("comment").asString();
+                d.location = record.get("d").get("location").asString();
 
                 disruptions.add(d);
             });
