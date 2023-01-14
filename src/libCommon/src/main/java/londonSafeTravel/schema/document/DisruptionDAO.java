@@ -8,27 +8,39 @@ import com.mongodb.client.model.Aggregates;
 import com.mongodb.client.model.Sorts;
 import com.mongodb.client.model.geojson.Polygon;
 import com.mongodb.client.model.geojson.Position;
-
-import londonSafeTravel.dbms.graph.ManageRouting;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 
+import javax.print.Doc;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
-
-import static com.mongodb.client.model.Aggregates.*;
-import static com.mongodb.client.model.Filters.*;
+import static com.mongodb.client.model.Aggregates.match;
+import static com.mongodb.client.model.Aggregates.project;
+import static com.mongodb.client.model.Filters.eq;
+import static com.mongodb.client.model.Filters.geoWithin;
 import static com.mongodb.client.model.Projections.*;
 
 
-
 public class DisruptionDAO {
-    private ConnectionMongoDB connection = new ConnectionMongoDB();
-    private MongoDatabase db = connection.giveDB();
-    private MongoCollection collection = db.getCollection("Disruption");
+    private final ConnectionMongoDB connection = new ConnectionMongoDB();
+    private final MongoDatabase db = connection.giveDB();
+    private final MongoCollection<Document> collection = db.getCollection("Disruption");
+
+    public static void main(String[] argv) {
+        DisruptionDAO disDAO = new DisruptionDAO();
+        /* test query2
+        disDAO.query2(-1, 100, -1, 90).forEach(d -> {
+            System.out.println(d.toJson());
+        });
+         */
+        disDAO.queryHeatmap(0.05, 0.05, "Works").forEach(d -> {
+            System.out.println(d.toJson());
+        });
+
+    }
 
     public void printAll() {
 
@@ -38,21 +50,6 @@ public class DisruptionDAO {
                 System.out.println(cursor.next().toJson());
             }
         }
-
-    }
-
-
-    public static void main(String[] argv) {
-        DisruptionDAO disDAO = new DisruptionDAO();
-        /* test query2
-        disDAO.query2(-1, 100, -1, 90).forEach(d -> {
-            System.out.println(d.toJson());
-        });
-         */
-
-       disDAO.queryHeatmap(0.05, 0.05, "Works").forEach(d -> {
-           System.out.println(d.toJson());
-       });
 
     }
 
@@ -85,13 +82,13 @@ public class DisruptionDAO {
 
         // Create the group stage
         Bson groupStage = Aggregates.group(
-                new Document("severity","$severity").append("category", "$category"),
+                new Document("severity", "$severity").append("category", "$category"),
                 Accumulators.sum("count", 1)
         );
         Bson groupStage2 = Aggregates.group(
                 "$_id.severity",
                 Accumulators.max("count", "$count"),
-                Accumulators.first("type","$_id.category"),
+                Accumulators.first("type", "$_id.category"),
                 Accumulators.first("severity", "$_id.severity")
         );
 
@@ -100,10 +97,10 @@ public class DisruptionDAO {
 
         // Projèct
 
-        Bson project = project(fields(excludeId(),include("severity","type" ,"count" )));
+        Bson project = project(fields(excludeId(), include("severity", "type", "count")));
 
         // Combine the stages into a pipeline
-        List<Bson> pipeline = Arrays.asList(Aggregates.match(inSquare), groupStage,groupStage2, sortStage,project);
+        List<Bson> pipeline = Arrays.asList(Aggregates.match(inSquare), groupStage, groupStage2, sortStage, project);
 
         // Execute the aggregation
         Collection<Document> result = collection.aggregate(pipeline).into(new ArrayList<>());
@@ -116,31 +113,49 @@ public class DisruptionDAO {
     Build a heatmap of a certain class of disruption
      */
 
-    public Collection<Document> queryHeatmap(double lenLat, double lenLong, String classDisruption){
+    public Collection<Document> queryHeatmap(double lenLat, double lenLong, String classDisruption) {
         Bson match = match(eq("category", classDisruption));
         Bson computeBuckets = new Document("$project", new Document()
-                .append("latB", new Document("$multiply", Arrays.asList( new Document("$floor", new Document("$divide", Arrays.asList(
-                        new Document("$arrayElemAt", Arrays.asList("$coordinates.coordinates", 0)),
+                .append("latB", new Document("$multiply", Arrays.asList(new Document("$floor", new Document("$divide", Arrays.asList(
+                        new Document("$arrayElemAt", Arrays.asList("$coordinates.coordinates", 1)),
                         lenLat))), lenLat
                 )))
-                .append("lngB", new Document("$multiply", Arrays.asList( new Document("$floor", new Document("$divide", Arrays.asList(
-                        new Document("$arrayElemAt", Arrays.asList("$coordinates.coordinates", 1)),
-                        lenLong))),lenLong
+                .append("lngB", new Document("$multiply", Arrays.asList(new Document("$floor", new Document("$divide", Arrays.asList(
+                        new Document("$arrayElemAt", Arrays.asList("$coordinates.coordinates", 0)),
+                        lenLong))), lenLong
                 ))));
         Bson groupStage = Aggregates.group(
-                new Document("latB","$latB").append("lngB", "$lngB"),
+                new Document("latB", "$latB").append("lngB", "$lngB"),
                 Accumulators.sum("count", 1)
         );
-        Bson project = project(fields(include( "count" )));
+
+        Bson project = project(fields(
+                excludeId(),
+                include("count"),
+                computed("latitude", "$_id.latB"),
+                computed("longitude", "$_id.lngB")
+        ));
+
         // Create the pipeline
         List<Bson> pipeline = Arrays.asList(
-                    match,computeBuckets, groupStage, project
+                match, computeBuckets, groupStage, project
         );
 
-// Execute the aggregation
-        Collection<Document> result = collection.aggregate(pipeline).into(new ArrayList<>());
+        pipeline.forEach(bson -> {
+            System.out.println(bson.toBsonDocument());
+        });
 
-        return result;
+        // Execute the aggregation
+        return collection.aggregate(pipeline).map(document -> {
+            var lat = document.getDouble("latitude");
+            var lon = document.getDouble("longitude");
+
+            // @fixme sort this crap out
+            //document.put("latitude", Math.floor(lat * 100) / 100);
+            //document.put("longitude", Math.floor(lon * 100) / 100);
+
+            return document;
+        }).into(new ArrayList<>());
     }
     /*
     Per ogni linea trovare per ogni giorno della settimana il numero di closures e la probabilità

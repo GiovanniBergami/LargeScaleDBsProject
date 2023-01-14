@@ -73,6 +73,7 @@ public class MainApp {
         mapViewer.addMouseWheelListener(new ZoomMouseWheelListenerCursor(mapViewer));
         mapViewer.addKeyListener(new PanKeyListener(mapViewer));
         mapViewer.setOverlayPainter(globalPainter);
+        //mapViewer.setOverlayPainter(new HeatmapPainter());
 
         mapViewer.addMouseListener(new MouseListener() {
             londonSafeTravel.schema.graph.Point start = null;
