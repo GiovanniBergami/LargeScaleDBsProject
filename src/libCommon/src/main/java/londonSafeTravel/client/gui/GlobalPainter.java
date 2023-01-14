@@ -60,10 +60,11 @@ public class GlobalPainter extends AbstractPainter<JXMapViewer> {
 
         boolean first = true;
 
+
+
         for (GeoPosition gp : route) {
             // convert geo-coordinate to world bitmap pixel
             Point2D pt = map.getTileFactory().geoToPixel(gp, map.getZoom());
-
             if (first) {
                 first = false;
             } else {

@@ -104,6 +104,7 @@ public class ManageRouting {
         }
     }
 
+
     public static void main(String argv[])
     {
         ManageRouting test= new ManageRouting("neo4j://localhost:7687", "neo4j", "pass");
@@ -114,5 +115,4 @@ public class ManageRouting {
             System.out.println("id " + hop);
         });
     }
-
 }
