@@ -35,10 +35,11 @@ public class MainApp {
     private JRadioButton foot;
     private JRadioButton bicycle;
     private JRadioButton motorVehicles;
+    private JPanel routingPanel;
+    private JLabel routingTime;
     private JButton adminButton;
 
     private GlobalPainter globalPainter;
-
 
     private String getSelectedMode() {
         String type="";
@@ -53,9 +54,6 @@ public class MainApp {
     }
 
     public MainApp() {
-
-
-
         // Create a TileFactoryInfo for OpenStreetMap
         TileFactoryInfo info = new OSMTileFactoryInfo();
         DefaultTileFactory tileFactory = new DefaultTileFactory(info);
@@ -118,11 +116,13 @@ public class MainApp {
 
                     // Create a track from the geo-positions
                     try {
-                        List<GeoPosition> track = new RoutingRequest(
+                        RoutingRequest routeReq =new RoutingRequest(
                                 "localhost:8080", start.getId(), end.getId(), getSelectedMode()
-                        ).getRouteGeo();
+                        );
+                        List<GeoPosition> track = routeReq.getRouteGeo();
 
                         System.out.println("Routing completed " + track.size() + " hops!");
+                        routingTime.setText(Double.toString(routeReq.getRoute().get(routeReq.getRoute().size() - 1).time / 60.0));
 
                         // Set the focus
                         mapViewer.zoomToBestFit(new HashSet<>(track), 0.7);
@@ -268,7 +268,6 @@ public class MainApp {
         frame.setContentPane(new MainApp().rootPanel);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.pack();
-        frame.setLocationRelativeTo(null);
         frame.setVisible(true);
     }
 }
