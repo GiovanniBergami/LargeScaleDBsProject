@@ -43,6 +43,9 @@ public class RoadDisruptionUpdate {
 
         dg.id = roadDisruptionUpdate.id;
         dg.severity = roadDisruptionUpdate.severity;
+        dg.comment = roadDisruptionUpdate.comments;
+        dg.update = roadDisruptionUpdate.currentUpdate;
+        dg.updateTime = roadDisruptionUpdate.currentUpdateDateTime;
 
         long ttl = roadDisruptionUpdate.endDateTime.toInstant().getEpochSecond() - t.toInstant().getEpochSecond();
         if (ttl > 0)

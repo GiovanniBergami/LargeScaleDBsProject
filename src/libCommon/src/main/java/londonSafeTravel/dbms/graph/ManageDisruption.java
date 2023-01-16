@@ -28,7 +28,9 @@ public class ManageDisruption {
                     SET d.radius = $radius
                     SET d.severity = $severity
                     SET d.ttl = $ttl\s
-                    SET d.category = $category SET d.subCategory = $subcategory\s
+                    SET d.category = $category SET d.subCategory = $subcategory
+                    SET d.comment = $comment
+                    SET d.update = $update SET d.updateTime = $updateTime
                     WITH d
                     MATCH (p: Point)
                     WHERE point.distance(p.coord, d.centrum) <= d.radius
@@ -43,6 +45,8 @@ public class ManageDisruption {
 
     public void createClosure(Disruption disruption) {
         try (Session session = driver.session()) {
+
+
             session.executeWriteWithoutResult(transactionContext -> {
                 Query q = CREATE_CLOSURE.withParameters(parameters(
                         "id", disruption.id,
@@ -52,7 +56,10 @@ public class ManageDisruption {
                         "ttl", disruption.ttl,
                         "severity", disruption.severity,
                         "category", disruption.category,
-                        "subcategory", disruption.subCategory
+                        "subcategory", disruption.subCategory,
+                        "comment", disruption.comment,
+                        "update", disruption.update,
+                        "updateTime", disruption.updateTime
                 ));
                 transactionContext.run(q);
             });
@@ -89,6 +96,13 @@ public class ManageDisruption {
                 d.radius = record.get("d").get("radius").asDouble();
                 d.severity = record.get("d").get("severity").asString();
                 d.ttl = record.get("d").get("ttl").asLong();
+                d.severity = record.get("d").get("severity").asString();
+                d.category = record.get("d").get("category").asString();
+                d.subCategory = record.get("d").get("severity").asString();
+                d.comment = record.get("d").get("comment").asString();
+                d.update = record.get("d").get("update").asString();
+                // @fixme figure this shit out
+                d.updateTime = java.sql.Timestamp.valueOf(record.get("d").get("updateTime").asLocalDateTime());
 
                 disruptions.add(d);
             });
