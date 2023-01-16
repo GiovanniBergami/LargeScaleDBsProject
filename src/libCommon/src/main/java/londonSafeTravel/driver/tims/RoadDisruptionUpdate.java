@@ -7,7 +7,6 @@ import com.github.filosganga.geogson.model.Point;
 import com.github.filosganga.geogson.model.Polygon;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
-import londonSafeTravel.dbms.graph.ManagePoint;
 import londonSafeTravel.schema.GeoFactory;
 import londonSafeTravel.schema.Location;
 import londonSafeTravel.schema.document.Disruption;
@@ -19,10 +18,11 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 
 
-@SuppressWarnings("rawtypes")
+@SuppressWarnings("rawtypes,unused")
 public class RoadDisruptionUpdate {
     private static ManageDisruption manageDisruptionDocument;
-    private static ManagePoint manageDisruptionGraph;
+    private static londonSafeTravel.dbms.graph.ManageDisruption manageDisruptionGraph;
+
     String id;
     String category;
     String subCategory;
@@ -173,7 +173,7 @@ public class RoadDisruptionUpdate {
     public static void main(String[] argv) throws Exception {
         // Open connections to DBs
         manageDisruptionDocument = new ManageDisruption();
-        manageDisruptionGraph = new ManagePoint("neo4j://localhost:7687", "neo4j", "pass");
+        manageDisruptionGraph = new londonSafeTravel.dbms.graph.ManageDisruption("neo4j://localhost:7687", "neo4j", "pass");
 
         ProcessResult state;
 
