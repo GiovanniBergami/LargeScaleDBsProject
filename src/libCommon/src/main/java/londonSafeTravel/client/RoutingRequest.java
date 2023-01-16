@@ -26,8 +26,8 @@ public class RoutingRequest {
 
         con.setRequestProperty("User-Agent", "Mozilla/5.0");
         con.setRequestMethod("GET");
-        con.setConnectTimeout(5000);
-        con.setReadTimeout(5000);
+        con.setConnectTimeout(10000);
+        con.setReadTimeout(10000);
 
         con.connect();
 
