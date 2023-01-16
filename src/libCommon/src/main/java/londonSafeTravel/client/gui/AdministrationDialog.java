@@ -51,10 +51,15 @@ public class AdministrationDialog extends JDialog {
     }
 
     private void onOK() throws Exception {
-        // add your code here
-     AnalyticsMap.main(null);
+        boolean userOK = textField1.getText().equals("admin");
+        boolean passOK = new String(passwordField1.getPassword()).equals("admin");
+        if(userOK && passOK) {
+            AnalyticsMap.main(null);
+            dispose();
+        }
+        else
+            JOptionPane.showMessageDialog(this.contentPane, "Wrong password", "Wrong password", JOptionPane.ERROR_MESSAGE);
 
-        dispose();
     }
 
     private void onCancel() {
@@ -66,7 +71,7 @@ public class AdministrationDialog extends JDialog {
         AdministrationDialog dialog = new AdministrationDialog();
         dialog.pack();
         dialog.setVisible(true);
-        System.exit(0);
+        //System.exit(0);
     }
 
 }

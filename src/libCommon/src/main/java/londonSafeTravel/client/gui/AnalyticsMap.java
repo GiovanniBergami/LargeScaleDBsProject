@@ -113,7 +113,7 @@ public class AnalyticsMap {
     public static void main(String[] args) throws Exception {
         JFrame frame = new JFrame("AnalyticsMap");
         frame.setContentPane(new AnalyticsMap().mainPanel);
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         frame.pack();
         frame.setVisible(true);
     }
