@@ -12,8 +12,34 @@ import java.util.List;
 import java.util.Map;
 
 public class HeatmapPainter extends AbstractPainter<JXMapViewer> {
-    private static class HeatmapKey {
+    private long dimLat;
+    private long dimLon;
+    private long max;
+
+    public HeatmapPainter(long dimLat, long dimLon) {
+        this.dimLat = dimLat;
+        this.dimLon = dimLon;
+    }
+
+    public long getDimLat() {
+        return dimLat;
+    }
+
+    public void setDimLat(long dimLat) {
+        this.dimLat = dimLat;
+    }
+
+    public long getDimLon() {
+        return dimLon;
+    }
+
+    public void setDimLon(long dimLon) {
+        this.dimLon = dimLon;
+    }
+
+    private class HeatmapKey {
         public long latitude; public long longitude;
+
 
         public HeatmapKey(long latitude, long longitude) {
             this.latitude = latitude;
@@ -21,8 +47,8 @@ public class HeatmapPainter extends AbstractPainter<JXMapViewer> {
         }
 
         public HeatmapKey(double latitude, double longitude) {
-            this.latitude = ((long) (latitude * 1000)) ;
-            this.longitude = (((long) (longitude * 1000)) / 5) * 5;
+            this.latitude = (((long) (latitude * 1000))/dimLat) * dimLat ;
+            this.longitude = (((long) (longitude * 1000)) / dimLon) * dimLon;
         }
 
         @Override
@@ -74,9 +100,9 @@ public class HeatmapPainter extends AbstractPainter<JXMapViewer> {
         Rectangle viewportBounds = map.getViewportBounds();
         g.translate(-viewportBounds.getX(), -viewportBounds.getY());
 
-        for(long latitude = MIN_LAT; latitude <= MAX_LAT; latitude += 1)
-            for(long longitude = MIN_LON; longitude <= MAX_LON; longitude += 5){
-                final double denominator = 3;
+        for(long latitude = MIN_LAT; latitude <= MAX_LAT; latitude += dimLat)
+            for(long longitude = MIN_LON; longitude <= MAX_LON; longitude += dimLon){
+                final double denominator = (double) max;
                 double numerator = 0;
 
                 var cell = heatmap.get(new HeatmapKey(latitude, longitude));
@@ -85,7 +111,7 @@ public class HeatmapPainter extends AbstractPainter<JXMapViewer> {
 
                 double percentage = numerator / denominator;
                 var col = percentageToColor(percentage);
-                System.out.println(latitude + "\t" + longitude + "\t" + percentage);
+
 
                 g.setBackground(col);
                 g.setColor(col);
@@ -93,7 +119,7 @@ public class HeatmapPainter extends AbstractPainter<JXMapViewer> {
                         new GeoPosition(latitude / 1000.0, longitude / 1000.0),
                         map.getZoom());
                 var test2 = map.getTileFactory().geoToPixel(
-                        new GeoPosition(latitude / 1000.0 + 0.001, longitude / 1000.0 + 0.005),
+                        new GeoPosition((latitude + dimLat )/1000.0, (longitude + dimLon) / 1000.0),
                         map.getZoom());
                 g.fillRect(
                         (int) test.getX(), (int) test.getY(),
@@ -108,12 +134,10 @@ public class HeatmapPainter extends AbstractPainter<JXMapViewer> {
 
     public void setHeatmap(List<HeatmapComputation> h) {
         heatmap.clear();
-
+        max=0;
         h.forEach(cell -> {
             var key = new HeatmapKey(cell.latitude, cell.longitude);
-            if(cell.count >= 8)
-                System.out.println(key + "\t" + cell.count);
-
+            max = Math.max(max, cell.count);
             heatmap.put(key, cell);
         });
     }

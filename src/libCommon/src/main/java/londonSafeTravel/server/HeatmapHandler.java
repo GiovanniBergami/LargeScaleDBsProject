@@ -15,12 +15,13 @@ public class HeatmapHandler implements HttpHandler {
     @Override
     public void handle(HttpExchange exchange) throws IOException {
         var uriParsed = new URIBuilder(exchange.getRequestURI());
-
+        long lenLat = Long.parseLong(uriParsed.getFirstQueryParam("lenLat").getValue());
+        long lenLon = Long.parseLong(uriParsed.getFirstQueryParam("lenLon").getValue());
         // @TODO sort this crap out
         StringBuilder jsonBuilder = new StringBuilder("[");
 
         for(var heatcell : heatmapDAO.queryHeatmap(
-                0.001, 0.005, uriParsed.getFirstQueryParam("class").getValue())) {
+                lenLat/1000.0, lenLon/1000.0, uriParsed.getFirstQueryParam("class").getValue())) {
             jsonBuilder.append(heatcell.toJson()).append(",");
         }
 
