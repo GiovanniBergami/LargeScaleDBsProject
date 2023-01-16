@@ -1,5 +1,6 @@
 package londonSafeTravel.client.gui;
 
+import londonSafeTravel.schema.Location;
 import org.jxmapviewer.JXMapViewer;
 import org.jxmapviewer.painter.AbstractPainter;
 import org.jxmapviewer.painter.Painter;
@@ -20,9 +21,47 @@ public class GlobalPainter extends AbstractPainter<JXMapViewer> {
 
     private final DefaultWaypointRenderer renderer =  new DefaultWaypointRenderer();
     private final Set<DisruptionWaypoint> disruptions = new HashSet<>();
+
+    private final int MINIMUM_ZOOM_LEVEL = 4;
+
+    private int oldZoom = -1;
     @Override
     public void doPaint(Graphics2D g, JXMapViewer map, int width, int height) {
         Rectangle viewportBounds = map.getViewportBounds();
+
+        int newZoom = map.getZoom();
+        if(newZoom != oldZoom) {
+            oldZoom = newZoom;
+
+
+
+            // POI
+
+            //long minLat, maxLat, minLon, maxLon;
+
+            GeoPosition pointTopLeft;
+            GeoPosition pointBottomRight;
+
+            Point2D topLeft = map.getLocation();
+            topLeft.setLocation(
+                    topLeft.getX() + viewportBounds.getX(),
+                    topLeft.getY() + viewportBounds.getY());
+
+            Point2D bottomRight = map.getLocation();
+            bottomRight.setLocation(
+                    bottomRight.getX() + viewportBounds.getX() + viewportBounds.getWidth(),
+                    bottomRight.getY() + viewportBounds.getY() + viewportBounds.getHeight());
+
+            pointTopLeft = map.getTileFactory().pixelToGeo(topLeft,newZoom);
+            pointBottomRight = map.getTileFactory().pixelToGeo(bottomRight,newZoom);
+
+            System.out.println("PointTopLeft:"+pointTopLeft + "\tand pointBottomRight: "+ pointBottomRight);
+
+            Location tl = new Location(pointTopLeft.getLatitude(), pointTopLeft.getLongitude());
+            Location br = new Location(pointBottomRight.getLatitude(), pointBottomRight.getLongitude());
+            System.out.println(tl.metricNorm(br) + "\t" + newZoom);
+
+        }
 
         g.translate(-viewportBounds.getX(), -viewportBounds.getY());
 
