@@ -14,6 +14,7 @@ public class Server {
         server.createContext("/query.json", new QueryPointHandler());
         server.createContext("/route.json", new RoutingHandler());
         server.createContext("/disruptions.json", new QueryDisruptionHandler());
+        server.createContext("/heatmap.json", new HeatmapHandler());
         
         server.setExecutor(threadPoolExecutor);
         server.start();
