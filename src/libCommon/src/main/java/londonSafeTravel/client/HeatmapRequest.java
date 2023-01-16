@@ -17,9 +17,11 @@ import java.util.List;
 public class HeatmapRequest {
 
     private final List<HeatmapComputation> heatmap;
-    public HeatmapRequest(String hostname, String disruptionClass) throws Exception {
+    public HeatmapRequest(String hostname, String disruptionClass, long lenLat, long lenLon) throws Exception {
+        disruptionClass=disruptionClass.replace(" ", "%20");
         HttpURLConnection con = (HttpURLConnection) new URL(
-                "http://" + hostname + "/heatmap.json?class=" + disruptionClass
+                "http://" + hostname + "/heatmap.json?class=" + disruptionClass +"&lenLat=" + lenLat
+                        + "&lenLon=" + lenLon
         ).openConnection();
 
         con.setRequestProperty("User-Agent", "Mozilla/5.0");

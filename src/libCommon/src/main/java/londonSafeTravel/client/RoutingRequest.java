@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import londonSafeTravel.driver.tims.RoadDisruptionUpdate;
 import londonSafeTravel.schema.graph.Point;
+import londonSafeTravel.schema.graph.RoutingHop;
 import org.jxmapviewer.viewer.GeoPosition;
 
 import java.io.BufferedReader;
@@ -17,7 +18,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class RoutingRequest {
-    List<Point> route;
+    List<RoutingHop> route;
 
     public RoutingRequest(String hostname, long start, long end, String type) throws Exception {
         HttpURLConnection con = (HttpURLConnection) new URL(
@@ -38,20 +39,20 @@ public class RoutingRequest {
         BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
         StringBuffer content = new StringBuffer();
 
-        Type collectionType = new TypeToken<ArrayList<Point>>() {
+        Type collectionType = new TypeToken<ArrayList<RoutingHop>>() {
         }.getType();
 
         route = new Gson().fromJson(in, collectionType);
     }
 
-    public List<Point> getRoute() {
+    public List<RoutingHop> getRoute() {
         return route;
     }
 
     public List<GeoPosition> getRouteGeo() {
         return route.stream()
-                .map(point -> new GeoPosition(
-                        point.location.getLatitude(), point.location.getLongitude())
+                .map(hop -> new GeoPosition(
+                        hop.point.location.getLatitude(), hop.point.location.getLongitude())
                 )
                 .collect(Collectors.toList());
     }
