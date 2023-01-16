@@ -4,6 +4,7 @@ import londonSafeTravel.client.DisruptionsRequest;
 import londonSafeTravel.client.QueryPointRequest;
 import londonSafeTravel.client.RoutingRequest;
 import londonSafeTravel.schema.graph.Disruption;
+import londonSafeTravel.schema.graph.RoutingHop;
 import org.jxmapviewer.JXMapViewer;
 import org.jxmapviewer.OSMTileFactoryInfo;
 import org.jxmapviewer.input.CenterMapListener;
@@ -35,6 +36,8 @@ public class MainApp {
     private JRadioButton foot;
     private JRadioButton bicycle;
     private JRadioButton motorVehicles;
+    private JPanel routingPanel;
+    private JLabel routingTime;
 
     private GlobalPainter globalPainter;
 
@@ -113,11 +116,13 @@ public class MainApp {
 
                     // Create a track from the geo-positions
                     try {
-                        List<GeoPosition> track = new RoutingRequest(
+                        RoutingRequest routeReq =new RoutingRequest(
                                 "localhost:8080", start.getId(), end.getId(), getSelectedMode()
-                        ).getRouteGeo();
+                        );
+                        List<GeoPosition> track = routeReq.getRouteGeo();
 
                         System.out.println("Routing completed " + track.size() + " hops!");
+                        routingTime.setText(Double.toString(routeReq.getRoute().get(routeReq.getRoute().size() - 1).time / 60.0));
 
                         // Set the focus
                         mapViewer.zoomToBestFit(new HashSet<>(track), 0.7);

@@ -3,6 +3,7 @@ package londonSafeTravel.dbms.graph;
 import londonSafeTravel.schema.document.ManageDisruption;
 import londonSafeTravel.schema.document.PointOfInterestDAO;
 import londonSafeTravel.schema.graph.Point;
+import londonSafeTravel.schema.graph.RoutingHop;
 import org.neo4j.driver.*;
 
 import java.util.ArrayList;
@@ -70,33 +71,43 @@ public class ManageRouting {
     private final Query ROUTE_1_QUERY = new Query("""
 MATCH (s:Point{id: $start})
 MATCH (e:Point{id: $end})
-CALL londonSafeTravel.route(s, e, $type, 70.0)
+CALL londonSafeTravel.route(s, e, $type, $maxspeed)
 YIELD index, node, time
 RETURN index, node AS waypoint, time
 ORDER BY index DESCENDING
 """);
 
-    public List<Point> route1(long start, long end, String type)
+    public List<RoutingHop> route1(long start, long end, String type)
     {
-        if(Objects.equals(type, "car"))
+        double maxspeed = 10.0;
+        if(Objects.equals(type, "car")) {
             type = "crossTimeMotorVehicle";
-        else if( Objects.equals(type, "bicycle"))
+            maxspeed=70.0;
+        }
+        else if( Objects.equals(type, "bicycle")) {
             type = "crossTimeBicycle";
-        else if(Objects.equals(type, "foot"))
+            maxspeed = 15;
+        }
+        else if(Objects.equals(type, "foot")) {
             type = "crossTimeFoot";
+            maxspeed=4;
+        }
 
         try(var session = driver.session()){
-            List<Point> hops = new ArrayList<>();
+            List<RoutingHop> hops = new ArrayList<>();
             var res = session.run(ROUTE_1_QUERY.withParameters(parameters(
                     "start", start,
                     "end", end,
-                    "type", type
+                    "type", type,
+                    "maxspeed", maxspeed
             )));
             res.forEachRemaining(record -> {
-                hops.add(new Point(
-                        record.get("waypoint").get("id").asLong(),
-                        record.get("waypoint").get("coord").asPoint().y(),
-                        record.get("waypoint").get("coord").asPoint().x()
+                hops.add(new RoutingHop(
+                        new Point(
+                            record.get("waypoint").get("id").asLong(),
+                            record.get("waypoint").get("coord").asPoint().y(),
+                            record.get("waypoint").get("coord").asPoint().x()
+                        ), record.get("time").asDouble()
                 ));
             });
             return hops;
@@ -148,7 +159,7 @@ ORDER BY index DESCENDING
         System.out.println(test.nearestNode(0,0));
 
         test.route1(4835478720L, 389139L, "car").forEach(hop -> {
-            System.out.println("id " + hop);
+            System.out.println("id " + hop.point);
         });
     }
 }
