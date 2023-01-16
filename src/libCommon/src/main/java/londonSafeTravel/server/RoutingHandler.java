@@ -26,7 +26,7 @@ public class RoutingHandler implements HttpHandler {
 
         // @TODO Handle errors here
         System.out.println(start + "\t" + end);
-        var route = manageRouting.route(start, end, type);
+        var route = manageRouting.route1(start, end, type);
         String json = new Gson().toJson(route);
 
         exchange.getResponseHeaders().set("Content-Type", "application/json");

@@ -65,6 +65,42 @@ public class ManageRouting {
         }
     }
 
+    private final Query ROUTE_1_QUERY = new Query("""
+MATCH (s:Point{id: $start})
+MATCH (e:Point{id: $end})
+CALL londonSafeTravel.route(s, e, $type, 70.0)
+YIELD index, node, time
+RETURN index, node AS waypoint, time
+ORDER BY index DESCENDING
+""");
+
+    public List<Point> route1(long start, long end, String type)
+    {
+        if(Objects.equals(type, "car"))
+            type = "crossTimeMotorVehicle";
+        else if( Objects.equals(type, "bicycle"))
+            type = "crossTimeBicycle";
+        else if(Objects.equals(type, "foot"))
+            type = "crossTimeFoot";
+
+        try(var session = driver.session()){
+            List<Point> hops = new ArrayList<>();
+            var res = session.run(ROUTE_1_QUERY.withParameters(parameters(
+                    "start", start,
+                    "end", end,
+                    "type", type
+            )));
+            res.forEachRemaining(record -> {
+                hops.add(new Point(
+                        record.get("waypoint").get("id").asLong(),
+                        record.get("waypoint").get("coord").asPoint().y(),
+                        record.get("waypoint").get("coord").asPoint().x()
+                ));
+            });
+            return hops;
+        }
+    }
+
     //Inserisco una query per trovare il nodo più vicino ad un dato punto. Utile quando l'utente clicca sulla mappa
     //e vogliamo stabilire nodo di partenza e di arrivo.
     private final Query NEAREST_NODE = new Query(
@@ -109,7 +145,7 @@ public class ManageRouting {
 
         System.out.println(test.nearestNode(0,0));
 
-        test.route(4835478720L, 389139L, "car").forEach(hop -> {
+        test.route1(4835478720L, 389139L, "car").forEach(hop -> {
             System.out.println("id " + hop);
         });
     }
