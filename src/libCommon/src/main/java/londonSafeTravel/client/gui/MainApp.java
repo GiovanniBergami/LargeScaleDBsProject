@@ -35,8 +35,10 @@ public class MainApp {
     private JRadioButton foot;
     private JRadioButton bicycle;
     private JRadioButton motorVehicles;
+    private JButton adminButton;
 
     private GlobalPainter globalPainter;
+
 
     private String getSelectedMode() {
         String type="";
@@ -51,6 +53,9 @@ public class MainApp {
     }
 
     public MainApp() {
+
+
+
         // Create a TileFactoryInfo for OpenStreetMap
         TileFactoryInfo info = new OSMTileFactoryInfo();
         DefaultTileFactory tileFactory = new DefaultTileFactory(info);
@@ -243,6 +248,19 @@ public class MainApp {
                 mapViewer.addMouseMotionListener(mouseListener);
             }
         });
+
+        adminButton.addActionListener(
+                new ActionListener() {
+                    public void actionPerformed(ActionEvent e) {
+                        var dialog = new AdministrationDialog();
+                        //@todo dimensions and default position!
+                        dialog.setVisible(true);
+
+                    }
+                }
+
+        );
+
     }
 
     public static void main(String[] args) {
@@ -250,6 +268,7 @@ public class MainApp {
         frame.setContentPane(new MainApp().rootPanel);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.pack();
+        frame.setLocationRelativeTo(null);
         frame.setVisible(true);
     }
 }
