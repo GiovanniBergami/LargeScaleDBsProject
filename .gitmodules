@@ -1,0 +1,3 @@
+[submodule "routingNeo4jProcedure"]
+	path = routingNeo4jProcedure
+	url = https://github.com/scarburato/neo4jpoormensAstar

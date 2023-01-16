@@ -19,10 +19,14 @@ public class RoutingHandler implements HttpHandler {
 
         long start = Long.parseLong(uriParsed.getFirstQueryParam("start").getValue());
         long end = Long.parseLong(uriParsed.getFirstQueryParam("end").getValue());
+        String type = uriParsed.getFirstQueryParam("type") != null ?
+                uriParsed.getFirstQueryParam("type").getValue() : "car";
+
+        System.out.println(uriParsed.getFirstQueryParam("type"));
 
         // @TODO Handle errors here
         System.out.println(start + "\t" + end);
-        var route = manageRouting.route(start, end);
+        var route = manageRouting.route1(start, end, type);
         String json = new Gson().toJson(route);
 
         exchange.getResponseHeaders().set("Content-Type", "application/json");

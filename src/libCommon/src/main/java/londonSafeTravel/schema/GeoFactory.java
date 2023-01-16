@@ -1,6 +1,7 @@
 package londonSafeTravel.schema;
 
 import com.mongodb.client.model.geojson.*;
+import org.neo4j.driver.types.Point;
 
 import java.lang.reflect.Array;
 import java.util.*;
@@ -8,6 +9,9 @@ import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 public class GeoFactory {
+    public static Location fromNeo4j(Point p) {
+        return new Location(p.y(), p.x());
+    }
 
     public static Location fromFilosgangaToLocation(com.github.filosganga.geogson.model.Point p) {
         return new Location(p.lat(), p.lon());

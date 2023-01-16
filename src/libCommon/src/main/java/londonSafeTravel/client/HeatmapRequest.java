@@ -2,8 +2,9 @@ package londonSafeTravel.client;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import londonSafeTravel.schema.document.HeatmapComputation;
+import londonSafeTravel.schema.graph.Disruption;
 import londonSafeTravel.schema.graph.Point;
-import org.jxmapviewer.viewer.GeoPosition;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -11,17 +12,16 @@ import java.lang.reflect.Type;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.List;
 
-public class QueryPointRequest {
-    public Point getPoint() {
-        return point;
-    }
+public class HeatmapRequest {
 
-    private Point point;
-
-    public QueryPointRequest(String hostname, double latitude, double longitude, String type) throws Exception {
+    private final List<HeatmapComputation> heatmap;
+    public HeatmapRequest(String hostname, String disruptionClass, long lenLat, long lenLon) throws Exception {
+        disruptionClass=disruptionClass.replace(" ", "%20");
         HttpURLConnection con = (HttpURLConnection) new URL(
-                "http://" + hostname + "/query.json?latitude=" + latitude + "&longitude=" + longitude +"&type="+type
+                "http://" + hostname + "/heatmap.json?class=" + disruptionClass +"&lenLat=" + lenLat
+                        + "&lenLon=" + lenLon
         ).openConnection();
 
         con.setRequestProperty("User-Agent", "Mozilla/5.0");
@@ -32,19 +32,17 @@ public class QueryPointRequest {
         con.connect();
 
         int status = con.getResponseCode();
-        if(status != 200)
+        if (status != 200)
             throw new Exception("errore " + status);
 
         BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
-        StringBuffer content = new StringBuffer();
 
-        point = new Gson().fromJson(in, Point.class);
+        Type collectionType = new TypeToken<ArrayList<HeatmapComputation>>() {
+        }.getType();
+        heatmap = new Gson().fromJson(in, collectionType);
     }
 
-    GeoPosition getPosition(){
-        return new GeoPosition(
-                point.location.getLatitude(),
-                point.location.getLongitude()
-        );
+    public List<HeatmapComputation> heatmap() {
+        return heatmap;
     }
 }

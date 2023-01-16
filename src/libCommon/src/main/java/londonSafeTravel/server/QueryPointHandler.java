@@ -12,10 +12,12 @@ import java.net.URLEncoder;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
+import java.util.Objects;
 
 import londonSafeTravel.schema.graph.Point;
 import org.apache.hc.client5.http.utils.URIUtils;
 import org.apache.hc.core5.http.NameValuePair;
+import org.apache.hc.core5.net.URIBuilder;
 import org.apache.hc.core5.net.URLEncodedUtils;
 
 class QueryPointHandler implements HttpHandler {
@@ -33,18 +35,14 @@ class QueryPointHandler implements HttpHandler {
             return;
         }
 
-        List<NameValuePair> params = URLEncodedUtils.parse(exchange.getRequestURI(), StandardCharsets.UTF_8);
-        double lat = 0;
-        double lon = 0;
+        var uriParsed = new URIBuilder(exchange.getRequestURI());
 
-        for(var pair : params) {
-            if(pair.getName().equals("latitude"))
-                lat = Double.parseDouble(pair.getValue());
-            else if(pair.getName().equals("longitude"))
-                lon = Double.parseDouble(pair.getValue());
-        }
+        double lat = Double.parseDouble(uriParsed.getFirstQueryParam("latitude").getValue());
+        double lon = Double.parseDouble(uriParsed.getFirstQueryParam("longitude").getValue());
+        String type = uriParsed.getFirstQueryParam("type") != null ?
+                uriParsed.getFirstQueryParam("type").getValue() : "car";
 
-        Point target = manageRouting.nearestNode(lat, lon);
+        Point target = manageRouting.nearestNode(lat, lon, type);
         String json = new Gson().toJson(target);
 
         exchange.getResponseHeaders().set("Content-Type", "application/json");

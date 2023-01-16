@@ -2,8 +2,7 @@ package londonSafeTravel.client;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import londonSafeTravel.schema.graph.Point;
-import org.jxmapviewer.viewer.GeoPosition;
+import londonSafeTravel.schema.graph.Disruption;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -12,17 +11,12 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 
-public class QueryPointRequest {
-    public Point getPoint() {
-        return point;
-    }
+public class DisruptionsRequest {
+    private ArrayList<Disruption> disruptions;
 
-    private Point point;
-
-    public QueryPointRequest(String hostname, double latitude, double longitude, String type) throws Exception {
+    public DisruptionsRequest(String hostname) throws Exception {
         HttpURLConnection con = (HttpURLConnection) new URL(
-                "http://" + hostname + "/query.json?latitude=" + latitude + "&longitude=" + longitude +"&type="+type
-        ).openConnection();
+                "http://" + hostname + "/disruptions.json").openConnection();
 
         con.setRequestProperty("User-Agent", "Mozilla/5.0");
         con.setRequestMethod("GET");
@@ -37,14 +31,14 @@ public class QueryPointRequest {
 
         BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
         StringBuffer content = new StringBuffer();
+        Type collectionType = new TypeToken<ArrayList<Disruption>>() {
+        }.getType();
 
-        point = new Gson().fromJson(in, Point.class);
+        disruptions = new Gson().fromJson(in, collectionType);
     }
 
-    GeoPosition getPosition(){
-        return new GeoPosition(
-                point.location.getLatitude(),
-                point.location.getLongitude()
-        );
+    public ArrayList<Disruption> getDisruptions() {
+        return disruptions;
     }
+
 }
