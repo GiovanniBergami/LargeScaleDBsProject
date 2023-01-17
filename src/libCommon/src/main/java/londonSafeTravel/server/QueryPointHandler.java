@@ -6,23 +6,18 @@ import com.sun.net.httpserver.HttpHandler;
 import londonSafeTravel.dbms.graph.ManageRouting;
 
 import java.io.IOException;
-import java.net.URI;
-import java.net.URLDecoder;
-import java.net.URLEncoder;
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
-import java.util.List;
-import java.util.Objects;
 
 import londonSafeTravel.schema.graph.Point;
-import org.apache.hc.client5.http.utils.URIUtils;
-import org.apache.hc.core5.http.NameValuePair;
 import org.apache.hc.core5.net.URIBuilder;
-import org.apache.hc.core5.net.URLEncodedUtils;
+import org.neo4j.driver.Driver;
 
 class QueryPointHandler implements HttpHandler {
 
     ManageRouting manageRouting;
+
+    public QueryPointHandler(Driver driver) {
+        manageRouting = new ManageRouting(driver);
+    }
     public QueryPointHandler() {
         manageRouting = new ManageRouting("neo4j://localhost:7687", "neo4j", "pass");
     }
