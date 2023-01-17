@@ -62,6 +62,12 @@
               <text value="Refresh"/>
             </properties>
           </component>
+          <component id="54187" class="javax.swing.JButton" binding="adminButton">
+            <constraints/>
+            <properties>
+              <text value="Admin"/>
+            </properties>
+          </component>
         </children>
       </toolbar>
       <component id="9463c" class="javax.swing.JCheckBox" binding="showDisruptionsCheckBox" default-binding="true">

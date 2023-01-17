@@ -8,12 +8,12 @@ import com.mongodb.client.model.geojson.Polygon;
 import com.mongodb.client.model.geojson.Position;
 import londonSafeTravel.schema.document.ConnectionMongoDB;
 import londonSafeTravel.schema.document.poi.PointOfInterest;
-import org.bson.Document;
 import org.bson.conversions.Bson;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 
 
 import static com.mongodb.client.model.Filters.geoWithin;
@@ -41,9 +41,9 @@ public class PointOfInterestDAO {
     {
         PointOfInterestDAO poiDAO = new PointOfInterestDAO(new ConnectionMongoDB());
 
-        poiDAO.query1(-1, 100, -1, 90).forEach(d -> {
-            System.out.println(d.name);
-        });
+        var res = poiDAO.selectPOIsInArea(0, 10, -90, 90);
+
+        System.out.println(res.size());
     }
 
     public void insert(PointOfInterest poi) {
@@ -51,8 +51,11 @@ public class PointOfInterestDAO {
     }
 
 
-    public Collection<PointOfInterest> query1(double minLong, double maxLong, double minLat, double maxLat)
+    public List<PointOfInterest> selectPOIsInArea(double minLong, double maxLong, double minLat, double maxLat)
     {
+        assert (minLong < maxLong);
+        assert (minLat < maxLat);
+
         Polygon region = new Polygon(Arrays.asList(
                 new Position(minLong, minLat),
                 new Position(maxLong, minLat),

@@ -33,7 +33,7 @@ public class HeatmapHandler implements HttpHandler {
         String json = jsonBuilder.toString();
 
         exchange.getResponseHeaders().set("Content-Type", "application/json");
-        exchange.sendResponseHeaders(200, json.length());
+        exchange.sendResponseHeaders(200, json.getBytes().length);
 
         exchange.getResponseBody().write(json.getBytes());
         exchange.getResponseBody().flush();

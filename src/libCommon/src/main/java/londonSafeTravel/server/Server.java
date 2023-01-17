@@ -25,6 +25,7 @@ public class Server {
         server.createContext("/route.json", new RoutingHandler(neo4j));
         server.createContext("/disruptions.json", new QueryDisruptionHandler(neo4j));
         server.createContext("/heatmap.json", new HeatmapHandler());
+        server.createContext("/queryPOI.json", new POIHandler());
         
         server.setExecutor(threadPoolExecutor);
         server.start();

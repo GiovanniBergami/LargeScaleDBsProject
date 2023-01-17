@@ -84,6 +84,7 @@ public class ManageDisruption {
 
     private static final Query FIND_ACTIVE_DISRUPTIONS = new Query("MATCH(d: Disruption) RETURN d");
 
+
     public List<Disruption> findDisruption() {
         ArrayList<Disruption> disruptions= new ArrayList<>();
         try (Session session = driver.session()) {

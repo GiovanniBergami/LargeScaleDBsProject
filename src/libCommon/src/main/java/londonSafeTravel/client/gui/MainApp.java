@@ -4,7 +4,6 @@ import londonSafeTravel.client.DisruptionsRequest;
 import londonSafeTravel.client.QueryPointRequest;
 import londonSafeTravel.client.RoutingRequest;
 import londonSafeTravel.schema.graph.Disruption;
-import londonSafeTravel.schema.graph.RoutingHop;
 import org.jxmapviewer.JXMapViewer;
 import org.jxmapviewer.OSMTileFactoryInfo;
 import org.jxmapviewer.input.CenterMapListener;
@@ -17,6 +16,7 @@ import javax.swing.*;
 import javax.swing.event.MouseInputListener;
 import java.awt.*;
 import java.awt.event.*;
+import java.awt.geom.Point2D;
 import java.util.*;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -38,6 +38,7 @@ public class MainApp {
     private JRadioButton motorVehicles;
     private JPanel routingPanel;
     private JLabel routingTime;
+    private JButton adminButton;
 
     private GlobalPainter globalPainter;
 
@@ -248,6 +249,19 @@ public class MainApp {
                 mapViewer.addMouseMotionListener(mouseListener);
             }
         });
+
+        adminButton.addActionListener(
+                new ActionListener() {
+                    public void actionPerformed(ActionEvent e) {
+                        var dialog = new AdministrationDialog();
+                        //@todo dimensions and default position!
+                        dialog.setVisible(true);
+
+                    }
+                }
+
+        );
+
     }
 
     public static void main(String[] args) {
@@ -255,6 +269,7 @@ public class MainApp {
         frame.setContentPane(new MainApp().rootPanel);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.pack();
+        frame.setLocationRelativeTo(null);
         frame.setVisible(true);
     }
 }
