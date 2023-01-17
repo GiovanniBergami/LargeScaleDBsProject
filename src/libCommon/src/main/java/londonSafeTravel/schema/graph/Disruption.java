@@ -2,6 +2,8 @@ package londonSafeTravel.schema.graph;
 
 import londonSafeTravel.schema.Location;
 
+import java.util.Date;
+
 public class Disruption {
     public Location centrum;
     public String id;
@@ -11,7 +13,9 @@ public class Disruption {
 
     public String category;
     public String subCategory;
-    public String location;
-    public String levelOfInterest;
+
     public String comment;
+
+    public String update;
+    public Date updateTime;
 }
