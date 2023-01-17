@@ -20,7 +20,7 @@ public class QueryDisruptionHandler implements HttpHandler {
         String json = new Gson().toJson(disruptions);
 
         exchange.getResponseHeaders().set("Content-Type", "application/json");
-        exchange.sendResponseHeaders(200, json.length());
+        exchange.sendResponseHeaders(200, json.getBytes().length);
 
         exchange.getResponseBody().write(json.getBytes());
         exchange.getResponseBody().flush();
