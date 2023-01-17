@@ -100,6 +100,7 @@ public class HeatmapPainter extends AbstractPainter<JXMapViewer> {
         Rectangle viewportBounds = map.getViewportBounds();
         g.translate(-viewportBounds.getX(), -viewportBounds.getY());
 
+
         for(long latitude = MIN_LAT; latitude <= MAX_LAT; latitude += dimLat)
             for(long longitude = MIN_LON; longitude <= MAX_LON; longitude += dimLon){
                 final double denominator = (double) max;

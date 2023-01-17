@@ -29,6 +29,7 @@ public class AnalyticsMap {
     private String selectedClass = "Infrastructure Issue";
 
     private JComboBox<String> classDisruption;
+    private JButton button1;
 
     private void updateHeatmap(String selectedClass, int size) {
         try {
