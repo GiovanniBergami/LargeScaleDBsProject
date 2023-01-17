@@ -13,6 +13,7 @@ public class DisruptionDialog extends JDialog {
     private JFormattedTextField severityTextField1;
     private JTextField categoryTextField;
     private JLabel categorField;
+    private JTextArea commentTextField;
     private JButton buttonCancel;
 
     Disruption disruption;
@@ -28,6 +29,8 @@ public class DisruptionDialog extends JDialog {
         disruptionID.setText(disruption.id);
         severityTextField1.setText(disruption.severity);
         categoryTextField.setText(disruption.category);
+        commentTextField.setText(disruption.comment);
+        commentTextField.setLineWrap(true);
 
         buttonOK.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -56,4 +59,7 @@ public class DisruptionDialog extends JDialog {
         dispose();
     }
 
+    private void createUIComponents() {
+        // TODO: place custom component creation code here
+    }
 }
