@@ -11,6 +11,8 @@ public class DisruptionDialog extends JDialog {
     private JButton buttonOK;
     private JLabel disruptionID;
     private JFormattedTextField severityTextField1;
+    private JTextField categoryTextField;
+    private JLabel categorField;
     private JButton buttonCancel;
 
     Disruption disruption;
@@ -25,6 +27,7 @@ public class DisruptionDialog extends JDialog {
 
         disruptionID.setText(disruption.id);
         severityTextField1.setText(disruption.severity);
+        categoryTextField.setText(disruption.category);
 
         buttonOK.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
