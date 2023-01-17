@@ -4,6 +4,7 @@ import londonSafeTravel.schema.GeoFactory;
 import londonSafeTravel.schema.graph.Disruption;
 import org.neo4j.driver.*;
 
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -59,7 +60,9 @@ public class ManageDisruption {
                         "subcategory", disruption.subCategory,
                         "comment", disruption.comment,
                         "update", disruption.update,
-                        "updateTime", disruption.updateTime
+                        "updateTime", disruption.updateTime.toInstant()
+                            .atZone(ZoneId.systemDefault())
+                            .toLocalDateTime()
                 ));
                 transactionContext.run(q);
             });

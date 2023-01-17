@@ -176,7 +176,10 @@ public class RoadDisruptionUpdate {
     public static void main(String[] argv) throws Exception {
         // Open connections to DBs
         manageDisruptionDocument = new ManageDisruption();
-        manageDisruptionGraph = new londonSafeTravel.dbms.graph.ManageDisruption("neo4j://localhost:7687", "neo4j", "pass");
+        manageDisruptionGraph = new londonSafeTravel.dbms.graph.ManageDisruption(
+                "bolt://172.16.5.47:7687",
+                "neo4j",
+                "password");
 
         ProcessResult state;
 
