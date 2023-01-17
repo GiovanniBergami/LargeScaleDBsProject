@@ -177,7 +177,7 @@ public class RoadDisruptionUpdate {
         // Open connections to DBs
         manageDisruptionDocument = new ManageDisruption();
         manageDisruptionGraph = new londonSafeTravel.dbms.graph.ManageDisruption(
-                "bolt://172.16.5.47:7687",
+                "bolt://localhost:7687",
                 "neo4j",
                 "password");
 
