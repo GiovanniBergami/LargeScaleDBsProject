@@ -121,7 +121,8 @@ public class POIFactory {
 
         HashMap<Long, Location> map = new HashMap<>();
 
-        PointOfInterestDAO poiDAO = new PointOfInterestDAO(new ConnectionMongoDB());
+        ConnectionMongoDB mongoc = new ConnectionMongoDB("mongodb://172.16.5.47:27017");
+        PointOfInterestDAO poiDAO = new PointOfInterestDAO(mongoc);
 
         for (r.next(); r.hasNext(); r.next()) {
             if (!r.isStartElement())
