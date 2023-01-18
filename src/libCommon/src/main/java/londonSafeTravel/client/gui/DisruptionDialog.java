@@ -14,6 +14,8 @@ public class DisruptionDialog extends JDialog {
     private JTextField categoryTextField;
     private JLabel categorField;
     private JTextArea commentTextField;
+    private JTextArea updateTextArea;
+    private JTextField updateDateTime;
     private JButton buttonCancel;
 
     Disruption disruption;
@@ -31,6 +33,10 @@ public class DisruptionDialog extends JDialog {
         categoryTextField.setText(disruption.category);
         commentTextField.setText(disruption.comment);
         commentTextField.setLineWrap(true);
+        updateTextArea.setText(disruption.update);
+        updateTextArea.setLineWrap(true);
+        updateDateTime.setText(disruption.updateTime.toString());
+
 
         buttonOK.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
