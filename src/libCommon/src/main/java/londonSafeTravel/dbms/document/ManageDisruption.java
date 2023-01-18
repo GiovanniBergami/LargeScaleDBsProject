@@ -1,19 +1,25 @@
-package londonSafeTravel.schema.document;
+package londonSafeTravel.dbms.document;
 
 import com.mongodb.MongoException;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
-import londonSafeTravel.driver.tims.RoadDisruptionUpdate;
+import londonSafeTravel.schema.document.Disruption;
 
 
 import static com.mongodb.client.model.Filters.*;
 
 
 public class ManageDisruption {
+    private final MongoCollection<Disruption> collection;
 
-    private ConnectionMongoDB connection = new ConnectionMongoDB();
-    private MongoDatabase db = connection.giveDB();
-    private MongoCollection<Disruption> collection = db.getCollection("Disruption", Disruption.class);
+    public ManageDisruption() {
+        this(new ConnectionMongoDB());
+    }
+
+    public ManageDisruption(ConnectionMongoDB connection){
+        MongoDatabase db = connection.giveDB();
+        this.collection = db.getCollection("Disruption", Disruption.class);
+    }
 
     /**
      * IL metodo get deve restituire una disruption dato un id in ingresso
@@ -22,8 +28,6 @@ public class ManageDisruption {
      * @return a disruption or null if not exists
      *
     */
-
-
     public Disruption get(String id) {
         return collection.find(eq("id", id)).first();
     }

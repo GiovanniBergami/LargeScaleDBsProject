@@ -2,7 +2,8 @@ package londonSafeTravel.server;
 
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
-import londonSafeTravel.schema.document.DisruptionDAO;
+import londonSafeTravel.dbms.document.ConnectionMongoDB;
+import londonSafeTravel.dbms.document.DisruptionDAO;
 import org.apache.hc.core5.net.URIBuilder;
 
 import java.io.IOException;
@@ -12,6 +13,11 @@ public class HeatmapHandler implements HttpHandler {
     public HeatmapHandler() {
         heatmapDAO = new DisruptionDAO();
     }
+
+    public HeatmapHandler(ConnectionMongoDB connection) {
+        heatmapDAO = new DisruptionDAO(connection);
+    }
+
     @Override
     public void handle(HttpExchange exchange) throws IOException {
         var uriParsed = new URIBuilder(exchange.getRequestURI());

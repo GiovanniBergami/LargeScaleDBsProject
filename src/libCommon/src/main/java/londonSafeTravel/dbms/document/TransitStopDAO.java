@@ -1,4 +1,4 @@
-package londonSafeTravel.schema.document;
+package londonSafeTravel.dbms.document;
 
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
@@ -6,7 +6,6 @@ import com.mongodb.client.model.Accumulators;
 import com.mongodb.client.model.Aggregates;
 import com.mongodb.client.model.Sorts;
 
-import londonSafeTravel.dbms.document.PointOfInterestDAO;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 
@@ -23,8 +22,8 @@ import static com.mongodb.client.model.Aggregates.*;
 
 public class TransitStopDAO extends PointOfInterestDAO {
 
-    private MongoDatabase db = super.connection.giveDB();
-    private MongoCollection collection = db.getCollection("TransitStop");
+    private final MongoDatabase db = super.connection.giveDB();
+    private final MongoCollection<Document> collection = db.getCollection("TransitStop", Document.class);
 
     public TransitStopDAO(ConnectionMongoDB connection) {
         super(connection);
@@ -56,7 +55,7 @@ public class TransitStopDAO extends PointOfInterestDAO {
    trovare la top 3 ( o 5) delle linee che sono più affette.
    */
 // Da testare
-    public Collection<Document> query3() {
+    public Collection<Object> query3() {
         Bson match = match(eq("typeDisruption", "PUBLIC_TRANSPORT"));
         // Create the group stage
         Bson groupStage = Aggregates.group(
@@ -70,7 +69,6 @@ public class TransitStopDAO extends PointOfInterestDAO {
         List<Bson> pipeline = Arrays.asList(match, groupStage, sortStage,limit);
 
         // Execute the aggregation
-        Collection<Document> result = collection.aggregate(pipeline).into(new ArrayList<>());
-        return result;
+        return collection.aggregate(pipeline).into(new ArrayList<>());
     }
 }

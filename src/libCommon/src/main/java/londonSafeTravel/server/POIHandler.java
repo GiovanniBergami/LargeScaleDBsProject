@@ -4,18 +4,22 @@ import com.google.gson.Gson;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import londonSafeTravel.dbms.document.PointOfInterestDAO;
-import londonSafeTravel.schema.document.ConnectionMongoDB;
+import londonSafeTravel.dbms.document.ConnectionMongoDB;
 import org.apache.hc.core5.net.URIBuilder;
 
 import java.io.IOException;
 
 public class POIHandler implements HttpHandler {
-    ConnectionMongoDB connection = new ConnectionMongoDB();
+    ConnectionMongoDB connection;
     PointOfInterestDAO poi;
      public POIHandler(){
-         poi = new PointOfInterestDAO(connection);
+         this(new ConnectionMongoDB());
      }
 
+     public POIHandler(ConnectionMongoDB connection) {
+         this.connection = connection;
+         poi = new PointOfInterestDAO(connection);
+     }
 
     @Override
     public void handle(HttpExchange exchange) throws IOException {
@@ -37,8 +41,6 @@ public class POIHandler implements HttpHandler {
         String json = new Gson().toJson(pois);
 
         var responseBody = exchange.getResponseBody();
-
-        json.length();
 
         exchange.getResponseHeaders().set("Content-Type", "application/json");
         exchange.sendResponseHeaders(200, json.getBytes().length);

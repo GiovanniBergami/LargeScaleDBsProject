@@ -1,12 +1,11 @@
 package londonSafeTravel.client.gui;
 
-import londonSafeTravel.schema.document.HeatmapComputation;
+import londonSafeTravel.dbms.document.HeatmapComputation;
 import org.jxmapviewer.JXMapViewer;
 import org.jxmapviewer.painter.AbstractPainter;
 import org.jxmapviewer.viewer.GeoPosition;
 
 import java.awt.*;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;

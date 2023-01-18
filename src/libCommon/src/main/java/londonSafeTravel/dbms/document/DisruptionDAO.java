@@ -1,4 +1,4 @@
-package londonSafeTravel.schema.document;
+package londonSafeTravel.dbms.document;
 
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
@@ -11,7 +11,6 @@ import com.mongodb.client.model.geojson.Position;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 
-import javax.print.Doc;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -25,9 +24,16 @@ import static com.mongodb.client.model.Projections.*;
 
 
 public class DisruptionDAO {
-    private final ConnectionMongoDB connection = new ConnectionMongoDB();
-    private final MongoDatabase db = connection.giveDB();
-    private final MongoCollection<Document> collection = db.getCollection("Disruption");
+    private final MongoCollection<Document> collection;
+
+    public DisruptionDAO() {
+        this(new ConnectionMongoDB());
+    }
+
+    public DisruptionDAO(ConnectionMongoDB connection) {
+        MongoDatabase db = connection.giveDB();
+        this.collection = db.getCollection("Disruption");
+    }
 
     public static void main(String[] argv) {
         DisruptionDAO disDAO = new DisruptionDAO();
@@ -36,9 +42,7 @@ public class DisruptionDAO {
             System.out.println(d.toJson());
         });
          */
-        disDAO.queryHeatmap(0.05, 0.05, "Works").forEach(d -> {
-            System.out.println(d.toJson());
-        });
+        disDAO.queryHeatmap(0.05, 0.05, "Works").forEach(d -> System.out.println(d.toJson()));
 
     }
 
@@ -141,9 +145,7 @@ public class DisruptionDAO {
                 match, computeBuckets, groupStage, project
         );
 
-        pipeline.forEach(bson -> {
-            System.out.println(bson.toBsonDocument());
-        });
+        pipeline.forEach(bson -> System.out.println(bson.toBsonDocument()));
 
         // Execute the aggregation
         return collection.aggregate(pipeline).map(document -> {
