@@ -16,7 +16,6 @@ import javax.swing.*;
 import javax.swing.event.MouseInputListener;
 import java.awt.*;
 import java.awt.event.*;
-import java.awt.geom.Point2D;
 import java.util.*;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -41,6 +40,83 @@ public class MainApp {
     private JButton adminButton;
 
     private GlobalPainter globalPainter;
+
+    private MouseAdapter showDisruption(ItemEvent e, MouseAdapter mouseListener){
+
+        if(e.getStateChange() != ItemEvent.SELECTED) {
+            mapViewer.removeMouseListener(mouseListener);
+            mapViewer.removeMouseMotionListener(mouseListener);
+
+            globalPainter.removeDisruptions();
+            mapViewer.updateUI();
+
+            return mouseListener;
+        }
+
+        ArrayList<Disruption> disruptions = null;
+        try {
+            disruptions = new DisruptionsRequest(
+                    "localhost:8080").getDisruptions();
+        } catch (Exception ex) {
+            throw new RuntimeException(ex);
+        }
+
+        Set<DisruptionWaypoint> waypoints = disruptions
+                .stream()
+                .map(DisruptionWaypoint::new)
+                .collect(Collectors.toSet());
+
+        globalPainter.setDisruptions(waypoints);
+        mapViewer.updateUI();
+
+        mouseListener = new MouseAdapter() {
+            private boolean isOnWaypoint(Point point, DisruptionWaypoint waypoint) {
+                var gp_pt = mapViewer.getTileFactory().geoToPixel(
+                        waypoint.getPosition(), mapViewer.getZoom()
+                );
+
+                //convert to screen
+                Rectangle rect = mapViewer.getViewportBounds();
+                Point converted_gp_pt = new Point(
+                        (int) gp_pt.getX() - rect.x - 5,
+                        (int) gp_pt.getY() - rect.y - 35);
+
+                // hitbox
+                Rectangle hitbox = new Rectangle(converted_gp_pt, new Dimension(10, 40));
+
+                return hitbox.contains(point);
+            }
+            @Override
+            public void mouseClicked(MouseEvent me) {
+                for(var waypoint : waypoints) {
+                    //check if near the mouse
+                    if (!isOnWaypoint(me.getPoint(), waypoint))
+                        continue;
+
+                    var dialog = new DisruptionDialog(waypoint.getDisruption());
+                    //@todo dimensions and default position!
+                    dialog.setVisible(true);
+                }
+            }
+
+            @Override
+            public void mouseMoved(MouseEvent me) {
+                for(var waypoint : waypoints) {
+                    if (!isOnWaypoint(me.getPoint(), waypoint))
+                        continue;
+
+                    mapViewer.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+                    return;
+                }
+
+                mapViewer.setCursor(Cursor.getDefaultCursor());
+            }
+        };
+
+        mapViewer.addMouseListener(mouseListener);
+        mapViewer.addMouseMotionListener(mouseListener);
+        return mouseListener;
+    }
 
     private String getSelectedMode() {
         String type="";
@@ -180,83 +256,14 @@ public class MainApp {
         });
         mapViewer.setTileFactory(tileFactory);
 
+
+
         showDisruptionsCheckBox.addItemListener(new ItemListener() {
             MouseAdapter mouseListener;
 
             @Override
             public void itemStateChanged(ItemEvent e) {
-                if(e.getStateChange() != ItemEvent.SELECTED) {
-                    mapViewer.removeMouseListener(mouseListener);
-                    mapViewer.removeMouseMotionListener(mouseListener);
-
-                    globalPainter.removeDisruptions();
-                    mapViewer.updateUI();
-
-                    return;
-                }
-
-                ArrayList<Disruption> disruptions = null;
-                try {
-                    disruptions = new DisruptionsRequest(
-                            "localhost:8080").getDisruptions();
-                } catch (Exception ex) {
-                    throw new RuntimeException(ex);
-                }
-
-                Set<DisruptionWaypoint> waypoints = disruptions
-                        .stream()
-                        .map(DisruptionWaypoint::new)
-                        .collect(Collectors.toSet());
-
-                globalPainter.setDisruptions(waypoints);
-                mapViewer.updateUI();
-
-                mouseListener = new MouseAdapter() {
-                    private boolean isOnWaypoint(Point point, DisruptionWaypoint waypoint) {
-                        var gp_pt = mapViewer.getTileFactory().geoToPixel(
-                                waypoint.getPosition(), mapViewer.getZoom()
-                        );
-
-                        //convert to screen
-                        Rectangle rect = mapViewer.getViewportBounds();
-                        Point converted_gp_pt = new Point(
-                                (int) gp_pt.getX() - rect.x - 5,
-                                (int) gp_pt.getY() - rect.y - 35);
-
-                        // hitbox
-                        Rectangle hitbox = new Rectangle(converted_gp_pt, new Dimension(10, 40));
-
-                        return hitbox.contains(point);
-                    }
-                    @Override
-                    public void mouseClicked(MouseEvent me) {
-                        for(var waypoint : waypoints) {
-                            //check if near the mouse
-                            if (!isOnWaypoint(me.getPoint(), waypoint))
-                                continue;
-
-                            var dialog = new DisruptionDialog(waypoint.getDisruption());
-                            //@todo dimensions and default position!
-                            dialog.setVisible(true);
-                        }
-                    }
-
-                    @Override
-                    public void mouseMoved(MouseEvent me) {
-                        for(var waypoint : waypoints) {
-                            if (!isOnWaypoint(me.getPoint(), waypoint))
-                                continue;
-
-                            mapViewer.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-                            return;
-                        }
-
-                        mapViewer.setCursor(Cursor.getDefaultCursor());
-                    }
-                };
-
-                mapViewer.addMouseListener(mouseListener);
-                mapViewer.addMouseMotionListener(mouseListener);
+                mouseListener = showDisruption(e,mouseListener);
             }
         });
 
@@ -272,6 +279,12 @@ public class MainApp {
 
         );
 
+        buttonRefresh.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+            }
+        });
     }
 
     public static void main(String[] args) {
