@@ -1,19 +1,26 @@
 package londonSafeTravel.client.gui;
 
+import londonSafeTravel.client.StatTableRequest;
 import londonSafeTravel.dbms.document.HeatmapComputation;
+import londonSafeTravel.schema.Location;
+import org.bson.Document;
 import org.jxmapviewer.JXMapViewer;
 import org.jxmapviewer.painter.AbstractPainter;
 import org.jxmapviewer.viewer.GeoPosition;
 
+import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
 import java.awt.*;
+import java.awt.geom.Point2D;
+import java.util.*;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class HeatmapPainter extends AbstractPainter<JXMapViewer> {
     private long dimLat;
     private long dimLon;
     private long max;
+    private JTable queryResult;
 
     public HeatmapPainter(long dimLat, long dimLon) {
         this.dimLat = dimLat;

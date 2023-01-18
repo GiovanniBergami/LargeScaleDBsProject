@@ -6,22 +6,26 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
 import com.mongodb.client.MongoDatabase;
 
+import com.mongodb.client.model.Filters;
+import com.mongodb.client.model.TextSearchOptions;
 import com.mongodb.client.model.geojson.Polygon;
 import com.mongodb.client.model.geojson.Position;
 import com.mongodb.client.model.geojson.codecs.GeoJsonCodecProvider;
-import com.mongodb.client.model.geojson.codecs.GeometryCodec;
 import londonSafeTravel.dbms.bsonCodecs.POICodec;
+import londonSafeTravel.schema.GeoFactory;
+import londonSafeTravel.schema.Location;
 import londonSafeTravel.schema.document.poi.PointOfInterest;
 import org.bson.codecs.BsonValueCodecProvider;
 import org.bson.codecs.ValueCodecProvider;
 import org.bson.codecs.configuration.CodecRegistries;
 import org.bson.codecs.configuration.CodecRegistry;
+import org.bson.Document;
 import org.bson.conversions.Bson;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
+import java.util.regex.Pattern;
 
 import static com.mongodb.client.model.Filters.geoWithin;
 
@@ -94,5 +98,19 @@ public class PointOfInterestDAO {
 
         collection.find(myMatch).forEach(results::add);
         return results;
+    }
+
+    public Location findPlace(String name){
+        //Bson match = match(eq("name", name));
+        //Bson match = Filters.text(name, new TextSearchOptions().caseSensitive(false));
+
+        PointOfInterest result = collection.find(
+                Filters.regex("name", Pattern.compile(name, Pattern.CASE_INSENSITIVE))
+        ).first();
+        if(result == null)
+            return null;
+
+        Location p = GeoFactory.fromMongo(result.coordinates);
+        return p;
     }
 }

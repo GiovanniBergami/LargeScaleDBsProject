@@ -30,7 +30,9 @@ public class Server {
         server.createContext("/disruptions.json", new QueryDisruptionHandler(neo4j));
         server.createContext("/heatmap.json", new HeatmapHandler(mongoc));
         server.createContext("/queryPOI.json", new POIHandler(mongoc));
-        
+        server.createContext("/queryTable.json", new QueryStatTableHandler(mongoc));
+        server.createContext("/querySearchPOI.json", new SearchHandler(mongoc));
+
         server.setExecutor(threadPoolExecutor);
         server.start();
     }
