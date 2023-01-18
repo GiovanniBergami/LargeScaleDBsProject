@@ -1,20 +1,25 @@
 package londonSafeTravel.client.gui;
 
+import londonSafeTravel.client.StatTableRequest;
+import londonSafeTravel.schema.Location;
 import londonSafeTravel.schema.document.HeatmapComputation;
+import org.bson.Document;
 import org.jxmapviewer.JXMapViewer;
 import org.jxmapviewer.painter.AbstractPainter;
 import org.jxmapviewer.viewer.GeoPosition;
 
+import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
 import java.awt.*;
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.awt.geom.Point2D;
+import java.util.*;
 import java.util.List;
-import java.util.Map;
 
 public class HeatmapPainter extends AbstractPainter<JXMapViewer> {
     private long dimLat;
     private long dimLon;
     private long max;
+    private JTable queryResult;
 
     public HeatmapPainter(long dimLat, long dimLon) {
         this.dimLat = dimLat;
@@ -95,11 +100,14 @@ public class HeatmapPainter extends AbstractPainter<JXMapViewer> {
 
     private final Map<HeatmapKey, HeatmapComputation> heatmap = new HashMap<>();
 
+
     @Override
     protected void doPaint(Graphics2D g, JXMapViewer map, int i, int i1) {
         Rectangle viewportBounds = map.getViewportBounds();
         g.translate(-viewportBounds.getX(), -viewportBounds.getY());
+        /* qua */
 
+        /* --- */
 
         for(long latitude = MIN_LAT; latitude <= MAX_LAT; latitude += dimLat)
             for(long longitude = MIN_LON; longitude <= MAX_LON; longitude += dimLon){
@@ -142,4 +150,5 @@ public class HeatmapPainter extends AbstractPainter<JXMapViewer> {
             heatmap.put(key, cell);
         });
     }
+
 }

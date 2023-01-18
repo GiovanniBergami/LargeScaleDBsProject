@@ -181,7 +181,7 @@ public class RoadDisruptionUpdate {
         manageDisruptionGraph = new londonSafeTravel.dbms.graph.ManageDisruption(
                 "bolt://localhost:7687",
                 "neo4j",
-                "password");
+                "pass");
 
         ProcessResult state;
 

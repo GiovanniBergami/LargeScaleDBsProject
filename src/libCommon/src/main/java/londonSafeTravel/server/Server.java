@@ -12,8 +12,8 @@ import java.util.concurrent.ThreadPoolExecutor;
 public class Server {
     public static void main(String[] argv) throws Exception {
         Driver neo4j = GraphDatabase.driver(
-                "bolt://172.16.5.47:7687",
-                AuthTokens.basic("neo4j", "password"));
+                "bolt://localhost:7687",
+                AuthTokens.basic("neo4j", "pass"));
 
         // Check if online
         neo4j.verifyConnectivity();
@@ -26,6 +26,7 @@ public class Server {
         server.createContext("/disruptions.json", new QueryDisruptionHandler(neo4j));
         server.createContext("/heatmap.json", new HeatmapHandler());
         server.createContext("/queryPOI.json", new POIHandler());
+        server.createContext("/queryTable.json", new QueryStatTableHandler());
         
         server.setExecutor(threadPoolExecutor);
         server.start();
