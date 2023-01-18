@@ -9,7 +9,7 @@ import org.apache.hc.core5.net.URIBuilder;
 
 import java.io.IOException;
 
-public class SearchHandler implements HttpHandler {
+public class SearchHandler extends Handler {
 
     ConnectionMongoDB connection;
     PointOfInterestDAO poi;
@@ -21,7 +21,7 @@ public class SearchHandler implements HttpHandler {
 
 
     @Override
-    public void handle(HttpExchange exchange) throws RuntimeException, IOException {
+    public void handleRequest(HttpExchange exchange) throws RuntimeException, IOException {
         if(!exchange.getRequestMethod().equals("GET")) {
             exchange.sendResponseHeaders(400, 0);
             exchange.close();

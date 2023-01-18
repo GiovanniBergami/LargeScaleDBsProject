@@ -26,17 +26,20 @@ public class POICodec implements Codec<PointOfInterest> {
     private final Codec<Document> documentCodec;
     private final Codec<Point> pointCodec;
     private final Codec<Geometry> geometryCodec;
+    private final Codec<String> stringCodec;
 
     public POICodec(CodecRegistry registry) {
         this.documentCodec = registry.get(Document.class);
         this.pointCodec = registry.get(Point.class);
         this.geometryCodec = registry.get(Geometry.class);
+        this.stringCodec = registry.get(String.class);
     }
     @Override
     public PointOfInterest decode(BsonReader reader, DecoderContext decoderContext) {
-        Document document = documentCodec.decode(reader, decoderContext);
         Point coordinates = null;
         Geometry perimeter = null;
+        Document tags = null;
+        HashMap<String, String> stuff = new HashMap<>();
 
         reader.readStartDocument();
         while (reader.readBsonType() != BsonType.END_OF_DOCUMENT) {
@@ -44,13 +47,17 @@ public class POICodec implements Codec<PointOfInterest> {
             if(name.equals("coordinates"))
                 coordinates = pointCodec.decode(reader, decoderContext);
             else if(name.equals("perimeter"))
-                perimeter = pointCodec.decode(reader, decoderContext);
-            else
+                perimeter = geometryCodec.decode(reader, decoderContext);
+            else if(name.equals("tags"))
+                tags = documentCodec.decode(reader, decoderContext);
+            else if(name.equals("_id"))
                 reader.skipValue();
+            else
+                stuff.put(name, stringCodec.decode(reader, decoderContext));
         }
         reader.readEndDocument();
 
-        String type = document.getString("type");
+        String type = stuff.get("type");
 
         PointOfInterest ret;
 
@@ -58,9 +65,10 @@ public class POICodec implements Codec<PointOfInterest> {
             var poi = new PointOfInterestOSM();
 
             poi.tags = new HashMap<>();
-            for (Map.Entry<String, Object> entry : document.get("tags", Document.class).entrySet()) {
-                poi.tags.put(entry.getKey(), (String) entry.getValue());
-            }
+            if(tags != null)
+                for (Map.Entry<String, Object> entry : tags.entrySet()) {
+                    poi.tags.put(entry.getKey(), (String) entry.getValue());
+                }
 
             poi.perimeter = perimeter;
 
@@ -68,8 +76,8 @@ public class POICodec implements Codec<PointOfInterest> {
         } else
             ret = new PointOfInterest();
 
-        ret.poiID = document.getString("poiID");
-        ret.name = document.getString("name");
+        ret.poiID = stuff.get("poiID");
+        ret.name = stuff.get("name");
         ret.coordinates = coordinates;
 
         return ret;
@@ -88,6 +96,9 @@ public class POICodec implements Codec<PointOfInterest> {
                 }
             }
         }
+        
+        document.put("type", value.getType());
+
         documentCodec.encode(writer, document, encoderContext);
     }
 
