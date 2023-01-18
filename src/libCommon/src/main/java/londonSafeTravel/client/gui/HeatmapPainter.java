@@ -1,8 +1,8 @@
 package londonSafeTravel.client.gui;
 
 import londonSafeTravel.client.StatTableRequest;
+import londonSafeTravel.dbms.document.HeatmapComputation;
 import londonSafeTravel.schema.Location;
-import londonSafeTravel.schema.document.HeatmapComputation;
 import org.bson.Document;
 import org.jxmapviewer.JXMapViewer;
 import org.jxmapviewer.painter.AbstractPainter;

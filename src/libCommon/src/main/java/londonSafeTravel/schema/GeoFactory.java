@@ -17,6 +17,13 @@ public class GeoFactory {
         return new Location(p.lat(), p.lon());
     }
 
+    public static Location fromMongo(com.mongodb.client.model.geojson.Point point) {
+        return new Location(
+                point.getCoordinates().getValues().get(1),
+                point.getCoordinates().getValues().get(0)
+        );
+    }
+
     public static Position convertToMongo(Location location) {
         return new Position(
                 location.getLongitude(),

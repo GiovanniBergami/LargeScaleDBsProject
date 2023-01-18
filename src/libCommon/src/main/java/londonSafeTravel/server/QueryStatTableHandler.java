@@ -3,17 +3,16 @@ package londonSafeTravel.server;
 import com.google.gson.Gson;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
-import londonSafeTravel.schema.document.ConnectionMongoDB;
-import londonSafeTravel.schema.document.Disruption;
-import londonSafeTravel.schema.document.DisruptionDAO;
+import londonSafeTravel.dbms.document.ConnectionMongoDB;
+import londonSafeTravel.dbms.document.DisruptionDAO;
 import org.apache.hc.core5.net.URIBuilder;
 
 import java.io.IOException;
 
 public class QueryStatTableHandler implements HttpHandler{
     DisruptionDAO tableDis;
-    public QueryStatTableHandler(){
-        tableDis = new DisruptionDAO();
+    public QueryStatTableHandler(ConnectionMongoDB connenction){
+        tableDis = new DisruptionDAO(connenction);
     }
 
     public void handle(HttpExchange exchange) throws IOException {

@@ -1,8 +1,7 @@
 package londonSafeTravel.client.gui;
 
-import londonSafeTravel.client.DisruptionsRequest;
-import londonSafeTravel.client.QueryPointRequest;
-import londonSafeTravel.client.RoutingRequest;
+import londonSafeTravel.client.*;
+import londonSafeTravel.schema.Location;
 import londonSafeTravel.schema.graph.Disruption;
 import org.jxmapviewer.JXMapViewer;
 import org.jxmapviewer.OSMTileFactoryInfo;
@@ -286,6 +285,31 @@ public class MainApp {
                 }
 
         );
+        buttonSearch.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+               String inputString = textFieldSearch.getText();
+               if(!inputString.isEmpty()){
+                   System.out.println(inputString);
+                   // Richiesta server
+                   Location result = null;
+                   try {
+                       result = new SearchRequest(
+                               "localhost:8080",
+                               inputString
+                       ).getCoord();
+                   } catch (Exception ex) {
+                       throw new RuntimeException(ex);
+                   }
+                   // in result abbiamo la location
+                   // rimane da settare lo zoom su questo
+
+               }else{
+                   JOptionPane.showMessageDialog(rootPanel, "Please insert a POI or a street", "Error", JOptionPane.ERROR_MESSAGE);
+               }
+
+            }
+        });
     }
 
     public static void main(String[] args) throws IOException {
