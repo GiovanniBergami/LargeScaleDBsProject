@@ -16,6 +16,7 @@ import javax.swing.*;
 import javax.swing.event.MouseInputListener;
 import java.awt.*;
 import java.awt.event.*;
+import java.io.IOException;
 import java.util.*;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -56,7 +57,7 @@ public class MainApp {
         return type;
     }
 
-    public MainApp() {
+    public MainApp() throws IOException {
         // Create a TileFactoryInfo for OpenStreetMap
         TileFactoryInfo info = new OSMTileFactoryInfo();
         DefaultTileFactory tileFactory = new DefaultTileFactory(info);
@@ -287,7 +288,7 @@ public class MainApp {
         );
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
         JFrame frame = new JFrame("MainApp");
         frame.setContentPane(new MainApp().rootPanel);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

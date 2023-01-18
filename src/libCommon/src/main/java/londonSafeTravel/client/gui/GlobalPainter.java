@@ -12,6 +12,8 @@ import org.jxmapviewer.viewer.*;
 
 import java.awt.*;
 import java.awt.geom.Point2D;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -26,6 +28,7 @@ public class GlobalPainter extends AbstractPainter<JXMapViewer> {
     private List<GeoPosition> route;
 
     private final DefaultWaypointRenderer renderer =  new DefaultWaypointRenderer();
+    private final POIRenderer poiRenderer=new POIRenderer(new File("assets/waypoints/poi.png"));
     private final Set<DisruptionWaypoint> disruptions = new HashSet<>();
 
     private final Set<POIWaypoint> pois = new HashSet<>();
@@ -34,6 +37,10 @@ public class GlobalPainter extends AbstractPainter<JXMapViewer> {
     private int oldZoom = -1;
     private double oldCenterX = -1;
     private double oldCenterY = -1;
+
+    public GlobalPainter() throws IOException {
+    }
+
     @Override
     public void doPaint(Graphics2D g, JXMapViewer map, int width, int height) {
         Rectangle viewportBounds = map.getViewportBounds();
@@ -151,7 +158,7 @@ public class GlobalPainter extends AbstractPainter<JXMapViewer> {
 
     private void drawPOIs(Graphics2D g, JXMapViewer map) {
         for (var w : pois) {
-            renderer.paintWaypoint(g, map, w);
+            poiRenderer.paintWaypoint(g, map, w);
         }
     }
     public void setRoute(List<GeoPosition> route) {
