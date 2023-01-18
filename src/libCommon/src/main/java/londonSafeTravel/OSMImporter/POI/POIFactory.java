@@ -3,7 +3,7 @@ package londonSafeTravel.OSMImporter.POI;
 import londonSafeTravel.dbms.document.PointOfInterestDAO;
 import londonSafeTravel.schema.GeoFactory;
 import londonSafeTravel.schema.Location;
-import londonSafeTravel.schema.document.ConnectionMongoDB;
+import londonSafeTravel.dbms.document.ConnectionMongoDB;
 import londonSafeTravel.schema.document.poi.PointOfInterest;
 import londonSafeTravel.schema.document.poi.PointOfInterestOSM;
 

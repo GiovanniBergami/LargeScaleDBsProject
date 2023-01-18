@@ -16,7 +16,7 @@ import javax.swing.*;
 import javax.swing.event.MouseInputListener;
 import java.awt.*;
 import java.awt.event.*;
-import java.awt.geom.Point2D;
+import java.io.IOException;
 import java.util.*;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -40,7 +40,10 @@ public class MainApp {
     private JLabel routingTime;
     private JButton adminButton;
 
-    private GlobalPainter globalPainter;
+    private final GlobalPainter globalPainter;
+
+    private interface DisruptionListener extends ItemListener, ActionListener {}
+
 
     private String getSelectedMode() {
         String type="";
@@ -54,7 +57,7 @@ public class MainApp {
         return type;
     }
 
-    public MainApp() {
+    public MainApp() throws IOException {
         // Create a TileFactoryInfo for OpenStreetMap
         TileFactoryInfo info = new OSMTileFactoryInfo();
         DefaultTileFactory tileFactory = new DefaultTileFactory(info);
@@ -99,7 +102,7 @@ public class MainApp {
 
 
 
-                QueryPointRequest request = null;
+                QueryPointRequest request;
                 try {
                     request = new QueryPointRequest(
                             "localhost:8080", coordinates.getLatitude(), coordinates.getLongitude(), getSelectedMode());
@@ -126,7 +129,7 @@ public class MainApp {
                         //routingTime.setText(Double.toString(routeReq.getRoute().get(routeReq.getRoute().size() - 1).time / 60.0));
                         int seconds = (int)routeReq.getRoute().get(routeReq.getRoute().size() - 1).time;
                         int minutes = seconds/60;
-                        int hours = 0;
+                        int hours;
                         seconds = seconds - (minutes*60);
                         if(minutes >= 60){
                             hours = minutes/60;
@@ -141,9 +144,10 @@ public class MainApp {
                         globalPainter.setRoute(track);
                     } catch (Exception ex) {
                         throw new RuntimeException(ex);
+                    } finally {
+                        start = null;
+                        end = null;
                     }
-                    start = null;
-                    end = null;
                 }
             }
 
@@ -168,34 +172,44 @@ public class MainApp {
             }
         });
 
-        tileFactory.addTileListener(new TileListener() {
+        tileFactory.addTileListener(tile -> {
+            //if (tileFactory.getPendingTiles() == 0) {
+            //    System.out.println("All tiles loaded!");
+            // }
 
-            @Override
-            public void tileLoaded(Tile tile) {
-                //if (tileFactory.getPendingTiles() == 0) {
-                //    System.out.println("All tiles loaded!");
-                //}
-
-            }
         });
         mapViewer.setTileFactory(tileFactory);
 
-        showDisruptionsCheckBox.addItemListener(new ItemListener() {
+        DisruptionListener disruptionManagerListener = new DisruptionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (!showDisruptionsCheckBox.isSelected())
+                    return;
+
+                hide();
+                show();
+            }
+
             MouseAdapter mouseListener;
 
             @Override
             public void itemStateChanged(ItemEvent e) {
-                if(e.getStateChange() != ItemEvent.SELECTED) {
-                    mapViewer.removeMouseListener(mouseListener);
-                    mapViewer.removeMouseMotionListener(mouseListener);
+                if (e.getStateChange() != ItemEvent.SELECTED)
+                    hide();
+                else
+                    show();
+            }
 
-                    globalPainter.removeDisruptions();
-                    mapViewer.updateUI();
+            private void hide() {
+                mapViewer.removeMouseListener(mouseListener);
+                mapViewer.removeMouseMotionListener(mouseListener);
 
-                    return;
-                }
+                globalPainter.removeDisruptions();
+                mapViewer.updateUI();
+            }
 
-                ArrayList<Disruption> disruptions = null;
+            private void show() {
+                ArrayList<Disruption> disruptions;
                 try {
                     disruptions = new DisruptionsRequest(
                             "localhost:8080").getDisruptions();
@@ -228,9 +242,10 @@ public class MainApp {
 
                         return hitbox.contains(point);
                     }
+
                     @Override
                     public void mouseClicked(MouseEvent me) {
-                        for(var waypoint : waypoints) {
+                        for (var waypoint : waypoints) {
                             //check if near the mouse
                             if (!isOnWaypoint(me.getPoint(), waypoint))
                                 continue;
@@ -243,7 +258,7 @@ public class MainApp {
 
                     @Override
                     public void mouseMoved(MouseEvent me) {
-                        for(var waypoint : waypoints) {
+                        for (var waypoint : waypoints) {
                             if (!isOnWaypoint(me.getPoint(), waypoint))
                                 continue;
 
@@ -258,23 +273,22 @@ public class MainApp {
                 mapViewer.addMouseListener(mouseListener);
                 mapViewer.addMouseMotionListener(mouseListener);
             }
-        });
+        };
+        showDisruptionsCheckBox.addItemListener(disruptionManagerListener);
+        buttonRefresh.addActionListener(disruptionManagerListener);
 
         adminButton.addActionListener(
-                new ActionListener() {
-                    public void actionPerformed(ActionEvent e) {
-                        var dialog = new AdministrationDialog();
-                        //@todo dimensions and default position!
-                        dialog.setVisible(true);
+                e -> {
+                    var dialog = new AdministrationDialog();
+                    //@todo dimensions and default position!
+                    dialog.setVisible(true);
 
-                    }
                 }
 
         );
-
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
         JFrame frame = new JFrame("MainApp");
         frame.setContentPane(new MainApp().rootPanel);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

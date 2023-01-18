@@ -13,6 +13,7 @@ import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.geom.Point2D;
 import java.util.*;
+import java.util.HashMap;
 import java.util.List;
 
 public class HeatmapPainter extends AbstractPainter<JXMapViewer> {
@@ -100,14 +101,10 @@ public class HeatmapPainter extends AbstractPainter<JXMapViewer> {
 
     private final Map<HeatmapKey, HeatmapComputation> heatmap = new HashMap<>();
 
-
     @Override
     protected void doPaint(Graphics2D g, JXMapViewer map, int i, int i1) {
         Rectangle viewportBounds = map.getViewportBounds();
         g.translate(-viewportBounds.getX(), -viewportBounds.getY());
-        /* qua */
-
-        /* --- */
 
         for(long latitude = MIN_LAT; latitude <= MAX_LAT; latitude += dimLat)
             for(long longitude = MIN_LON; longitude <= MAX_LON; longitude += dimLon){
@@ -150,5 +147,4 @@ public class HeatmapPainter extends AbstractPainter<JXMapViewer> {
             heatmap.put(key, cell);
         });
     }
-
 }

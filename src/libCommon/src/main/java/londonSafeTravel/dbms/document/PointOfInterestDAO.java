@@ -6,13 +6,11 @@ import com.mongodb.client.MongoDatabase;
 
 import com.mongodb.client.model.geojson.Polygon;
 import com.mongodb.client.model.geojson.Position;
-import londonSafeTravel.schema.document.ConnectionMongoDB;
 import londonSafeTravel.schema.document.poi.PointOfInterest;
 import org.bson.conversions.Bson;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
 
 
@@ -30,7 +28,8 @@ public class PointOfInterestDAO {
 
     public void printAll() {
         try (
-                MongoCursor<PointOfInterest> cursor = collection.find().iterator()) {
+                MongoCursor<PointOfInterest> cursor = collection.find().iterator()
+        ) {
             while (cursor.hasNext()) {
                 System.out.println(cursor.next());
             }

@@ -1,4 +1,4 @@
-package londonSafeTravel.schema.document;
+package londonSafeTravel.dbms.document;
 
 import com.mongodb.MongoClientSettings;
 import com.mongodb.client.MongoClient;
@@ -11,9 +11,16 @@ import org.bson.codecs.pojo.PojoCodecProvider;
 public class ConnectionMongoDB {
 
     static final private String uri = "mongodb://localhost:27017";
-    private final MongoDatabase database = myClient.getDatabase("londonSafeTravel");
+    private final MongoDatabase database;
 
-    private static final MongoClient myClient = MongoClients.create(uri);
+    public ConnectionMongoDB() {
+        this(uri);
+    }
+
+    public ConnectionMongoDB(String uri) {
+        MongoClient myClient = MongoClients.create(uri);
+        database = myClient.getDatabase("londonSafeTravel");
+    }
 
     public MongoDatabase giveDB(){
         CodecRegistry defaultCodecRegistry = MongoClientSettings.getDefaultCodecRegistry();

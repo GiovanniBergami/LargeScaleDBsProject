@@ -9,8 +9,11 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import londonSafeTravel.schema.GeoFactory;
 import londonSafeTravel.schema.Location;
+import londonSafeTravel.dbms.document.ConnectionMongoDB;
 import londonSafeTravel.schema.document.Disruption;
-import londonSafeTravel.schema.document.ManageDisruption;
+import londonSafeTravel.dbms.document.ManageDisruption;
+import org.neo4j.driver.AuthTokens;
+import org.neo4j.driver.GraphDatabase;
 
 import java.io.*;
 import java.lang.reflect.Type;
@@ -68,6 +71,7 @@ public class RoadDisruptionUpdate {
             return;
         }
 
+        // @fixme wrong radius
         dg.radius = 0;
         Polygon poly = roadDisruptionUpdate.geometry.type() == Geometry.Type.POLYGON ?
                 (Polygon) roadDisruptionUpdate.geometry :
@@ -177,11 +181,11 @@ public class RoadDisruptionUpdate {
 
     public static void main(String[] argv) throws Exception {
         // Open connections to DBs
-        manageDisruptionDocument = new ManageDisruption();
+        manageDisruptionDocument = new ManageDisruption(new ConnectionMongoDB("mongodb://172.16.5.47:27017"));
         manageDisruptionGraph = new londonSafeTravel.dbms.graph.ManageDisruption(
-                "bolt://localhost:7687",
-                "neo4j",
-                "pass");
+                GraphDatabase.driver(
+                        "bolt://172.16.5.47",
+                        AuthTokens.basic("neo4j", "password")));
 
         ProcessResult state;
 
