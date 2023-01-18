@@ -123,8 +123,18 @@ public class MainApp {
                         List<GeoPosition> track = routeReq.getRouteGeo();
 
                         System.out.println("Routing completed " + track.size() + " hops!");
-                        routingTime.setText(Double.toString(routeReq.getRoute().get(routeReq.getRoute().size() - 1).time / 60.0));
-
+                        //routingTime.setText(Double.toString(routeReq.getRoute().get(routeReq.getRoute().size() - 1).time / 60.0));
+                        int seconds = (int)routeReq.getRoute().get(routeReq.getRoute().size() - 1).time;
+                        int minutes = seconds/60;
+                        int hours = 0;
+                        seconds = seconds - (minutes*60);
+                        if(minutes >= 60){
+                            hours = minutes/60;
+                            minutes = minutes - hours * 60;
+                            routingTime.setText(hours+" h "+ minutes + " min " + seconds +" s");
+                        } else {
+                            routingTime.setText(minutes + " min " + seconds + " s");
+                        }
                         // Set the focus
                         mapViewer.zoomToBestFit(new HashSet<>(track), 0.7);
 
