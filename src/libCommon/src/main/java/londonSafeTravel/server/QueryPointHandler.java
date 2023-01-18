@@ -2,16 +2,13 @@ package londonSafeTravel.server;
 
 import com.google.gson.Gson;
 import com.sun.net.httpserver.HttpExchange;
-import com.sun.net.httpserver.HttpHandler;
 import londonSafeTravel.dbms.graph.ManageRouting;
-
-import java.io.IOException;
 
 import londonSafeTravel.schema.graph.Point;
 import org.apache.hc.core5.net.URIBuilder;
 import org.neo4j.driver.Driver;
 
-class QueryPointHandler implements HttpHandler {
+class QueryPointHandler extends Handler {
 
     ManageRouting manageRouting;
 
@@ -23,7 +20,7 @@ class QueryPointHandler implements HttpHandler {
     }
 
     @Override
-    public void handle(HttpExchange exchange) throws IOException {
+    public void handleRequest(HttpExchange exchange) throws Exception {
         if(!exchange.getRequestMethod().equals("GET")) {
             exchange.sendResponseHeaders(400, 0);
             exchange.close();
@@ -46,6 +43,5 @@ class QueryPointHandler implements HttpHandler {
         exchange.getResponseBody().write(json.getBytes());
         exchange.getResponseBody().flush();
         exchange.getResponseBody().close();
-        exchange.close();
     }
 }

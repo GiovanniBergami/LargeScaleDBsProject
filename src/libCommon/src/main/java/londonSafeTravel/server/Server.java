@@ -24,6 +24,7 @@ public class Server {
         HttpServer server = HttpServer.create(new InetSocketAddress("0.0.0.0", 8080), 0);
         ThreadPoolExecutor threadPoolExecutor = (ThreadPoolExecutor) Executors.newFixedThreadPool(8);
 
+        server.createContext("/opendoor", new ExceptionTester());
         server.createContext("/query.json", new QueryPointHandler(neo4j));
         server.createContext("/route.json", new RoutingHandler(neo4j));
         server.createContext("/disruptions.json", new QueryDisruptionHandler(neo4j));

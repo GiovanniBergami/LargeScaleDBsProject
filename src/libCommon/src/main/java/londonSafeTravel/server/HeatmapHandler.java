@@ -1,14 +1,11 @@
 package londonSafeTravel.server;
 
 import com.sun.net.httpserver.HttpExchange;
-import com.sun.net.httpserver.HttpHandler;
 import londonSafeTravel.dbms.document.ConnectionMongoDB;
 import londonSafeTravel.dbms.document.DisruptionDAO;
 import org.apache.hc.core5.net.URIBuilder;
 
-import java.io.IOException;
-
-public class HeatmapHandler implements HttpHandler {
+public class HeatmapHandler extends Handler {
     DisruptionDAO heatmapDAO;
     public HeatmapHandler() {
         heatmapDAO = new DisruptionDAO();
@@ -19,7 +16,7 @@ public class HeatmapHandler implements HttpHandler {
     }
 
     @Override
-    public void handle(HttpExchange exchange) throws IOException {
+    public void handleRequest(HttpExchange exchange) throws Exception {
         var uriParsed = new URIBuilder(exchange.getRequestURI());
         long lenLat = Long.parseLong(uriParsed.getFirstQueryParam("lenLat").getValue());
         long lenLon = Long.parseLong(uriParsed.getFirstQueryParam("lenLon").getValue());
@@ -44,6 +41,5 @@ public class HeatmapHandler implements HttpHandler {
         exchange.getResponseBody().write(json.getBytes());
         exchange.getResponseBody().flush();
         exchange.getResponseBody().close();
-        exchange.close();
     }
 }

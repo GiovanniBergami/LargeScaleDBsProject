@@ -2,14 +2,11 @@ package londonSafeTravel.server;
 
 import com.google.gson.Gson;
 import com.sun.net.httpserver.HttpExchange;
-import com.sun.net.httpserver.HttpHandler;
 import londonSafeTravel.dbms.graph.ManageRouting;
 import org.apache.hc.core5.net.URIBuilder;
 import org.neo4j.driver.Driver;
 
-import java.io.IOException;
-
-public class RoutingHandler implements HttpHandler {
+public class RoutingHandler extends Handler {
     ManageRouting manageRouting;
 
     public RoutingHandler(Driver driver) {
@@ -20,7 +17,7 @@ public class RoutingHandler implements HttpHandler {
         manageRouting = new ManageRouting("neo4j://localhost:7687", "neo4j", "pass");
     }
     @Override
-    public void handle(HttpExchange exchange) throws IOException {
+    public void handleRequest(HttpExchange exchange) throws Exception {
         var uriParsed = new URIBuilder(exchange.getRequestURI());
 
         long start = Long.parseLong(uriParsed.getFirstQueryParam("start").getValue());
@@ -41,6 +38,5 @@ public class RoutingHandler implements HttpHandler {
         exchange.getResponseBody().write(json.getBytes());
         exchange.getResponseBody().flush();
         exchange.getResponseBody().close();
-        exchange.close();
     }
 }
