@@ -5,9 +5,7 @@ import com.google.gson.reflect.TypeToken;
 import londonSafeTravel.schema.GeoFactory;
 import londonSafeTravel.schema.Location;
 import londonSafeTravel.schema.document.poi.PointOfInterest;
-import londonSafeTravel.schema.document.poi.PointOfInterestOSM;
-import londonSafeTravel.schema.graph.Point;
-import londonSafeTravel.schema.graph.RoutingHop;
+
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -22,6 +20,7 @@ public class SearchRequest {
 
     public SearchRequest(String hostname, String namePoint) throws Exception{
 
+        namePoint = namePoint.replace(" ", "%20");
         HttpURLConnection con = (HttpURLConnection) new URL(
                 "http://"+ hostname+ "/querySearchPOI.json?name="+ namePoint
         ).openConnection();

@@ -2,6 +2,7 @@ package londonSafeTravel.client.gui;
 
 import londonSafeTravel.client.*;
 import londonSafeTravel.schema.Location;
+import londonSafeTravel.schema.document.poi.PointOfInterest;
 import londonSafeTravel.schema.graph.Disruption;
 import org.jxmapviewer.JXMapViewer;
 import org.jxmapviewer.OSMTileFactoryInfo;
@@ -13,6 +14,7 @@ import org.jxmapviewer.viewer.*;
 
 import javax.swing.*;
 import javax.swing.event.MouseInputListener;
+import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.IOException;
@@ -38,6 +40,7 @@ public class MainApp {
     private JPanel routingPanel;
     private JLabel routingTime;
     private JButton adminButton;
+    private JTable tableTips;
 
     private final GlobalPainter globalPainter;
 
@@ -78,6 +81,8 @@ public class MainApp {
         mapViewer.setOverlayPainter(globalPainter);
         //mapViewer.setOverlayPainter(new HeatmapPainter());
 
+        DefaultTableModel tableData = (DefaultTableModel) tableTips.getModel();
+        tableData.addColumn("Maybe you were looking for...");
         mapViewer.addMouseListener(new MouseListener() {
             londonSafeTravel.schema.graph.Point start = null;
             londonSafeTravel.schema.graph.Point end = null;
@@ -293,11 +298,14 @@ public class MainApp {
                    System.out.println(inputString);
                    // Richiesta server
                    Location result = null;
+                   List<PointOfInterest> table = null;
                    try {
-                       result = new SearchRequest(
+                       SearchRequest req = new SearchRequest(
                                "localhost:8080",
                                inputString
-                       ).getCoord();
+                       );
+                       result = req.getCoord();
+                       table = req.getList();
                    } catch (Exception ex) {
                        throw new RuntimeException(ex);
                    }
@@ -307,6 +315,15 @@ public class MainApp {
                    mapViewer.setZoom(2);
                    GeoPosition puntoDaVisualizzare = new GeoPosition(result.getLatitude(), result.getLongitude());
                    mapViewer.setAddressLocation(puntoDaVisualizzare);
+
+                   tableTips.setDefaultEditor(Object.class, null);
+                   DefaultTableModel tableData = (DefaultTableModel) tableTips.getModel();
+
+                   tableData.setRowCount(0);
+                   for(var row : table){
+                       Object[] tableRow = {row.name};
+                       tableData.addRow(tableRow);
+                   }
 
                }else{
                    JOptionPane.showMessageDialog(rootPanel, "Please insert a POI or a street", "Error", JOptionPane.ERROR_MESSAGE);
