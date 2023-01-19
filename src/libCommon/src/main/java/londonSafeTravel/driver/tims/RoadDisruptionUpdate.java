@@ -68,13 +68,13 @@ public class RoadDisruptionUpdate {
                 && roadDisruptionUpdate.geometry.type() != Geometry.Type.MULTI_POLYGON
                 && (roadDisruptionUpdate.geometry.type() == Geometry.Type.MULTI_POLYGON &&
                 !((MultiPolygon) roadDisruptionUpdate.geometry).polygons().iterator().hasNext()))) {
-            dg.radius = 150;
+            dg.radius = 150.0;
             manageDisruptionGraph.createClosure(dg);
             return;
         }
 
         // @fixme wrong radius
-        dg.radius = 0;
+        dg.radius = 0.0;
         Polygon poly = roadDisruptionUpdate.geometry.type() == Geometry.Type.POLYGON ?
                 (Polygon) roadDisruptionUpdate.geometry :
                 ((MultiPolygon) roadDisruptionUpdate.geometry).polygons().iterator().next();
