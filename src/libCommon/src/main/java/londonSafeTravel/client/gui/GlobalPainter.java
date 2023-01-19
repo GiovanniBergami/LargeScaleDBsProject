@@ -39,7 +39,7 @@ public class GlobalPainter extends AbstractPainter<JXMapViewer> {
     private List<PointOfInterest> pois2;
 
     private final DefaultWaypointRenderer renderer =  new DefaultWaypointRenderer();
-    private final POIRenderer poiRenderer=new POIRenderer(new File("assets/waypoints/poi.png"));
+    private final POIRenderer poiRenderer=new POIRenderer(new File("assets/pois/generic.png"));
     private final Set<DisruptionWaypoint> disruptions = new HashSet<>();
 
     private final Set<POIWaypoint> pois = new HashSet<>();
@@ -201,9 +201,9 @@ public class GlobalPainter extends AbstractPainter<JXMapViewer> {
                     }
                 }
                 if(!leave)
-                    poiRendererGeneric.paintWaypoint(g, map, p);
+                    poiRenderer.paintWaypoint(g, map, p);
             } else
-                poiRendererGeneric.paintWaypoint(g, map, p);
+                poiRenderer.paintWaypoint(g, map, p);
         }
     }
     public void setRoute(List<GeoPosition> route) {

@@ -319,6 +319,16 @@ public class MainApp {
                                 "localhost:8080",
                                 inputString
                         );
+                        if(req.getList().size() == 0) {
+                            JOptionPane.showMessageDialog(
+                                    rootPanel,
+                                    "Nothing was found!",
+                                    "Query result",
+                                    JOptionPane.INFORMATION_MESSAGE
+                            );
+                            return;
+                        }
+
                         result = req.getCoord();
                         table = req.getList();
                     } catch (Exception ex) {
