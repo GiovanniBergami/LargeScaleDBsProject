@@ -1,16 +1,24 @@
 package londonSafeTravel.client;
 
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+import londonSafeTravel.schema.GeoFactory;
 import londonSafeTravel.schema.Location;
+import londonSafeTravel.schema.document.poi.PointOfInterest;
+import londonSafeTravel.schema.document.poi.PointOfInterestOSM;
 import londonSafeTravel.schema.graph.Point;
+import londonSafeTravel.schema.graph.RoutingHop;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.lang.reflect.Type;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 
 public class SearchRequest {
-    private Location poi;
+    private List<PointOfInterest> pois;
 
     public SearchRequest(String hostname, String namePoint) throws Exception{
 
@@ -31,11 +39,17 @@ public class SearchRequest {
         // continuare dopo
         BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
         StringBuffer content = new StringBuffer();
+        Type collectionType = new TypeToken<ArrayList<PointOfInterest>>() {
+        }.getType();
 
-        poi = new Gson().fromJson(in, Location.class);
+        pois = new Gson().fromJson(in, collectionType);
     }
 
     public Location getCoord(){
-        return poi;
+        return GeoFactory.fromMongo(pois.get(0).coordinates);
+    }
+
+    public List<PointOfInterest> getList(){
+        return pois;
     }
 }

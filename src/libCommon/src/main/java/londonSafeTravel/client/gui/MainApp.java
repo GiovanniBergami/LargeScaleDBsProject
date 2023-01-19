@@ -68,9 +68,6 @@ public class MainApp {
         // Use 3 threads in parallel to load the tiles
         tileFactory.setThreadPoolSize(3);
 
-        mapViewer.setZoom(6);
-        mapViewer.setAddressLocation(new GeoPosition(51.5067, -0.1269)); // London
-
         // Add interactions
         MouseInputListener mia = new PanMouseInputListener(mapViewer);
         mapViewer.addMouseListener(mia);
@@ -178,6 +175,9 @@ public class MainApp {
 
         });
         mapViewer.setTileFactory(tileFactory);
+
+        mapViewer.setZoom(6);
+        mapViewer.setAddressLocation(new GeoPosition(51.5067, -0.1269)); // London
 
         DisruptionListener disruptionManagerListener = new DisruptionListener() {
             @Override
@@ -303,6 +303,10 @@ public class MainApp {
                    }
                    // in result abbiamo la location
                    // rimane da settare lo zoom su questo
+
+                   mapViewer.setZoom(2);
+                   GeoPosition puntoDaVisualizzare = new GeoPosition(result.getLatitude(), result.getLongitude());
+                   mapViewer.setAddressLocation(puntoDaVisualizzare);
 
                }else{
                    JOptionPane.showMessageDialog(rootPanel, "Please insert a POI or a street", "Error", JOptionPane.ERROR_MESSAGE);
