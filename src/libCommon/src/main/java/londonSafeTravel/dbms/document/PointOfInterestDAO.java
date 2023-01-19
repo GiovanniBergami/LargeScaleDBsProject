@@ -24,6 +24,7 @@ import org.bson.conversions.Bson;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -100,6 +101,7 @@ public class PointOfInterestDAO {
         return results;
     }
 
+    /*
     public Location findPlace(String name){
         //Bson match = match(eq("name", name));
         //Bson match = Filters.text(name, new TextSearchOptions().caseSensitive(false));
@@ -112,5 +114,17 @@ public class PointOfInterestDAO {
 
         Location p = GeoFactory.fromMongo(result.coordinates);
         return p;
+    }
+
+     */
+    public Collection<PointOfInterest> findPlace(String name){
+        //Bson match = match(eq("name", name));
+        //Bson match = Filters.text(name, new TextSearchOptions().caseSensitive(false));
+        ArrayList<PointOfInterest> results = new ArrayList<>();
+        collection.find(
+                Filters.regex("name", Pattern.compile(name, Pattern.CASE_INSENSITIVE))
+        ).limit(20).forEach(results::add);
+
+        return results;
     }
 }
