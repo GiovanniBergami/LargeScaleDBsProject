@@ -1,6 +1,5 @@
 package londonSafeTravel.client.gui;
 
-import com.google.protobuf.MapEntry;
 import londonSafeTravel.client.POIRequest;
 import londonSafeTravel.schema.Location;
 import londonSafeTravel.schema.document.poi.PointOfInterest;
@@ -29,8 +28,11 @@ public class GlobalPainter extends AbstractPainter<JXMapViewer> {
 
     private List<GeoPosition> route;
 
-    private GeoPosition routeStart;
-    private GeoPosition routeEnd;
+    private DefaultWaypoint routeStart;
+    private DefaultWaypoint routeEnd;
+
+    private final POIRenderer routeStartRenderer = new POIRenderer(new File("assets/start.png"));
+    private final POIRenderer routeEndRenderer = new POIRenderer(new File("assets/end.png"));
 
     private final DefaultWaypointRenderer renderer =  new DefaultWaypointRenderer();
     private final POIRenderer poiRendererGeneric = new POIRenderer(new File("assets/pois/generic.png"));
@@ -142,8 +144,6 @@ public class GlobalPainter extends AbstractPainter<JXMapViewer> {
 
         boolean first = true;
 
-
-
         for (GeoPosition gp : route) {
             // convert geo-coordinate to world bitmap pixel
             Point2D pt = map.getTileFactory().geoToPixel(gp, map.getZoom());
@@ -156,6 +156,12 @@ public class GlobalPainter extends AbstractPainter<JXMapViewer> {
             lastX = (int) pt.getX();
             lastY = (int) pt.getY();
         }
+
+        if(this.routeStart != null)
+            this.routeStartRenderer.paintWaypoint(g, map, this.routeStart);
+
+        if(this.routeEnd != null)
+            this.routeEndRenderer.paintWaypoint(g, map, this.routeEnd);
     }
 
     private void drawDisruptions(Graphics2D g, JXMapViewer map) {
@@ -190,6 +196,14 @@ public class GlobalPainter extends AbstractPainter<JXMapViewer> {
         this.route = route;
     }
 
+    public void setRouteStart(DefaultWaypoint routeStart) {
+        this.routeStart = routeStart;
+    }
+
+    public void setRouteEnd(DefaultWaypoint routeEnd) {
+        this.routeEnd = routeEnd;
+    }
+
     public void setDisruptions(Set<DisruptionWaypoint> disruptions) {
         this.disruptions.clear();
         this.disruptions.addAll(disruptions);
@@ -197,14 +211,6 @@ public class GlobalPainter extends AbstractPainter<JXMapViewer> {
     public void setPOIs(Set<POIWaypoint> pois){
         this.pois.clear();
         this.pois.addAll(pois);
-    }
-
-    public void setRouteStart(GeoPosition routeStart) {
-        this.routeStart = routeStart;
-    }
-
-    public void setRouteEnd(GeoPosition routeEnd) {
-        this.routeEnd = routeEnd;
     }
 
     public void removeDisruptions() {
