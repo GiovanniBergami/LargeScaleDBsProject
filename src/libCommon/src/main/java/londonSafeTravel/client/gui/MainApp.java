@@ -147,6 +147,14 @@ public class MainApp {
                         mapViewer.zoomToBestFit(new HashSet<>(track), 0.7);
 
                         globalPainter.setRoute(track);
+                        globalPainter.setRouteStart(new DefaultWaypoint(
+                                start.getLocation().getLatitude(),
+                                start.getLocation().getLongitude()
+                        ));
+                        globalPainter.setRouteEnd(new DefaultWaypoint(
+                                end.getLocation().getLatitude(),
+                                end.getLocation().getLongitude()
+                        ));
                     } catch (Exception ex) {
                         throw new RuntimeException(ex);
                     } finally {

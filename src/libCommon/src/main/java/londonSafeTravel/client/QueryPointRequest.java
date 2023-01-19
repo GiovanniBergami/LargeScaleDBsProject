@@ -1,16 +1,13 @@
 package londonSafeTravel.client;
 
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
+import londonSafeTravel.gsonUtils.GsonFactory;
 import londonSafeTravel.schema.graph.Point;
 import org.jxmapviewer.viewer.GeoPosition;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
-import java.lang.reflect.Type;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.ArrayList;
 
 public class QueryPointRequest {
     public Point getPoint() {
@@ -38,7 +35,7 @@ public class QueryPointRequest {
         BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
         StringBuffer content = new StringBuffer();
 
-        point = new Gson().fromJson(in, Point.class);
+        point = GsonFactory.build().fromJson(in, Point.class);
     }
 
     GeoPosition getPosition(){

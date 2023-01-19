@@ -122,8 +122,7 @@ public class RoadDisruptionUpdate {
             d.end = roadDisruptionUpdate.endDateTime;
 
 
-            d.coordinates = new com.mongodb.client.model.geojson.Point(
-                    GeoFactory.fromFilosgangaToMongo(roadDisruptionUpdate.geography));
+            d.coordinates = GeoFactory.fromFilosgangaToMongo(roadDisruptionUpdate.geography);
 
             if (roadDisruptionUpdate.geometry == null)
                 d.boundaries = null;

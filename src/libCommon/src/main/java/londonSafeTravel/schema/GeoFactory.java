@@ -1,5 +1,6 @@
 package londonSafeTravel.schema;
 
+import com.github.filosganga.geogson.model.positions.SinglePosition;
 import com.mongodb.client.model.geojson.*;
 import org.neo4j.driver.types.Point;
 
@@ -24,15 +25,20 @@ public class GeoFactory {
         );
     }
 
-    public static Position convertToMongo(Location location) {
-        return new Position(
+    public static com.mongodb.client.model.geojson.Point convertToMongo(Location location) {
+        return new com.mongodb.client.model.geojson.Point(new Position(
                 location.getLongitude(),
                 location.getLatitude()
-        );
+        ));
     }
 
     public static LineString convertToMongo(List<Location> line) {
-        return new LineString(line.stream().map(GeoFactory::convertToMongo).collect(Collectors.toList()));
+        return new LineString(
+                line.stream()
+                        .map(GeoFactory::convertToMongo)
+                        .map(com.mongodb.client.model.geojson.Point::getPosition)
+                        .collect(Collectors.toList())
+        );
     }
 
     public static Polygon convertToMongo(Location.Polygon poly) {
@@ -41,8 +47,14 @@ public class GeoFactory {
 
     public static PolygonCoordinates convertToMongo2(Location.Polygon poly) {
         return new PolygonCoordinates(
-                poly.outer.stream().map(GeoFactory::convertToMongo).collect(Collectors.toList()),
-                poly.inner.stream().map(GeoFactory::convertToMongo).collect(Collectors.toList())
+                poly.outer.stream()
+                        .map(GeoFactory::convertToMongo)
+                        .map(com.mongodb.client.model.geojson.Point::getPosition)
+                        .collect(Collectors.toList()),
+                poly.inner.stream()
+                        .map(GeoFactory::convertToMongo)
+                        .map(com.mongodb.client.model.geojson.Point::getPosition)
+                        .collect(Collectors.toList())
         );
     }
 
@@ -52,14 +64,16 @@ public class GeoFactory {
         );
     }
 
-    public static Position fromFilosgangaToMongo(com.github.filosganga.geogson.model.Point point) {
+    public static com.mongodb.client.model.geojson.Point fromFilosgangaToMongo(com.github.filosganga.geogson.model.Point point) {
         return convertToMongo(new Location(point.lat(), point.lon()));
     }
 
     public static LineString fromFilosgangaToMongo(com.github.filosganga.geogson.model.LineString line) {
         return new LineString(
                 StreamSupport.stream(line.points().spliterator(), false)
-                        .map(GeoFactory::fromFilosgangaToMongo).collect(Collectors.toList()));
+                        .map(GeoFactory::fromFilosgangaToMongo)
+                        .map(com.mongodb.client.model.geojson.Point::getPosition)
+                        .collect(Collectors.toList()));
     }
 
     public static Polygon fromFilosgangaToMongo(com.github.filosganga.geogson.model.Polygon polygon) {
@@ -81,5 +95,9 @@ public class GeoFactory {
                         .map(Polygon::getCoordinates)
                         .collect(Collectors.toList())
         );
+    }
+
+    public static com.github.filosganga.geogson.model.Point toSgagna(Location p) {
+        return com.github.filosganga.geogson.model.Point.from(p.getLongitude(), p.getLatitude());
     }
 }
