@@ -1,13 +1,10 @@
 package londonSafeTravel.client.gui;
 
-import londonSafeTravel.client.DisruptionsRequest;
 import londonSafeTravel.client.POIRequest;
 import londonSafeTravel.schema.Location;
 import londonSafeTravel.schema.document.poi.PointOfInterest;
-import londonSafeTravel.schema.graph.Disruption;
 import org.jxmapviewer.JXMapViewer;
 import org.jxmapviewer.painter.AbstractPainter;
-import org.jxmapviewer.painter.Painter;
 import org.jxmapviewer.viewer.*;
 
 import java.awt.*;
@@ -27,6 +24,8 @@ public class GlobalPainter extends AbstractPainter<JXMapViewer> {
 
     private List<GeoPosition> route;
 
+    private List<PointOfInterest> pois2;
+
     private final DefaultWaypointRenderer renderer =  new DefaultWaypointRenderer();
     private final POIRenderer poiRenderer=new POIRenderer(new File("assets/waypoints/poi.png"));
     private final Set<DisruptionWaypoint> disruptions = new HashSet<>();
@@ -38,7 +37,12 @@ public class GlobalPainter extends AbstractPainter<JXMapViewer> {
     private double oldCenterX = -1;
     private double oldCenterY = -1;
 
-    public GlobalPainter() throws IOException {
+    private POIEventHandler poiEventHandler;
+
+
+
+    public GlobalPainter(POIEventHandler poiEventHandler) throws IOException {
+        this.poiEventHandler = poiEventHandler;
     }
 
     @Override
@@ -91,7 +95,8 @@ public class GlobalPainter extends AbstractPainter<JXMapViewer> {
                         .collect(Collectors.toSet());
 
                 setPOIs(poisSET);
-
+                poiEventHandler.setPois(pois);
+                pois2 = pois;
             }
             else
                 setPOIs(new HashSet<>());
@@ -174,6 +179,9 @@ public class GlobalPainter extends AbstractPainter<JXMapViewer> {
         this.pois.addAll(pois);
     }
 
+    public List<PointOfInterest> getPois(){
+        return pois2;
+    }
 
     public void removeDisruptions() {
         this.disruptions.clear();
