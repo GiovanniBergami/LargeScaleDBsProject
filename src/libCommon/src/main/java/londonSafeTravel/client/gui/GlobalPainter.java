@@ -29,6 +29,9 @@ public class GlobalPainter extends AbstractPainter<JXMapViewer> {
 
     private List<GeoPosition> route;
 
+    private GeoPosition routeStart;
+    private GeoPosition routeEnd;
+
     private final DefaultWaypointRenderer renderer =  new DefaultWaypointRenderer();
     private final POIRenderer poiRendererGeneric = new POIRenderer(new File("assets/pois/generic.png"));
     private final Set<DisruptionWaypoint> disruptions = new HashSet<>();
@@ -196,6 +199,13 @@ public class GlobalPainter extends AbstractPainter<JXMapViewer> {
         this.pois.addAll(pois);
     }
 
+    public void setRouteStart(GeoPosition routeStart) {
+        this.routeStart = routeStart;
+    }
+
+    public void setRouteEnd(GeoPosition routeEnd) {
+        this.routeEnd = routeEnd;
+    }
 
     public void removeDisruptions() {
         this.disruptions.clear();
