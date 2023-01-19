@@ -1,11 +1,13 @@
 package londonSafeTravel.client.gui;
 
+import londonSafeTravel.client.DisruptionsRequest;
 import londonSafeTravel.client.POIRequest;
 import londonSafeTravel.schema.Location;
 import londonSafeTravel.schema.document.poi.PointOfInterest;
 import londonSafeTravel.schema.document.poi.PointOfInterestOSM;
 import org.jxmapviewer.JXMapViewer;
 import org.jxmapviewer.painter.AbstractPainter;
+import org.jxmapviewer.painter.Painter;
 import org.jxmapviewer.viewer.*;
 
 import java.awt.*;
@@ -28,16 +30,16 @@ public class GlobalPainter extends AbstractPainter<JXMapViewer> {
 
     private List<GeoPosition> route;
 
-    private List<PointOfInterest> pois2;
-
     private DefaultWaypoint routeStart;
     private DefaultWaypoint routeEnd;
 
     private final POIRenderer routeStartRenderer = new POIRenderer(new File("assets/start.png"));
     private final POIRenderer routeEndRenderer = new POIRenderer(new File("assets/end.png"));
 
+    private List<PointOfInterest> pois2;
+
     private final DefaultWaypointRenderer renderer =  new DefaultWaypointRenderer();
-    private final POIRenderer poiRendererGeneric = new POIRenderer(new File("assets/pois/generic.png"));
+    private final POIRenderer poiRenderer=new POIRenderer(new File("assets/pois/generic.png"));
     private final Set<DisruptionWaypoint> disruptions = new HashSet<>();
 
     private final Set<POIWaypoint> pois = new HashSet<>();
@@ -105,6 +107,9 @@ public class GlobalPainter extends AbstractPainter<JXMapViewer> {
                             .map(POIWaypoint::new)
                             .collect(Collectors.toSet());
 
+                setPOIs(poisSET);
+                poiEventHandler.setPois(pois);
+                pois2 = pois;
                     setPOIs(poisSET);
                 } catch (Exception ex) {
                     throw new RuntimeException(ex);
@@ -196,9 +201,9 @@ public class GlobalPainter extends AbstractPainter<JXMapViewer> {
                     }
                 }
                 if(!leave)
-                    poiRendererGeneric.paintWaypoint(g, map, p);
+                    poiRenderer.paintWaypoint(g, map, p);
             } else
-                poiRendererGeneric.paintWaypoint(g, map, p);
+                poiRenderer.paintWaypoint(g, map, p);
         }
     }
     public void setRoute(List<GeoPosition> route) {
@@ -222,6 +227,9 @@ public class GlobalPainter extends AbstractPainter<JXMapViewer> {
         this.pois.addAll(pois);
     }
 
+    public List<PointOfInterest> getPois(){
+        return pois2;
+    }
 
     public void removeDisruptions() {
         this.disruptions.clear();
