@@ -49,7 +49,7 @@ public class GlobalPainter extends AbstractPainter<JXMapViewer> {
     private double oldCenterX = -1;
     private double oldCenterY = -1;
 
-    private POIEventHandler poiEventHandler;
+    private final POIEventHandler poiEventHandler;
 
 
 
@@ -88,7 +88,7 @@ public class GlobalPainter extends AbstractPainter<JXMapViewer> {
             pointTopLeft = map.getTileFactory().pixelToGeo(topLeft,newZoom);
             pointBottomRight = map.getTileFactory().pixelToGeo(bottomRight,newZoom);
 
-            System.out.println("PointTopLeft:"+pointTopLeft + "\tand pointBottomRight: "+ pointBottomRight);
+            //System.out.println("PointTopLeft:"+pointTopLeft + "\tand pointBottomRight: "+ pointBottomRight);
 
             Location tl = new Location(pointTopLeft.getLatitude(), pointTopLeft.getLongitude());
             Location br = new Location(pointBottomRight.getLatitude(), pointBottomRight.getLongitude());
@@ -148,6 +148,12 @@ public class GlobalPainter extends AbstractPainter<JXMapViewer> {
      * @param map the map
      */
     private void drawRoute(Graphics2D g, JXMapViewer map) {
+        if(this.routeStart != null)
+            this.routeStartRenderer.paintWaypoint(g, map, this.routeStart);
+
+        if(this.routeEnd != null)
+            this.routeEndRenderer.paintWaypoint(g, map, this.routeEnd);
+
         if(this.route == null)
             return;
 
@@ -170,12 +176,6 @@ public class GlobalPainter extends AbstractPainter<JXMapViewer> {
             lastX = (int) pt.getX();
             lastY = (int) pt.getY();
         }
-
-        if(this.routeStart != null)
-            this.routeStartRenderer.paintWaypoint(g, map, this.routeStart);
-
-        if(this.routeEnd != null)
-            this.routeEndRenderer.paintWaypoint(g, map, this.routeEnd);
     }
 
     private void drawDisruptions(Graphics2D g, JXMapViewer map) {

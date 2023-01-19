@@ -102,10 +102,14 @@ public class MainApp {
                 var coordinates = mapViewer.convertPointToGeoPosition(e.getPoint());
                 if (coordinates.getLatitude() > MAX_LAT || coordinates.getLatitude() < MIN_LAT ||
                         coordinates.getLongitude() > MAX_LON || coordinates.getLongitude() < MIN_LON) {
-                    System.out.println("Skipping click outside of bounds");
+                    JOptionPane.showMessageDialog(
+                            rootPanel,
+                            "Point " + coordinates + " is out of bound!",
+                            "Routing error",
+                            JOptionPane.ERROR_MESSAGE
+                    );
                     return;
                 }
-
 
                 QueryPointRequest request;
                 try {
@@ -147,21 +151,33 @@ public class MainApp {
                         mapViewer.zoomToBestFit(new HashSet<>(track), 0.7);
 
                         globalPainter.setRoute(track);
-                        globalPainter.setRouteStart(new DefaultWaypoint(
-                                start.getLocation().getLatitude(),
-                                start.getLocation().getLongitude()
-                        ));
+                    } catch (Exception ex) {
+                        throw new RuntimeException(ex);
+                    } finally {
                         globalPainter.setRouteEnd(new DefaultWaypoint(
                                 end.getLocation().getLatitude(),
                                 end.getLocation().getLongitude()
                         ));
-                    } catch (Exception ex) {
-                        throw new RuntimeException(ex);
-                    } finally {
+
                         start = null;
                         end = null;
                     }
+                    return;
                 }
+
+                if(start != null)
+                    globalPainter.setRouteStart(new DefaultWaypoint(
+                            start.getLocation().getLatitude(),
+                            start.getLocation().getLongitude()
+                    ));
+                else
+                    globalPainter.setRouteStart(null);
+
+                if(end == null)
+                    globalPainter.setRouteEnd(null);
+
+
+                mapViewer.repaint();
             }
 
             @Override
