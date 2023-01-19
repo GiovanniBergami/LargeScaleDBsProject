@@ -1,17 +1,22 @@
 package londonSafeTravel.client.gui;
 
 import londonSafeTravel.schema.document.poi.PointOfInterest;
+import londonSafeTravel.schema.document.poi.PointOfInterestOSM;
 
 import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.*;
+import java.util.Map;
 
 public class POIDialog extends JDialog {
     private JPanel contentPane;
     private JButton buttonOK;
     private JLabel namePOI;
-    private JTextArea namePOIText;
+    private JTextField namePOIText;
     private JLabel id_poi;
+    private JTable table1;
+    private JScrollPane tablesScrollPane;
 
     PointOfInterest poi;
 
@@ -25,12 +30,21 @@ public class POIDialog extends JDialog {
         id_poi.setText("ID: "+poi.poiID);
         namePOIText.setText(poi.name);
 
+        // Show
+        if(poi.getType().equals("OSM-POI")) {
+            PointOfInterestOSM osm = (PointOfInterestOSM) poi;
+            DefaultTableModel tableData = (DefaultTableModel)table1.getModel();
 
-        buttonOK.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                onOK();
-            }
-        });
+            tableData.addColumn("key");
+            tableData.addColumn("value");
+
+            for(Map.Entry<String, String> tag : osm.tags.entrySet())
+                tableData.addRow(new String[]{tag.getKey(), tag.getValue()});
+        } else
+            tablesScrollPane.setVisible(false);
+
+
+        buttonOK.addActionListener(e -> onOK());
 
         // call onCancel() when cross is clicked
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
@@ -41,11 +55,11 @@ public class POIDialog extends JDialog {
         });
 
         // call onCancel() on ESCAPE
-        contentPane.registerKeyboardAction(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                onOK();
-            }
-        }, KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+        contentPane.registerKeyboardAction(
+                e -> onOK(),
+                KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
+                JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT
+        );
     }
 
     private void onOK() {
