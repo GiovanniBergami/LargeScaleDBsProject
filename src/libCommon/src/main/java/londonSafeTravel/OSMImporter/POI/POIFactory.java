@@ -33,8 +33,7 @@ public class POIFactory {
         var mongoPoint = new PointOfInterestOSM();
 
         mongoPoint.poiID = String.valueOf(poi.osmID);
-        mongoPoint.coordinates = new com.mongodb.client.model.geojson.Point(
-                GeoFactory.convertToMongo(poi.getCentrum()));
+        mongoPoint.coordinates = GeoFactory.convertToMongo(poi.getCentrum());
         mongoPoint.name = poi.name;
         mongoPoint.tags = poi.osmTags;
         if(poi instanceof  Way)

@@ -1,7 +1,7 @@
 package londonSafeTravel.server;
 
-import com.google.gson.Gson;
 import com.sun.net.httpserver.HttpExchange;
+import londonSafeTravel.gsonUtils.GsonFactory;
 import londonSafeTravel.dbms.document.PointOfInterestDAO;
 import londonSafeTravel.dbms.document.ConnectionMongoDB;
 import org.apache.hc.core5.net.URIBuilder;
@@ -36,7 +36,7 @@ public class POIHandler extends Handler {
         double longBottomRight = Double.parseDouble(uriParsed.getFirstQueryParam("longBottomRight").getValue());
 
         var pois = poi.selectPOIsInArea(longTopLeft,longBottomRight,latBottomRight,latTopLeft);
-        String json = new Gson().toJson(pois);
+        String json = GsonFactory.build().toJson(pois);
 
         var responseBody = exchange.getResponseBody();
 
