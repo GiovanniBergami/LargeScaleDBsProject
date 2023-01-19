@@ -39,6 +39,9 @@ public class POIEventHandler extends MouseAdapter {
 
     @Override
     public void mouseClicked(MouseEvent me) {
+        if(me.getButton() != MouseEvent.BUTTON1 || mapViewer.getZoom() > 3)
+            return;
+
         if(pois == null)
             return;
 
@@ -57,8 +60,10 @@ public class POIEventHandler extends MouseAdapter {
 
     @Override
     public void mouseMoved(MouseEvent me) {
-        if(pois == null)
+        if(pois == null || mapViewer.getZoom() > 3) {
+            mapViewer.setCursor(Cursor.getDefaultCursor());
             return;
+        }
 
         for (var singlePoi : pois) {
             POIWaypoint temp = new POIWaypoint(singlePoi);

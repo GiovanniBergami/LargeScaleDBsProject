@@ -40,6 +40,7 @@ public class RoadDisruptionUpdate {
     Point geography;
     Geometry geometry;
     String severity;
+    boolean hasClosures;
 
     private static void addToGraph(RoadDisruptionUpdate roadDisruptionUpdate, Date t) {
         londonSafeTravel.schema.graph.Disruption dg = new londonSafeTravel.schema.graph.Disruption();
@@ -51,6 +52,7 @@ public class RoadDisruptionUpdate {
         dg.updateTime = roadDisruptionUpdate.currentUpdateDateTime;
         dg.category = roadDisruptionUpdate.category;
         dg.subCategory = roadDisruptionUpdate.subCategory;
+        dg.closed = roadDisruptionUpdate.hasClosures;
 
         long ttl = roadDisruptionUpdate.endDateTime.toInstant().getEpochSecond() - t.toInstant().getEpochSecond();
         if (ttl > 0)
@@ -61,12 +63,12 @@ public class RoadDisruptionUpdate {
         dg.centrum = GeoFactory.fromFilosgangaToLocation(roadDisruptionUpdate.geography);
 
         // Compute a radius
-        if (roadDisruptionUpdate.geometry == null
-                || roadDisruptionUpdate.geometry.type() != Geometry.Type.POLYGON
-                || roadDisruptionUpdate.geometry.type() != Geometry.Type.MULTI_POLYGON
-                || (roadDisruptionUpdate.geometry.type() == Geometry.Type.MULTI_POLYGON &&
-                !((MultiPolygon) roadDisruptionUpdate.geometry).polygons().iterator().hasNext())) {
-            dg.radius = 20;
+        if (roadDisruptionUpdate.geometry == null || (
+                roadDisruptionUpdate.geometry.type() != Geometry.Type.POLYGON
+                && roadDisruptionUpdate.geometry.type() != Geometry.Type.MULTI_POLYGON
+                && (roadDisruptionUpdate.geometry.type() == Geometry.Type.MULTI_POLYGON &&
+                !((MultiPolygon) roadDisruptionUpdate.geometry).polygons().iterator().hasNext()))) {
+            dg.radius = 150;
             manageDisruptionGraph.createClosure(dg);
             return;
         }
@@ -83,6 +85,8 @@ public class RoadDisruptionUpdate {
             if (dist > dg.radius)
                 dg.radius = dist;
         }));
+
+        dg.radius = Math.max(500, dg.radius);
 
         manageDisruptionGraph.createClosure(dg);
     }
@@ -120,7 +124,6 @@ public class RoadDisruptionUpdate {
             d.severity = roadDisruptionUpdate.severity;
             d.start = roadDisruptionUpdate.startDateTime;
             d.end = roadDisruptionUpdate.endDateTime;
-
 
             d.coordinates = GeoFactory.fromFilosgangaToMongo(roadDisruptionUpdate.geography);
 
@@ -179,7 +182,7 @@ public class RoadDisruptionUpdate {
     }
 
     public static void main(String[] argv) throws Exception {
-        // Open connections to DBs
+        // Open connections to DBs 172.16.5.47
         manageDisruptionDocument = new ManageDisruption(new ConnectionMongoDB("mongodb://172.16.5.47:27017"));
         manageDisruptionGraph = new londonSafeTravel.dbms.graph.ManageDisruption(
                 GraphDatabase.driver(

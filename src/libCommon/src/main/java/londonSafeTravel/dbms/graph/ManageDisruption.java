@@ -21,17 +21,17 @@ public class ManageDisruption {
         this.driver = driver;
     }
 
-    // language=Chyper
     private static final Query CREATE_CLOSURE = new Query(
             """
                     MERGE (d:Disruption {id: $id})
                     SET d.centrum = point({latitude: $lat, longitude: $lon})
                     SET d.radius = $radius
                     SET d.severity = $severity
-                    SET d.ttl = $ttl\s
+                    SET d.ttl = $ttl
                     SET d.category = $category SET d.subCategory = $subcategory
                     SET d.comment = $comment
                     SET d.update = $update SET d.updateTime = $updateTime
+                    SET d.closed = $closed
                     WITH d
                     MATCH (p: Point)
                     WHERE point.distance(p.coord, d.centrum) <= d.radius
@@ -59,6 +59,7 @@ public class ManageDisruption {
                         "category", disruption.category,
                         "subcategory", disruption.subCategory,
                         "comment", disruption.comment,
+                        "closed", disruption.closed,
                         "update", disruption.update,
                         "updateTime", disruption.updateTime.toInstant()
                             .atZone(ZoneId.systemDefault())
@@ -107,6 +108,7 @@ public class ManageDisruption {
                 d.update = record.get("d").get("update").asString();
                 // @fixme figure this shit out
                 d.updateTime = java.sql.Timestamp.valueOf(record.get("d").get("updateTime").asLocalDateTime());
+                d.closed = record.get("d").get("closed").asBoolean(false);
 
                 disruptions.add(d);
             });

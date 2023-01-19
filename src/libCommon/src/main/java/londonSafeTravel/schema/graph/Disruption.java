@@ -18,4 +18,5 @@ public class Disruption {
 
     public String update;
     public Date updateTime;
+    public boolean closed;
 }
