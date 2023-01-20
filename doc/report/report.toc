@@ -29,7 +29,13 @@
 \contentsline {chapter}{\numberline {8}Overall platform architecture}{15}{chapter.8}%
 \contentsline {chapter}{\numberline {9}Framework used}{16}{chapter.9}%
 \contentsline {part}{IV\hspace {1em}Implementation}{17}{part.4}%
-\contentsline {part}{V\hspace {1em}Conclusion}{18}{part.5}%
-\contentsline {part}{VI\hspace {1em}Manual}{19}{part.6}%
-\contentsline {chapter}{\numberline {A}User}{20}{appendix.A}%
-\contentsline {chapter}{\numberline {B}Statistician}{21}{appendix.B}%
+\contentsline {chapter}{\numberline {10}Queries on graph database}{18}{chapter.10}%
+\contentsline {section}{\numberline {10.1}Routing}{18}{section.10.1}%
+\contentsline {section}{\numberline {10.2}Point finding}{22}{section.10.2}%
+\contentsline {paragraph}{}{22}{section*.16}%
+\contentsline {paragraph}{}{23}{section*.18}%
+\contentsline {paragraph}{}{23}{section*.19}%
+\contentsline {part}{V\hspace {1em}Conclusion}{24}{part.5}%
+\contentsline {part}{VI\hspace {1em}Manual}{25}{part.6}%
+\contentsline {chapter}{\numberline {A}User}{26}{appendix.A}%
+\contentsline {chapter}{\numberline {B}Statistician}{27}{appendix.B}%
