@@ -22,6 +22,8 @@ public class RoutingHandler extends Handler {
 
         long start = Long.parseLong(uriParsed.getFirstQueryParam("start").getValue());
         long end = Long.parseLong(uriParsed.getFirstQueryParam("end").getValue());
+        boolean dis = Boolean.parseBoolean(uriParsed.getFirstQueryParam("considerDisruptions").getValue());
+
         String type = uriParsed.getFirstQueryParam("type") != null ?
                 uriParsed.getFirstQueryParam("type").getValue() : "car";
 
@@ -29,7 +31,7 @@ public class RoutingHandler extends Handler {
 
         // @TODO Handle errors here
         System.out.println(start + "\t" + end);
-        var route = manageRouting.route1(start, end, type);
+        var route = manageRouting.route1(start, end, type, dis);
         String json = new Gson().toJson(route);
 
         exchange.getResponseHeaders().set("Content-Type", "application/json");
