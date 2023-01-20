@@ -1,6 +1,9 @@
 package londonSafeTravel.client.gui;
 
-import londonSafeTravel.client.*;
+import londonSafeTravel.client.net.DisruptionsRequest;
+import londonSafeTravel.client.net.QueryPointRequest;
+import londonSafeTravel.client.net.RoutingRequest;
+import londonSafeTravel.client.net.SearchRequest;
 import londonSafeTravel.schema.Location;
 import londonSafeTravel.schema.document.poi.PointOfInterest;
 import londonSafeTravel.schema.graph.Disruption;

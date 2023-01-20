@@ -1,4 +1,4 @@
-package londonSafeTravel.client;
+package londonSafeTravel.client.net;
 
 import org.bson.Document;
 

@@ -1,8 +1,11 @@
-package londonSafeTravel.client;
+package londonSafeTravel.client.net;
 
+import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import londonSafeTravel.gsonUtils.GsonFactory;
+import londonSafeTravel.schema.GeoFactory;
+import londonSafeTravel.schema.Location;
 import londonSafeTravel.schema.document.poi.PointOfInterest;
+
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -10,14 +13,16 @@ import java.lang.reflect.Type;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.List;
 
-public class POIRequest {
+public class SearchRequest {
+    private final List<PointOfInterest> pois;
 
-    ArrayList<PointOfInterest> pois;
-    public POIRequest(String hostname, double latTopLeft, double longTopLeft, double latBottomRight, double longBottomRight) throws Exception{
+    public SearchRequest(String hostname, String namePoint) throws Exception{
 
+        namePoint = namePoint.replace(" ", "%20");
         HttpURLConnection con = (HttpURLConnection) new URL(
-         "http://"+ hostname+ "/queryPOI.json?latTopLeft="+ latTopLeft +"&longTopLeft="+longTopLeft+"&latBottomRight="+latBottomRight+"&longBottomRight="+longBottomRight
+                "http://"+ hostname+ "/querySearchPOI.json?name="+ namePoint
         ).openConnection();
 
         con.setRequestProperty("User-Agent", "Mozilla/5.0");
@@ -30,15 +35,20 @@ public class POIRequest {
         if(status != 200)
             throw new Exception("errore " + status);
 
+        // continuare dopo
         BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
         StringBuffer content = new StringBuffer();
         Type collectionType = new TypeToken<ArrayList<PointOfInterest>>() {
         }.getType();
 
-        pois = GsonFactory.build().fromJson(in, collectionType);
+        pois = new Gson().fromJson(in, collectionType);
     }
 
-    public ArrayList<PointOfInterest> getPOIs() {
+    public Location getCoord(){
+        return GeoFactory.fromMongo(pois.get(0).coordinates);
+    }
+
+    public List<PointOfInterest> getList(){
         return pois;
     }
 }

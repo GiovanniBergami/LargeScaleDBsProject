@@ -1,9 +1,22 @@
 package londonSafeTravel.client.gui;
 
-import londonSafeTravel.client.HeatmapRequest;
-import londonSafeTravel.client.StatTableRequest;
+import londonSafeTravel.client.net.HeatmapRequest;
+import londonSafeTravel.client.net.LineGraphRequest;
+import londonSafeTravel.client.net.StatTableRequest;
 import londonSafeTravel.schema.Location;
 import org.bson.Document;
+import org.jfree.chart.ChartFactory;
+import org.jfree.chart.ChartPanel;
+import org.jfree.chart.JFreeChart;
+import org.jfree.chart.axis.NumberAxis;
+import org.jfree.chart.axis.NumberTickUnit;
+import org.jfree.chart.plot.PlotOrientation;
+import org.jfree.chart.plot.XYPlot;
+import org.jfree.data.category.DefaultCategoryDataset;
+import org.jfree.data.general.Dataset;
+import org.jfree.data.xy.XYDataset;
+import org.jfree.data.xy.XYSeries;
+import org.jfree.data.xy.XYSeriesCollection;
 import org.jxmapviewer.JXMapViewer;
 import org.jxmapviewer.OSMTileFactoryInfo;
 import org.jxmapviewer.input.CenterMapListener;
@@ -23,10 +36,12 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.geom.Point2D;
+import java.util.ArrayList;
 import java.util.Collection;
 
 public class AnalyticsMap {
     private final HeatmapPainter heatmapPainter;
+    private final XYSeriesCollection dataset;
     private JTable queryResult;
     private JPanel mainPanel;
     private JXMapViewer mapViewer;
@@ -36,7 +51,7 @@ public class AnalyticsMap {
 
     private JComboBox<String> classDisruption;
     private JButton updateButton;
-
+    private JPanel graphContainer;
     private void updateHeatmap(String selectedClass, int size) {
         try {
             long latitudeLength = 0;
@@ -114,7 +129,7 @@ public class AnalyticsMap {
     }
     public AnalyticsMap() throws Exception {
         // Create a TileFactoryInfo for OpenStreetMap
-        TileFactoryInfo info = new OSMTileFactoryInfo();
+        TileFactoryInfo info = new OSMTileFactoryInfo("Humanitarian", "http://tile-c.openstreetmap.fr/hot");
         DefaultTileFactory tileFactory = new DefaultTileFactory(info);
         mapViewer.setTileFactory(tileFactory);
 
@@ -148,14 +163,36 @@ public class AnalyticsMap {
         tableData.addColumn("Cardinality");
         queryResult.setAutoCreateRowSorter(true);
 
+        dataset = new XYSeriesCollection();
+        var chart = ChartFactory.createXYLineChart(
+                "Average active disruptions by hour",
+                "Hour",
+                "Cardinality",
+                dataset,
+                PlotOrientation.VERTICAL,
+                true,
+                true,
+                false
+        );
+        NumberAxis domain = (NumberAxis) ((XYPlot)chart.getPlot()).getDomainAxis();
+        domain.setRange(0.0, 23.0);
+        domain.setTickUnit(new NumberTickUnit(1.0));
+
+        graphContainer.add(new ChartPanel(chart));
 
         //{"Infrastructure Issue", "Works", "Hazard(s)", "Traffic Incidents", "Special and Planned Events", "Traffic Volume"};
         classDisruption.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                updateHeatmap((String)classDisruption.getSelectedItem(), partitionSize.getValue());
+                try {
+                    updateHeatmap((String)classDisruption.getSelectedItem(), partitionSize.getValue());
+                    updateGraph((String)classDisruption.getSelectedItem());
+                } catch (Exception ex) {
+                    throw new RuntimeException(ex);
+                }
             }
         });
 
+        classDisruption.setSelectedItem("Works");
 
         partitionSize.addChangeListener(new ChangeListener() {
             @Override
@@ -163,9 +200,6 @@ public class AnalyticsMap {
                 updateHeatmap((String)classDisruption.getSelectedItem(), partitionSize.getValue());
             }
         });
-
-
-
 
         var heatmapReq = new HeatmapRequest("localhost:8080", "Infrastructure Issue", 50, 50);
 
@@ -181,6 +215,23 @@ public class AnalyticsMap {
         });
 
 
+    }
+
+    private void updateGraph(String selectedItem) throws Exception {
+        var request = new LineGraphRequest("localhost:8080", selectedItem);
+        var series = new XYSeries("by hour");
+
+        double[] counts = new double[24];
+        request.getEntries().forEach(lineGraphEntry -> {
+            counts[(int) lineGraphEntry.hour] = lineGraphEntry.count;
+        });
+
+        for(int i = 0; i < 24; i++) {
+            series.add(i, counts[i]);
+        }
+
+        dataset.removeAllSeries();
+        dataset.addSeries(series);
     }
 
     public static void main(String[] args) throws Exception {

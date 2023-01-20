@@ -7,7 +7,8 @@ db.Disruption.aggregate([
             start: {$multiply : [{$floor: {$divide: [{$toLong: "$start"}, 3600000]}}, 3600]},
             // @TODO take min between $end and current_date
             end: {$multiply : [{$ceil: {$divide: [{$toLong: "$end"}, 3600000]}}, 3600]},
-            id: "$id"
+            id: "$id",
+            category: "$category"
         }
     },
     {
@@ -19,7 +20,8 @@ db.Disruption.aggregate([
                     in: "$$i"
                 }
             },
-            id: "$id"
+            id: "$id",
+            category: "$category"
         }
     },
     {
@@ -28,7 +30,8 @@ db.Disruption.aggregate([
     {
         $project: {
             date: {$toDate: {$multiply: ["$dates", 1000]}},
-            id: "$id"
+            id: "$id",
+            category: "$category"
         }
     },
     {
@@ -36,8 +39,19 @@ db.Disruption.aggregate([
             year: {$year: "$date"},
             dayOfYear: {$dayOfYear: "$date"},
             hour: {$hour: "$date"},
-            id: "$id"
+            id: "$id",
+            category: "$category"
         }
+    },
+    {
+        $match: {$or: [
+                {
+                    category: {$ne: "Works"}
+                },
+                {
+                    hour: {$in: [7, 8, 9, 10, 11, 12, 13, 14, 15, 15+1, 17, 18]}
+                }
+            ] }
     },
     {
         $group: {
@@ -55,4 +69,4 @@ db.Disruption.aggregate([
             }
         }
     }
-]);
+])

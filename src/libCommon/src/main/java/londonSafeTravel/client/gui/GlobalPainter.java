@@ -1,13 +1,11 @@
 package londonSafeTravel.client.gui;
 
-import londonSafeTravel.client.DisruptionsRequest;
-import londonSafeTravel.client.POIRequest;
+import londonSafeTravel.client.net.POIRequest;
 import londonSafeTravel.schema.Location;
 import londonSafeTravel.schema.document.poi.PointOfInterest;
 import londonSafeTravel.schema.document.poi.PointOfInterestOSM;
 import org.jxmapviewer.JXMapViewer;
 import org.jxmapviewer.painter.AbstractPainter;
-import org.jxmapviewer.painter.Painter;
 import org.jxmapviewer.viewer.*;
 
 import java.awt.*;

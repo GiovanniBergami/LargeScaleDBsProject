@@ -1,4 +1,4 @@
-package londonSafeTravel.client;
+package londonSafeTravel.client.net;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
