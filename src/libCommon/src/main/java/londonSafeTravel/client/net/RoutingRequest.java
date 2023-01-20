@@ -20,9 +20,10 @@ import java.util.stream.Collectors;
 public class RoutingRequest {
     List<RoutingHop> route;
 
-    public RoutingRequest(String hostname, long start, long end, String type) throws Exception {
+    public RoutingRequest(String hostname, long start, long end, String type, boolean considerDisruptions) throws Exception {
         HttpURLConnection con = (HttpURLConnection) new URL(
-                "http://" + hostname + "/route.json?start=" + start + "&end=" + end + "&type=" + type
+                "http://" + hostname + "/route.json?start=" + start +
+                        "&end=" + end + "&type=" + type + "&considerDisruptions=" + Boolean.toString(considerDisruptions)
         ).openConnection();
 
         con.setRequestProperty("User-Agent", "Mozilla/5.0");

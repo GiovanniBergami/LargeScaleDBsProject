@@ -44,6 +44,7 @@ public class MainApp {
     private JLabel routingTime;
     private JButton adminButton;
     private JTable tableTips;
+    private JCheckBox disruptionsRoutingCheckBox;
 
     private final GlobalPainter globalPainter;
 
@@ -133,7 +134,9 @@ public class MainApp {
                     // Create a track from the geo-positions
                     try {
                         RoutingRequest routeReq = new RoutingRequest(
-                                "localhost:8080", start.getId(), end.getId(), getSelectedMode()
+                                "localhost:8080",
+                                start.getId(), end.getId(), getSelectedMode(),
+                                disruptionsRoutingCheckBox.isSelected()
                         );
                         List<GeoPosition> track = routeReq.getRouteGeo();
 
