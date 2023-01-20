@@ -1,4 +1,4 @@
-package londonSafeTravel.dbms.document;
+package londonSafeTravel.schema.document;
 
 import org.bson.codecs.pojo.annotations.BsonProperty;
 

@@ -1,8 +1,8 @@
-package londonSafeTravel.client;
+package londonSafeTravel.client.net;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import londonSafeTravel.dbms.document.HeatmapComputation;
+import londonSafeTravel.schema.document.HeatmapComputation;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;

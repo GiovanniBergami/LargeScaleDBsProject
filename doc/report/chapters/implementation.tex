@@ -1,1 +1,38 @@
 \part{Implementation}
+
+\chapter{Queries on graph database}
+
+In this chapter are presented the relevant queries for the
+Neo4j graph database.
+
+\section{Routing}
+
+Our routing query is used to compute a suboptimal path between two points on the map, given as input to the query, using the algorithm known as \textbf{Anytime A*}.
+
+\begin{figure}[H]
+	\lstinputlisting{../../queries/routing.cypher}
+	\caption{Cypher query}
+\end{figure} 
+
+The procedure \textit{lodonSafeTravel.route.anytime} has been implemented as show below:
+
+%\begin{figure}[H]
+\lstinputlisting[linerange={50,163}]{../../routingNeo4jProcedure/src/main/java/londonSafeTravel/RoutingAStart.java}
+%	\caption{implementation of the procedure}
+%\end{figure} 
+
+\section{Point finding}
+
+\paragraph{}
+To ensure that the user selects a reachable point in the network given the user's transportation mode, we use \textit{connects} relationships between points in the graph to reduce the probability of selecting an unreachable point.
+
+\begin{figure}[H]
+	\lstinputlisting{../../queries/nearest_point.cypher}
+	\caption{Cypher query}
+\end{figure} 
+
+\paragraph{}
+For example, we in the user selects a pathway in a park and \textit{motor vehicle} is selected as transportation mode, the query will return the node relative to the nearest road open to motor traffic.
+
+\paragraph{}
+As stated in the previous chapters, a restriction of access for a certain mode of transportation is represented in the graph as cross time of positive infinity.

@@ -32,6 +32,7 @@ public class Server {
         server.createContext("/queryPOI.json", new POIHandler(mongoc));
         server.createContext("/queryTable.json", new QueryStatTableHandler(mongoc));
         server.createContext("/querySearchPOI.json", new SearchHandler(mongoc));
+        server.createContext("/lineGraph.json", new LineGraphHandler(mongoc));
 
         server.setExecutor(threadPoolExecutor);
         server.start();

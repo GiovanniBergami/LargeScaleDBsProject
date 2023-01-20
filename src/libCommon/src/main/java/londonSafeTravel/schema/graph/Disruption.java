@@ -7,7 +7,7 @@ import java.util.Date;
 public class Disruption {
     public Location centrum;
     public String id;
-    public double radius;
+    public Double radius;
     public String severity;
     public long ttl;
 
@@ -18,4 +18,5 @@ public class Disruption {
 
     public String update;
     public Date updateTime;
+    public boolean closed;
 }
