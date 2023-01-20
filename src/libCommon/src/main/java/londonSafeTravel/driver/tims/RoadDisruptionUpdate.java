@@ -68,7 +68,7 @@ public class RoadDisruptionUpdate {
                 && roadDisruptionUpdate.geometry.type() != Geometry.Type.MULTI_POLYGON
                 && (roadDisruptionUpdate.geometry.type() == Geometry.Type.MULTI_POLYGON &&
                 !((MultiPolygon) roadDisruptionUpdate.geometry).polygons().iterator().hasNext()))) {
-            dg.radius = 150.0;
+            dg.radius = 100.0;
             manageDisruptionGraph.createClosure(dg);
             return;
         }
@@ -86,7 +86,7 @@ public class RoadDisruptionUpdate {
                 dg.radius = dist;
         }));
 
-        dg.radius = Math.max(500, dg.radius);
+        dg.radius = Math.min(400, dg.radius);
 
         manageDisruptionGraph.createClosure(dg);
     }
