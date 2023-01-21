@@ -28,7 +28,7 @@ public class DisruptionDialog extends JDialog {
         setContentPane(contentPane);
         setModal(true);
         getRootPane().setDefaultButton(buttonOK);
-        setMinimumSize(new Dimension(400, 600));
+        setMinimumSize(new Dimension(400, 400));
 
         disruptionID.setText(disruption.id);
         severityTextField1.setText(disruption.severity);

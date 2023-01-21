@@ -25,7 +25,7 @@ public class POIDialog extends JDialog {
         setContentPane(contentPane);
         setModal(true);
         getRootPane().setDefaultButton(buttonOK);
-        setMinimumSize(new Dimension(400, 600));
+        setMinimumSize(new Dimension(400, 400));
 
         id_poi.setText("ID: "+poi.poiID);
         namePOIText.setText(poi.name);
