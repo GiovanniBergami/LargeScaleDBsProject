@@ -4,9 +4,10 @@ ways.csv
 nodes.csv
 
 *.ser
-*.java
+*.class
 *.aux
 report.pdf
 *.log
 *.out
+*.synctex.gz
 *.toc
