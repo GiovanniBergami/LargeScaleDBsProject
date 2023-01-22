@@ -25,7 +25,7 @@ change the magnifying level with the scrolling wheel of the mouse.
 \end{figure}
 
 \paragraph{Appearance}
-The \textit{Point of Interest}s are being shown on the map only when at an 
+The \textit{Point of Interest}s are being shown on the map only when an 
 appropriate level of zoom is reached to avoid cluttering the map.
 
 \paragraph{Information}
@@ -47,7 +47,7 @@ with relevant information as seen in \ref{fig:mainappdialog1}
 \paragraph{Appearance}
 The user can make the currently active disruptions appear on the map by ticking 
 the option called \textit{Show disruptions} located in the right panel. If 
-needed the user can also force a request by clicking on the button 
+needed the user can also force an update request by clicking on the button 
 \textit{Refresh}.
 
 The disruptions are color-coded according to their severity:
@@ -194,5 +194,54 @@ results are shown in a list in the right panel, below the search button.
 
 \paragraph{Access}
 The authorized personnel can access the administrative window by clicking on 
-the \textit{Admin} button and entering his credentials in the dialog.
+the \textit{Admin} button and entering his credentials in the dialog. In the 
+demo application is it possible to log-in with the following details:
 
+\begin{lstlisting}[numbers=none, frame=single]
+Username: admin
+Password: admin
+\end{lstlisting}
+
+\paragraph{Layout}
+The analytic window is divided in three main panels, one for each analytic 
+provided by the application.
+
+\section{Heat-map}
+
+\paragraph{}
+The heat-map is located in the top-left pane of the window. It shows a heat-map 
+relative to the selected disruption; the green color represents an area where a 
+the class of disruption never happened, the red color represents an area where 
+most of the disruptions happened.
+
+\paragraph{Category}
+To select the \textit{category of disruption} to analyze, select it from the 
+drop-down list above the map.
+
+\paragraph{Precision}
+To applications provides three levels of precision when computing the heat-map, 
+to change it move the slider below the map; to the left is more precise, that 
+is to render smaller squares, and to the right is less precise.
+
+\paragraph{Movements}
+As for the user's map, it is possible to move around via \textit{drag 'n drop}.
+
+\section{Disruptions' time series}
+
+\paragraph{}
+The time series is located on the top-right pane of the window. It shows how 
+common was a disruption in a certain hour of the day.
+
+\paragraph{Category}
+The category is the same as the one selected for the heat-map.
+
+\section{Common disruptions in an area}
+
+\paragraph{}
+The result of this analytic are presented in the table located in the bottom 
+pane of the window. It shows, for each category, how many disruptions happened 
+in the selected area, and what was the most common sub-category for each one.
+
+\paragraph{Boundaries}
+To select the boundaries move the map around and adjust its zoom, unlike the 
+others, to update the result press the \textit{update button}.  
