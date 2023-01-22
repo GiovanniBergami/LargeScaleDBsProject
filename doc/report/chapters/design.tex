@@ -7,6 +7,53 @@ bla bla bla
 
 \input{chapters/design/mainActors.tex}
 \input{chapters/design/functionalReq.tex}
+<<<<<<< Updated upstream
+=======
+The application will allow its users to perform the following tasks:
+
+\section{Client}
+
+\begin{itemize}
+	\item \textbf{View the map}
+	\item \textbf{Move the map in a direction}, with the typical drag 'n drop
+	\item \textbf{Increase or decrease the map magnifying}, with either buttons 
+	or the mouse's wheel
+	\item \textbf{Search for a specific place}, the following method are 
+	supported:
+	\begin{itemize}
+		\item With an address
+		\item With a POI's name
+		\item With WGS84 geographical coordinates
+	\end{itemize}
+	\item \textbf{Ask for directions} between two intersections on the map
+	\begin{itemize}
+		\item Via car
+		\item Via bicycle
+		\item On foot
+	\end{itemize}
+	\item \textbf{Refresh active disruptions' data} clicking on the refresh button
+\end{itemize}
+\section{TIMS}
+	\begin{itemize}
+	\item \textbf{Create/Update a disruption}
+	\item \textbf{Close a disruption}
+	
+	\end{itemize}
+\section{Statician}
+\begin{itemize}
+	\item \textbf{Access the analytics tools}
+	\item \textbf{Display the disruptions' heatmap}
+\end{itemize}
+\input{chapters/design/nonFunctionalRequirements.tex}
+	\begin{itemize}
+	\item To solve a routing problem in an acceptable amount of time
+	\item A cache for queries to have a better response time for frequent queries
+	\item To find a good approximation of the optimal route
+	\item Respect the access constraints on the graph, such as oneway streets
+	\item Use a routing algorithm that uses an heuristic function to compute a path, such as A*, to avoid excessive exploration of the hypothesis space, since those algorithms are always exponential in the graph’s dimension
+	\item Define a good heuristic to guide the algorithm on its visit on the graph, considering features such as the road’s classification, speed limit, the geographical distance between the vertices.
+	\end{itemize}
+>>>>>>> Stashed changes
 \input{chapters/design/capTheorem.tex}
 \input{chapters/design/useCases.tex}
 \input{chapters/design/dataModel.tex}
