@@ -2,6 +2,7 @@ package londonSafeTravel.dbms.document;
 
 import com.google.common.collect.Lists;
 import com.mongodb.DBObjectCodecProvider;
+import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
 import com.mongodb.client.MongoDatabase;
@@ -22,6 +23,7 @@ import org.bson.codecs.configuration.CodecRegistry;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 
+import javax.print.Doc;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
