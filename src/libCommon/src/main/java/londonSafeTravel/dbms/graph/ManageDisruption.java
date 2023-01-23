@@ -2,11 +2,14 @@ package londonSafeTravel.dbms.graph;
 
 import londonSafeTravel.schema.GeoFactory;
 import londonSafeTravel.schema.graph.Disruption;
+import org.apache.hc.core5.http.impl.bootstrap.AsyncServer;
 import org.neo4j.driver.*;
+import org.neo4j.driver.async.AsyncSession;
 
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
 
 import static org.neo4j.driver.Values.parameters;
 
@@ -44,30 +47,62 @@ public class ManageDisruption {
     //                "return d"
     //);
 
+    public void createClosureAsync(Disruption disruption) {
+        AsyncSession session = driver.session(AsyncSession.class);
+        session.executeWriteAsync(transactionContext -> {
+                    Query q = CREATE_CLOSURE.withParameters(parameters(
+                            "id", disruption.id,
+                            "lat", disruption.centrum.getLatitude(),
+                            "lon", disruption.centrum.getLongitude(),
+                            "radius", disruption.radius,
+                            "ttl", disruption.ttl,
+                            "severity", disruption.severity,
+                            "category", disruption.category,
+                            "subcategory", disruption.subCategory,
+                            "comment", disruption.comment,
+                            "closed", disruption.closed,
+                            "update", disruption.update,
+                            "updateTime", disruption.updateTime.toInstant()
+                                    .atZone(ZoneId.systemDefault())
+                                    .toLocalDateTime()
+                    ));
+                    return transactionContext.runAsync(q);
+        }
+        );
+    }
+
     public void createClosure(Disruption disruption) {
         try (Session session = driver.session()) {
+            session.executeWriteWithoutResult(writeDisruption(disruption));
+        }
+    }
 
+    public void createClosures(List<Disruption> disruptions) {
+        try (Session session = driver.session()) {
+            disruptions.forEach(disruption -> session.executeWriteWithoutResult(writeDisruption(disruption)));
+        }
+    }
 
-            session.executeWriteWithoutResult(transactionContext -> {
-                Query q = CREATE_CLOSURE.withParameters(parameters(
-                        "id", disruption.id,
-                        "lat", disruption.centrum.getLatitude(),
-                        "lon", disruption.centrum.getLongitude(),
-                        "radius", disruption.radius,
-                        "ttl", disruption.ttl,
-                        "severity", disruption.severity,
-                        "category", disruption.category,
-                        "subcategory", disruption.subCategory,
-                        "comment", disruption.comment,
-                        "closed", disruption.closed,
-                        "update", disruption.update,
-                        "updateTime", disruption.updateTime.toInstant()
+    private static Consumer<TransactionContext> writeDisruption(Disruption disruption) {
+        return transactionContext -> {
+            Query q = CREATE_CLOSURE.withParameters(parameters(
+                    "id", disruption.id,
+                    "lat", disruption.centrum.getLatitude(),
+                    "lon", disruption.centrum.getLongitude(),
+                    "radius", disruption.radius,
+                    "ttl", disruption.ttl,
+                    "severity", disruption.severity,
+                    "category", disruption.category,
+                    "subcategory", disruption.subCategory,
+                    "comment", disruption.comment,
+                    "closed", disruption.closed,
+                    "update", disruption.update,
+                    "updateTime", disruption.updateTime.toInstant()
                             .atZone(ZoneId.systemDefault())
                             .toLocalDateTime()
-                ));
-                transactionContext.run(q);
-            });
-        }
+            ));
+            transactionContext.run(q);
+        };
     }
 
     private static final Query DELETE_CLOSURE = new Query(
@@ -87,7 +122,6 @@ public class ManageDisruption {
     }
 
     private static final Query FIND_ACTIVE_DISRUPTIONS = new Query("MATCH(d: Disruption) RETURN d");
-
 
     public List<Disruption> findDisruption() {
         ArrayList<Disruption> disruptions= new ArrayList<>();
