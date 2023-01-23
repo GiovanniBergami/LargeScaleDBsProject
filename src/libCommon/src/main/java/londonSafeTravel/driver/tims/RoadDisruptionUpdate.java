@@ -99,7 +99,7 @@ public class RoadDisruptionUpdate {
         return dg;
     }
 
-    private static ProcessResult process(InputStreamReader fs, ProcessResult last, Date t) {
+    private static ProcessResult process(InputStreamReader fs, ProcessResult last, Date t) throws Exception {
         Type collectionType = new TypeToken<ArrayList<RoadDisruptionUpdate>>() {
         }.getType();
         Collection<RoadDisruptionUpdate> updates = new GsonBuilder()
@@ -204,7 +204,10 @@ public class RoadDisruptionUpdate {
         HashSet<String> frontier = new HashSet<>(last.processed);
         frontier.removeAll(explored);
 
-        System.err.println("Cleaning up...");
+        System.err.println("Writing to graph...");
+        manageDisruptionGraph.createClosures(toWrite);
+
+        System.err.println("Closing up terminated disruptions...");
         frontier.forEach(terminatedDisruptionID -> {
             System.out.println("Closing disruption " + terminatedDisruptionID + " time " + t);
 
@@ -220,9 +223,6 @@ public class RoadDisruptionUpdate {
             // Drop it from graph database
             manageDisruptionGraph.deleteClosure(terminatedDisruptionID);
         });
-
-        System.err.println("Writing to graph...");
-        manageDisruptionGraph.createClosures(toWrite);
 
         ProcessResult r = new ProcessResult();
         r.time = t;
@@ -272,14 +272,22 @@ public class RoadDisruptionUpdate {
                             filename.substring(pos + 1, ext) + " as date, using current date :P");
                     t = new Date();
                 }
-                var ret = process(new FileReader(filename), state, t);
-                if (ret != null)
-                    state = ret;
+
+                try {
+                    var ret = process(new FileReader(filename), state, t);
+                    if (ret != null)
+                        state = ret;
+                }
+                catch (Exception e) {
+                    System.err.println("Error processing file! " + filename);
+                    System.err.println(e.toString());
+                }
 
                 Thread.sleep(10);
             }
 
         // Save to disk
+        System.out.println("Writing to disk current state...");
         new ObjectOutputStream(new FileOutputStream("tims.roads.ser")).writeObject(state);
     }
 
