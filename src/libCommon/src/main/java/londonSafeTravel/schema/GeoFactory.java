@@ -12,7 +12,8 @@ public class GeoFactory {
         return new Location(p.y(), p.x());
     }
 
-    public static Location fromFilosgangaToLocation(com.github.filosganga.geogson.model.Point p) {
+    public static Location fromFilosgangaToLocation(
+            com.github.filosganga.geogson.model.Point p) {
         return new Location(p.lat(), p.lon());
     }
 
@@ -92,7 +93,9 @@ public class GeoFactory {
             );
         else
             return new Polygon(
-                    fromFilosgangaToMongo(polygon.linearRings().iterator().next()).getCoordinates()
+                    fromFilosgangaToMongo(
+                            polygon.linearRings().iterator().next()
+                    ).getCoordinates()
             );
     }
 
