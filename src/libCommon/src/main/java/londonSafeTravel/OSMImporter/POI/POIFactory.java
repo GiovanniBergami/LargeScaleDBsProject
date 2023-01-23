@@ -33,8 +33,7 @@ public class POIFactory {
         var mongoPoint = new PointOfInterestOSM();
 
         mongoPoint.poiID = String.valueOf(poi.osmID);
-        mongoPoint.coordinates = new com.mongodb.client.model.geojson.Point(
-                GeoFactory.convertToMongo(poi.getCentrum()));
+        mongoPoint.coordinates = GeoFactory.convertToMongo(poi.getCentrum());
         mongoPoint.name = poi.name;
         mongoPoint.tags = poi.osmTags;
         if(poi instanceof  Way)
@@ -121,7 +120,8 @@ public class POIFactory {
 
         HashMap<Long, Location> map = new HashMap<>();
 
-        PointOfInterestDAO poiDAO = new PointOfInterestDAO(new ConnectionMongoDB());
+        ConnectionMongoDB mongoc = new ConnectionMongoDB("mongodb://172.16.5.47:27017");
+        PointOfInterestDAO poiDAO = new PointOfInterestDAO(mongoc);
 
         for (r.next(); r.hasNext(); r.next()) {
             if (!r.isStartElement())

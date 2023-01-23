@@ -18,8 +18,12 @@ public class ConnectionMongoDB {
     }
 
     public ConnectionMongoDB(String uri) {
+        this(uri, "londonSafeTravel");
+    }
+
+    public ConnectionMongoDB(String uri, String databaseName) {
         MongoClient myClient = MongoClients.create(uri);
-        database = myClient.getDatabase("londonSafeTravel");
+        database = myClient.getDatabase(databaseName);
     }
 
     public MongoDatabase giveDB(){

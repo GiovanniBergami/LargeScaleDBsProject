@@ -2,13 +2,10 @@ package londonSafeTravel.server;
 
 import com.google.gson.Gson;
 import com.sun.net.httpserver.HttpExchange;
-import com.sun.net.httpserver.HttpHandler;
 import londonSafeTravel.dbms.graph.ManageDisruption;
 import org.neo4j.driver.Driver;
 
-import java.io.IOException;
-
-public class QueryDisruptionHandler implements HttpHandler {
+public class QueryDisruptionHandler extends Handler {
     ManageDisruption manageDisruption;
 
     public QueryDisruptionHandler(Driver driver) {
@@ -20,7 +17,7 @@ public class QueryDisruptionHandler implements HttpHandler {
     }
 
     @Override
-    public void handle(HttpExchange exchange) throws IOException {
+    public void handleRequest(HttpExchange exchange) throws Exception {
         var disruptions = manageDisruption.findDisruption();
         String json = new Gson().toJson(disruptions);
 
@@ -30,6 +27,5 @@ public class QueryDisruptionHandler implements HttpHandler {
         exchange.getResponseBody().write(json.getBytes());
         exchange.getResponseBody().flush();
         exchange.getResponseBody().close();
-        exchange.close();
     }
 }

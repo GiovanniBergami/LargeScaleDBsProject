@@ -16,6 +16,8 @@ public class DisruptionDialog extends JDialog {
     private JTextArea commentTextField;
     private JTextArea updateTextArea;
     private JTextField updateDateTime;
+    private JTextField radiusField;
+    private JTextField closureField;
     private JButton buttonCancel;
 
     Disruption disruption;
@@ -26,7 +28,7 @@ public class DisruptionDialog extends JDialog {
         setContentPane(contentPane);
         setModal(true);
         getRootPane().setDefaultButton(buttonOK);
-        setMinimumSize(new Dimension(400, 600));
+        setMinimumSize(new Dimension(400, 400));
 
         disruptionID.setText(disruption.id);
         severityTextField1.setText(disruption.severity);
@@ -36,7 +38,8 @@ public class DisruptionDialog extends JDialog {
         updateTextArea.setText(disruption.update);
         updateTextArea.setLineWrap(true);
         updateDateTime.setText(disruption.updateTime.toString());
-
+        radiusField.setText(disruption.radius == null ? "null" : disruption.radius.toString());
+        closureField.setText(Boolean.toString(disruption.closed));
 
         buttonOK.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {

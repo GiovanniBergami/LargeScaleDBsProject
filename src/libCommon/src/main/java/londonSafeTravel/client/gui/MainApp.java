@@ -1,8 +1,11 @@
 package londonSafeTravel.client.gui;
 
-import londonSafeTravel.client.DisruptionsRequest;
-import londonSafeTravel.client.QueryPointRequest;
-import londonSafeTravel.client.RoutingRequest;
+import londonSafeTravel.client.net.DisruptionsRequest;
+import londonSafeTravel.client.net.QueryPointRequest;
+import londonSafeTravel.client.net.RoutingRequest;
+import londonSafeTravel.client.net.SearchRequest;
+import londonSafeTravel.schema.Location;
+import londonSafeTravel.schema.document.poi.PointOfInterest;
 import londonSafeTravel.schema.graph.Disruption;
 import org.jxmapviewer.JXMapViewer;
 import org.jxmapviewer.OSMTileFactoryInfo;
@@ -14,6 +17,7 @@ import org.jxmapviewer.viewer.*;
 
 import javax.swing.*;
 import javax.swing.event.MouseInputListener;
+import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.IOException;
@@ -39,19 +43,24 @@ public class MainApp {
     private JPanel routingPanel;
     private JLabel routingTime;
     private JButton adminButton;
+    private JTable tableTips;
+    private JCheckBox disruptionsRoutingCheckBox;
 
     private final GlobalPainter globalPainter;
 
-    private interface DisruptionListener extends ItemListener, ActionListener {}
+    private interface DisruptionListener extends ItemListener, ActionListener {
+    }
 
+    private interface PoisListener extends ItemListener, ActionListener {
+    }
 
     private String getSelectedMode() {
-        String type="";
-        if(motorVehicles.isSelected())
+        String type = "";
+        if (motorVehicles.isSelected())
             type = "car";
-        else if(bicycle.isSelected())
+        else if (bicycle.isSelected())
             type = "bicycle";
-        else if(foot.isSelected())
+        else if (foot.isSelected())
             type = "foot";
 
         return type;
@@ -63,14 +72,13 @@ public class MainApp {
         DefaultTileFactory tileFactory = new DefaultTileFactory(info);
         mapViewer.setTileFactory(tileFactory);
 
+        POIEventHandler mouseListener = new POIEventHandler(mapViewer);
+
         // Create painter
-        globalPainter = new GlobalPainter();
+        globalPainter = new GlobalPainter(mouseListener);
 
         // Use 3 threads in parallel to load the tiles
         tileFactory.setThreadPoolSize(3);
-
-        mapViewer.setZoom(6);
-        mapViewer.setAddressLocation(new GeoPosition(51.5067, -0.1269)); // London
 
         // Add interactions
         MouseInputListener mia = new PanMouseInputListener(mapViewer);
@@ -82,25 +90,30 @@ public class MainApp {
         mapViewer.setOverlayPainter(globalPainter);
         //mapViewer.setOverlayPainter(new HeatmapPainter());
 
+        DefaultTableModel tableData = (DefaultTableModel) tableTips.getModel();
+        tableData.addColumn("Maybe you were looking for...");
         mapViewer.addMouseListener(new MouseListener() {
             londonSafeTravel.schema.graph.Point start = null;
             londonSafeTravel.schema.graph.Point end = null;
+
             @Override
             public void mouseClicked(MouseEvent e) {
-                if(e.getButton() != MouseEvent.BUTTON3)
+                if (e.getButton() != MouseEvent.BUTTON3)
                     return;
 
                 System.out.println("CLICK!");
 
                 var coordinates = mapViewer.convertPointToGeoPosition(e.getPoint());
-                if(coordinates.getLatitude() > MAX_LAT || coordinates.getLatitude() < MIN_LAT ||
-                    coordinates.getLongitude() > MAX_LON || coordinates.getLongitude() < MIN_LON)
-                {
-                    System.out.println("Skipping click outside of bounds");
+                if (coordinates.getLatitude() > MAX_LAT || coordinates.getLatitude() < MIN_LAT ||
+                        coordinates.getLongitude() > MAX_LON || coordinates.getLongitude() < MIN_LON) {
+                    JOptionPane.showMessageDialog(
+                            rootPanel,
+                            "Point " + coordinates + " is out of bound!",
+                            "Routing error",
+                            JOptionPane.ERROR_MESSAGE
+                    );
                     return;
                 }
-
-
 
                 QueryPointRequest request;
                 try {
@@ -110,7 +123,7 @@ public class MainApp {
                     throw new RuntimeException(ex);
                 }
 
-                if(start == null)
+                if (start == null)
                     start = request.getPoint();
                 else {
                     end = request.getPoint();
@@ -120,21 +133,23 @@ public class MainApp {
 
                     // Create a track from the geo-positions
                     try {
-                        RoutingRequest routeReq =new RoutingRequest(
-                                "localhost:8080", start.getId(), end.getId(), getSelectedMode()
+                        RoutingRequest routeReq = new RoutingRequest(
+                                "localhost:8080",
+                                start.getId(), end.getId(), getSelectedMode(),
+                                disruptionsRoutingCheckBox.isSelected()
                         );
                         List<GeoPosition> track = routeReq.getRouteGeo();
 
                         System.out.println("Routing completed " + track.size() + " hops!");
                         //routingTime.setText(Double.toString(routeReq.getRoute().get(routeReq.getRoute().size() - 1).time / 60.0));
-                        int seconds = (int)routeReq.getRoute().get(routeReq.getRoute().size() - 1).time;
-                        int minutes = seconds/60;
+                        int seconds = (int) routeReq.getRoute().get(routeReq.getRoute().size() - 1).time;
+                        int minutes = seconds / 60;
                         int hours;
-                        seconds = seconds - (minutes*60);
-                        if(minutes >= 60){
-                            hours = minutes/60;
+                        seconds = seconds - (minutes * 60);
+                        if (minutes >= 60) {
+                            hours = minutes / 60;
                             minutes = minutes - hours * 60;
-                            routingTime.setText(hours+" h "+ minutes + " min " + seconds +" s");
+                            routingTime.setText(hours + " h " + minutes + " min " + seconds + " s");
                         } else {
                             routingTime.setText(minutes + " min " + seconds + " s");
                         }
@@ -145,10 +160,30 @@ public class MainApp {
                     } catch (Exception ex) {
                         throw new RuntimeException(ex);
                     } finally {
+                        globalPainter.setRouteEnd(new DefaultWaypoint(
+                                end.getLocation().getLatitude(),
+                                end.getLocation().getLongitude()
+                        ));
+
                         start = null;
                         end = null;
                     }
+                    return;
                 }
+
+                if(start != null)
+                    globalPainter.setRouteStart(new DefaultWaypoint(
+                            start.getLocation().getLatitude(),
+                            start.getLocation().getLongitude()
+                    ));
+                else
+                    globalPainter.setRouteStart(null);
+
+                if(end == null)
+                    globalPainter.setRouteEnd(null);
+
+
+                mapViewer.repaint();
             }
 
             @Override
@@ -179,6 +214,12 @@ public class MainApp {
 
         });
         mapViewer.setTileFactory(tileFactory);
+
+        mapViewer.setZoom(6);
+        mapViewer.setAddressLocation(new GeoPosition(51.5067, -0.1269)); // London
+        mapViewer.addMouseListener(mouseListener);
+        mapViewer.addMouseMotionListener(mouseListener);
+
 
         DisruptionListener disruptionManagerListener = new DisruptionListener() {
             @Override
@@ -286,6 +327,57 @@ public class MainApp {
                 }
 
         );
+        buttonSearch.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String inputString = textFieldSearch.getText();
+                if (!inputString.isEmpty()) {
+                    System.out.println(inputString);
+                    // Richiesta server
+                    Location result = null;
+                    List<PointOfInterest> table = null;
+                    try {
+                        SearchRequest req = new SearchRequest(
+                                "localhost:8080",
+                                inputString
+                        );
+                        if(req.getList().size() == 0) {
+                            JOptionPane.showMessageDialog(
+                                    rootPanel,
+                                    "Nothing was found!",
+                                    "Query result",
+                                    JOptionPane.INFORMATION_MESSAGE
+                            );
+                            return;
+                        }
+
+                        result = req.getCoord();
+                        table = req.getList();
+                    } catch (Exception ex) {
+                        throw new RuntimeException(ex);
+                    }
+                    // in result abbiamo la location
+                    // rimane da settare lo zoom su questo
+
+                    mapViewer.setZoom(2);
+                    GeoPosition puntoDaVisualizzare = new GeoPosition(result.getLatitude(), result.getLongitude());
+                    mapViewer.setAddressLocation(puntoDaVisualizzare);
+
+                    tableTips.setDefaultEditor(Object.class, null);
+                    DefaultTableModel tableData = (DefaultTableModel) tableTips.getModel();
+
+                    tableData.setRowCount(0);
+                    for (var row : table) {
+                        Object[] tableRow = {row.name};
+                        tableData.addRow(tableRow);
+                    }
+
+                } else {
+                    JOptionPane.showMessageDialog(rootPanel, "Please insert a POI or a street", "Error", JOptionPane.ERROR_MESSAGE);
+                }
+
+            }
+        });
     }
 
     public static void main(String[] args) throws IOException {

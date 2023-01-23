@@ -1,15 +1,12 @@
 package londonSafeTravel.server;
 
-import com.google.gson.Gson;
 import com.sun.net.httpserver.HttpExchange;
-import com.sun.net.httpserver.HttpHandler;
+import londonSafeTravel.gsonUtils.GsonFactory;
 import londonSafeTravel.dbms.document.PointOfInterestDAO;
 import londonSafeTravel.dbms.document.ConnectionMongoDB;
 import org.apache.hc.core5.net.URIBuilder;
 
-import java.io.IOException;
-
-public class POIHandler implements HttpHandler {
+public class POIHandler extends Handler {
     ConnectionMongoDB connection;
     PointOfInterestDAO poi;
      public POIHandler(){
@@ -21,8 +18,9 @@ public class POIHandler implements HttpHandler {
          poi = new PointOfInterestDAO(connection);
      }
 
+
     @Override
-    public void handle(HttpExchange exchange) throws IOException {
+    public void handleRequest(HttpExchange exchange) throws Exception {
 
          if(!exchange.getRequestMethod().equals("GET")) {
             exchange.sendResponseHeaders(400, 0);
@@ -38,7 +36,7 @@ public class POIHandler implements HttpHandler {
         double longBottomRight = Double.parseDouble(uriParsed.getFirstQueryParam("longBottomRight").getValue());
 
         var pois = poi.selectPOIsInArea(longTopLeft,longBottomRight,latBottomRight,latTopLeft);
-        String json = new Gson().toJson(pois);
+        String json = GsonFactory.build().toJson(pois);
 
         var responseBody = exchange.getResponseBody();
 
@@ -49,6 +47,5 @@ public class POIHandler implements HttpHandler {
         responseBody.flush();
         responseBody.close();
 
-        exchange.close();
     }
 }

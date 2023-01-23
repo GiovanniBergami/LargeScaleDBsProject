@@ -6,9 +6,9 @@ import org.bson.codecs.pojo.annotations.BsonId;
 import org.bson.codecs.pojo.annotations.BsonProperty;
 
 public class PointOfInterest {
-    // @TODO add enum
-    //@BsonProperty("type")
-    //public abstract String getType();
+    public String getType() {
+        return "GENERIC";
+    };
     @BsonProperty
     public String poiID;
     @BsonProperty

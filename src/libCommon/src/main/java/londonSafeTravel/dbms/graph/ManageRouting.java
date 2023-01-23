@@ -55,13 +55,11 @@ public class ManageRouting {
                     "end", end,
                     "type", type
             )));
-            res.forEachRemaining(record -> {
-                hops.add(new Point(
-                        record.get("waypoint").get("id").asLong(),
-                        record.get("waypoint").get("coord").asPoint().y(),
-                        record.get("waypoint").get("coord").asPoint().x()
-                ));
-            });
+            res.forEachRemaining(record -> hops.add(new Point(
+                    record.get("waypoint").get("id").asLong(),
+                    record.get("waypoint").get("coord").asPoint().y(),
+                    record.get("waypoint").get("coord").asPoint().x()
+            )));
             return hops;
         }
     }
@@ -69,13 +67,13 @@ public class ManageRouting {
     private final Query ROUTE_1_QUERY = new Query("""
 MATCH (s:Point{id: $start})
 MATCH (e:Point{id: $end})
-CALL londonSafeTravel.route(s, e, $type, $maxspeed)
+CALL londonSafeTravel.route.anytime(s, e, $type, $considerDisruptions, $maxspeed, 12.5)
 YIELD index, node, time
 RETURN index, node AS waypoint, time
 ORDER BY index DESCENDING
 """);
 
-    public List<RoutingHop> route1(long start, long end, String type)
+    public List<RoutingHop> route1(long start, long end, String type, boolean considerDisruptions)
     {
         double maxspeed = 10.0;
         if(Objects.equals(type, "car")) {
@@ -97,17 +95,16 @@ ORDER BY index DESCENDING
                     "start", start,
                     "end", end,
                     "type", type,
-                    "maxspeed", maxspeed
+                    "maxspeed", maxspeed,
+                    "considerDisruptions", considerDisruptions
             )));
-            res.forEachRemaining(record -> {
-                hops.add(new RoutingHop(
-                        new Point(
-                            record.get("waypoint").get("id").asLong(),
-                            record.get("waypoint").get("coord").asPoint().y(),
-                            record.get("waypoint").get("coord").asPoint().x()
-                        ), record.get("time").asDouble()
-                ));
-            });
+            res.forEachRemaining(record -> hops.add(new RoutingHop(
+                    new Point(
+                        record.get("waypoint").get("id").asLong(),
+                        record.get("waypoint").get("coord").asPoint().y(),
+                        record.get("waypoint").get("coord").asPoint().x()
+                    ), record.get("time").asDouble()
+            )));
             return hops;
         }
     }
@@ -120,13 +117,13 @@ ORDER BY index DESCENDING
                     MATCH (p:Point)
                     MATCH (p)-[w:CONNECTS]->(r:Point)
                     WHERE point.distance(q, p.coord) < 100 AND
-                    CASE 
+                    CASE
                         WHEN $type = 'foot' THEN w.crossTimeFoot <> Infinity
                         WHEN $type = 'bicycle' THEN w.crossTimeBicycle <> Infinity
                         WHEN $type = 'car' THEN w.crossTimeMotorVehicle <> Infinity
                     END
                     RETURN p, point.distance(q, p.coord)
-                    ORDER BY point.distance(q, p.coord) LIMIT 1 """
+                    ORDER BY point.distance(q, p.coord) LIMIT 1"""
     );
 
     public Point nearestNode(double lat, double lng){
@@ -150,14 +147,12 @@ ORDER BY index DESCENDING
     }
 
 
-    public static void main(String argv[])
+    public static void main(String[] argv)
     {
         ManageRouting test= new ManageRouting("neo4j://localhost:7687", "neo4j", "pass");
 
         System.out.println(test.nearestNode(0,0));
 
-        test.route1(4835478720L, 389139L, "car").forEach(hop -> {
-            System.out.println("id " + hop.point);
-        });
+        test.route1(4835478720L, 389139L, "car", true).forEach(hop -> System.out.println("id " + hop.point));
     }
 }
