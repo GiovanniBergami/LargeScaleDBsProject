@@ -4,9 +4,11 @@ db.Disruption.aggregate([
     },*/
     {
         $project: {
-            start: {$multiply : [{$floor: {$divide: [{$toLong: "$start"}, 3600000]}}, 3600]},
+            start: {$multiply : [{$floor: {$divide: [
+            	{$toLong: "$start"}, 3600000]}}, 3600]},
             // @TODO take min between $end and current_date
-            end: {$multiply : [{$ceil: {$divide: [{$toLong: "$end"}, 3600000]}}, 3600]},
+            end: {$multiply : [{$ceil: {$divide: 
+            	[{$toLong: "$end"}, 3600000]}}, 3600]},
             id: "$id",
             category: "$category"
         }
@@ -49,7 +51,7 @@ db.Disruption.aggregate([
                     category: {$ne: "Works"}
                 },
                 {
-                    hour: {$in: [7, 8, 9, 10, 11, 12, 13, 14, 15, 15+1, 17, 18]}
+                    hour: {$in: [7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18]}
                 }
             ] }
     },
