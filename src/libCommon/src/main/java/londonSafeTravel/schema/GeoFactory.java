@@ -1,11 +1,9 @@
 package londonSafeTravel.schema;
 
-import com.github.filosganga.geogson.model.positions.SinglePosition;
 import com.mongodb.client.model.geojson.*;
 import org.neo4j.driver.types.Point;
 
-import java.lang.reflect.Array;
-import java.util.*;
+import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -60,15 +58,19 @@ public class GeoFactory {
 
     public static MultiPolygon convertToMongo2(List<Location.Polygon> polygons) {
         return new MultiPolygon(
-                polygons.stream().map(GeoFactory::convertToMongo2).collect(Collectors.toList())
+                polygons.stream()
+                        .map(GeoFactory::convertToMongo2)
+                        .collect(Collectors.toList())
         );
     }
 
-    public static com.mongodb.client.model.geojson.Point fromFilosgangaToMongo(com.github.filosganga.geogson.model.Point point) {
+    public static com.mongodb.client.model.geojson.Point fromFilosgangaToMongo(
+            com.github.filosganga.geogson.model.Point point) {
         return convertToMongo(new Location(point.lat(), point.lon()));
     }
 
-    public static LineString fromFilosgangaToMongo(com.github.filosganga.geogson.model.LineString line) {
+    public static LineString fromFilosgangaToMongo(
+            com.github.filosganga.geogson.model.LineString line) {
         return new LineString(
                 StreamSupport.stream(line.points().spliterator(), false)
                         .map(GeoFactory::fromFilosgangaToMongo)
@@ -76,11 +78,17 @@ public class GeoFactory {
                         .collect(Collectors.toList()));
     }
 
-    public static Polygon fromFilosgangaToMongo(com.github.filosganga.geogson.model.Polygon polygon) {
-        if(polygon.holes().iterator().hasNext())
+    public static Polygon fromFilosgangaToMongo(
+            com.github.filosganga.geogson.model.Polygon polygon) {
+        if (polygon.holes().iterator().hasNext())
             return new Polygon(
-                    fromFilosgangaToMongo(polygon.linearRings().iterator().next()).getCoordinates(),
-                    fromFilosgangaToMongo(polygon.holes().iterator().next()).getCoordinates()
+                    fromFilosgangaToMongo(
+                            polygon.linearRings().iterator().next())
+                            .getCoordinates(),
+
+                    fromFilosgangaToMongo(
+                            polygon.holes().iterator().next())
+                            .getCoordinates()
             );
         else
             return new Polygon(
@@ -88,7 +96,8 @@ public class GeoFactory {
             );
     }
 
-    public static MultiPolygon fromFilosgangaToMongo(com.github.filosganga.geogson.model.MultiPolygon multiPolygon) {
+    public static MultiPolygon fromFilosgangaToMongo(
+            com.github.filosganga.geogson.model.MultiPolygon multiPolygon) {
         return new MultiPolygon(
                 StreamSupport.stream(multiPolygon.polygons().spliterator(), false)
                         .map(GeoFactory::fromFilosgangaToMongo)
@@ -98,6 +107,7 @@ public class GeoFactory {
     }
 
     public static com.github.filosganga.geogson.model.Point toSgagna(Location p) {
-        return com.github.filosganga.geogson.model.Point.from(p.getLongitude(), p.getLatitude());
+        return com.github.filosganga.geogson.model.Point
+                .from(p.getLongitude(), p.getLatitude());
     }
 }
