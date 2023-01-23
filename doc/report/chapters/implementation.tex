@@ -210,3 +210,177 @@ For example, we in the user selects a pathway in a park and \textit{motor vehicl
 
 \paragraph{}
 As stated in the previous chapters, a restriction of access for a certain mode of transportation is represented in the graph as cross time of positive infinity.
+
+\paragraph{}
+The function \textit{nearestNode} in Java has been implemented as show below:
+%\begin{figure}[H]
+\lstinputlisting[linerange={114-147}, language=Java]
+{../../src/libCommon/src/main/java/londonSafeTravel/dbms/graph/ManageRouting.java}
+%	\caption{implementation of the procedure}
+%\end{figure} 
+
+\chapter{Queries on Document database}
+In this chapter are presented the relevant queries for the
+MongoDB document database.
+
+\section{POIs in a certain area}
+\textit{Visualize the information of POIs in a given area}
+
+%\begin{figure}[H]
+\lstinputlisting[linerange={84-102}, language=Java]
+{../../src/libCommon/src/main/java/londonSafeTravel/dbms/document/PointOfInterestDAO.java}
+%	\caption{implementation of the procedure}
+%\end{figure} 
+
+\paragraph{}
+The same query wrote in Mongo Query Language:
+\begin{figure}[H]
+\begin{lstlisting}
+	db.PointOfInterest.find(
+	{
+		"coordinates": {
+			$geoWithin: {
+				$polygon: [
+				[minLong, minLat],
+				[maxLong, minLat],
+				[maxLong, maxLat],
+				[minLong, maxLat],
+				[minLong, minLat]
+				]
+			}
+		}
+	}
+	)
+\end{lstlisting}
+\caption{POIs' MongoDB query}
+\end{figure}
+
+\section{The heatmap}
+\textit{Build a heatmap of a certain class of disruption.}
+
+%\begin{figure}[H]
+\lstinputlisting[linerange={120-161}, language=Java]
+{../../src/libCommon/src/main/java/londonSafeTravel/dbms/document/DisruptionDAO.java}
+%	\caption{implementation of the procedure}
+%\end{figure} 
+
+\paragraph{}
+The same query wrote in Mongo Query Language:
+\begin{figure}[H]
+	\begin{lstlisting}
+db.Disruption.aggregate([
+{ $match: { category: classDisruption } },
+{ 
+	$project: {
+		latB: { 
+			$multiply: [ { 
+				$floor: { 
+					$divide: [ { 
+						$arrayElemAt: 
+						[ "$coordinates.coordinates", 1 ]
+					 }, 
+				 lenLat ] } },
+			  lenLat ] },
+		lngB: { 
+			$multiply: [ { 
+				$floor: { 
+					$divide: [ { 
+						$arrayElemAt: [ 
+						"$coordinates.coordinates", 0 ] 
+					}, lenLong ] } },
+				 lenLong ] }
+	}
+},
+{ 
+	$group: {
+		_id: { latB: "$latB", lngB: "$lngB" },
+		count: { $sum: 1 }
+	}
+},
+{
+	$project: {
+		count: 1,
+		latitude: "$_id.latB",
+		longitude: "$_id.lngB"
+	}
+}
+])
+\end{lstlisting}
+\caption{Heatmap MongoDB query}
+\end{figure}
+
+\section{The most common disruptions}
+\textit{Return a list witch contains the most common disruption in order to severity.}
+
+%\begin{figure}[H]
+\lstinputlisting[linerange={75-114}, language=Java]
+{../../src/libCommon/src/main/java/londonSafeTravel/dbms/document/DisruptionDAO.java}
+%	\caption{implementation of the procedure}
+%\end{figure} 
+
+\paragraph{}
+The same query wrote in Mongo Query Language:
+\begin{figure}[H]
+	\begin{lstlisting}
+		db.Disruption.aggregate([
+		{
+			$match: {
+				coordinates: {
+					$geoWithin: {
+						$polygon: [
+						[minLong, minLat],
+						[maxLong, minLat],
+						[maxLong, maxLat],
+						[minLong, maxLat],
+						[minLong, minLat]
+						]
+					}
+				}
+			}
+		},
+		{
+			$group: {
+				_id: { severity: "$severity", category: "$category" },
+				count: { $sum: 1 }
+			}
+		},
+		{
+			$group: {
+				_id: "$_id.severity",
+				count: { $max: "$count" },
+				type: { $first: "$_id.category" },
+				severity: { $first: "$_id.severity" }
+			}
+		},
+		{
+			$sort: { count: -1 }
+		},
+		{
+			$project: {
+				_id: 0,
+				severity: 1,
+				type: 1,
+				count: 1
+			}
+		}
+		])
+	\end{lstlisting}
+	\caption{Common disruptions' MongoDB query}
+\end{figure}
+
+\section{Time series}
+\textit{Returns, for each hour of the day, the average number of disruptions that were active at that time of day. Optionally the user can filter by disruption class to produce a graph relative only the specified class.}
+
+%\begin{figure}[H]
+\lstinputlisting[linerange={25-143}, language=Java]
+{../../src/libCommon/src/main/java/londonSafeTravel/dbms/document/LineGraphDAO.java}
+%	\caption{implementation of the procedure}
+%\end{figure} 
+
+\paragraph{}
+The same query wrote in Mongo Query Language:
+%\begin{figure}[H]
+\lstinputlisting
+{../../query.js}
+%	\caption{Time series' MongoDB query}
+%\end{figure}

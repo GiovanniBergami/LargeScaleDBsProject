@@ -75,7 +75,8 @@ public class PointOfInterestDAO {
 
         var res = poiDAO.selectPOIsInArea(0, 10, -90, 90);
 
-        System.out.println(res.size());
+
+
     }
 
     public void insert(PointOfInterest poi) {
@@ -101,6 +102,7 @@ public class PointOfInterestDAO {
 
         collection.find(myMatch).forEach(results::add);
         return results;
+
     }
 
     /*
