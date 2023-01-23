@@ -1,0 +1,11 @@
+[Unit]
+Description=tfl's timer
+Requires=tfl.service
+
+[Timer]
+Unit=tfl.service
+OnBootSec=10min
+OnUnitActiveSec=10min
+
+[Install]
+WantedBy=timers.target
