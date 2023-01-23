@@ -1,5 +1,178 @@
 \part{Implementation}
 
+\chapter{Java application}
+
+\paragraph{Introduction}
+All parts of the applications are written in \textit{Java} using \textit{Maven} 
+as a building system to handle all the dependencies used in the project.
+
+\section{Source tree}
+
+\paragraph{}
+All the code is stored into the \textit{londonSafeTravel} package
+
+This is the source tree of the Java packages:
+
+%\lstinputlisting[numbers=none]{assets/tree}
+
+\subsection{Packages}
+The most relevant packages:
+
+\begin{itemize}
+	\item \textbf{schema}
+		Contains the \textbf{data transfer objects} used to get or send data to 
+		the databases
+	
+	\item \textbf{dbms}
+		Contains the \textbf{data access objects} used to access the databases
+	
+	\item \textbf{driver.tims}
+		Contains the client and all its relevant classes for the \textbf{TIMS} 
+		user
+	
+	\item \textbf{gsonUtilis}
+		Contains the serialization and de-serialization facilities for 
+		\textit{Gson}, the library used to exchange \textit{JSON}s between 
+		client and server
+	
+	\item \textbf{OSMImporter}
+		Contains a support program used to import the relevant 
+		\textit{OpenStreetMap}'s data into the various databases.
+	
+	\item \textbf{server}
+		Contains the server application, used to provide remote access to the 
+		database to the \textit{user} and the \textit{statistician}
+	
+	\item \textbf{client}
+		Contains the client application, both the for the \textit{user} and the 
+		\textit{statistician}. It has two sub-packages:
+		
+		\begin{itemize}
+			\item \textbf{net}
+				handles all the network requests to the server
+			
+			\item \textbf{gui}
+				contains all the stuff related to the user interface, that is 
+				implemented in \textit{Java Swing} 
+		\end{itemize}
+\end{itemize}
+
+\subsection{Java model classes}
+
+\paragraph{Design}
+All model classes, which are stored into the \textit{schema} package, are 
+\textit{POJO}s classes that are ordinary Java objects, not bound by any special 
+restriction.
+
+\subsubsection{MongoDB data access objects}
+
+\paragraph{Disruption}
+This object represents the documents stored into the \textit{Disruption} 
+collection of \textit{MongoDB}
+
+\lstinputlisting[firstline=16,language=Java]{../../src/libCommon/src/main/java/londonSafeTravel/schema/document/Disruption.java}
+
+\paragraph{Point of Interest}
+Those objects represents the documents stored into the \textit{PointOfInterest} 
+collection. Originally it was planned to have two kinds of \textit{POI}s stored 
+into the database: the ones from \textit{OpenStreetMap} and another kind, 
+called \textit{TransitStop}, that was supposed to store specific information 
+about public transportation's stop.
+
+Currently only the first is present in the application, while the latter was 
+cut; so in the codes still survives the generalization of those two classes:
+
+\subparagraph{PointOfInterest}
+The super-class
+
+\lstinputlisting[firstline=8,language=Java]
+{../../src/libCommon/src/main/java/londonSafeTravel/schema/document/poi/PointOfInterest.java}
+
+\subparagraph{PointOfInterestOSM}
+The only kind of document currently used in the application
+
+\lstinputlisting[firstline=7,language=Java]
+{../../src/libCommon/src/main/java/londonSafeTravel/schema/document/poi/PointOfInterestOSM.java}
+
+\subsubsection{MongoDB data access objects for queries}
+
+%TODO INSERIRE REF A CAPITO DELLE QUERY
+\paragraph{Heatmap}
+The \textit{HeatmapComputation} class that contains the result of the heatmap 
+query computation, the $(\text{latitude}, \text{longitude})$ could be thought 
+as the indexes of a matrix.
+
+\lstinputlisting[firstline=5,language=Java]
+{../../src/libCommon/src/main/java/londonSafeTravel/schema/document/HeatmapComputation.java}
+
+\paragraph{Time series graph}
+The \textit{LineGraphEntry} class contains the points of the time series 
+computed in the query
+
+\lstinputlisting[firstline=5,language=Java]
+{../../src/libCommon/src/main/java/londonSafeTravel/schema/document/LineGraphEntry.java}
+
+\subsubsection{Neo4j data access objects}
+
+\paragraph{Active Disruption}
+An active disruption is represented by the class \textit{Disruption}
+
+\lstinputlisting[firstline=7,language=Java]
+{../../src/libCommon/src/main/java/londonSafeTravel/schema/graph/Disruption.java}
+
+\paragraph{Point}
+A node with label \textit{Point}, also known as an \textit{Intersection}, on 
+the graph is represented by the \textit{POJO} class \textit{Point}
+
+\lstinputlisting[firstline=5,language=Java]
+{../../src/libCommon/src/main/java/londonSafeTravel/schema/graph/Point.java}
+
+\paragraph{Way}
+A relationship between two \textit{Points} with label \textit{CONNECTS} is 
+represented by the \textit{POJO} class \textit{Way}
+
+\lstinputlisting[firstline=5,language=Java]
+{../../src/libCommon/src/main/java/londonSafeTravel/schema/graph/Way.java}
+
+\subsubsection{Neo4j data access objects for queries}
+
+\paragraph{Routing}
+A routing hop in the path computed by the routing procedure is represented by 
+the class \textit{RoutingHop}
+
+\lstinputlisting[firstline=3,language=Java]
+{../../src/libCommon/src/main/java/londonSafeTravel/schema/graph/RoutingHop.java}
+
+\section{Considerations on geographical data}
+
+\paragraph{Built-in types} %todo ref to driver TIMS
+Both MongoDB and Neo4j's drivers use their own Java classes to represents 
+geographical data, which are not compatible directly with each other. There's 
+also Filosgnagna's GeoJson classes used by the \textit{driver TIMS} user to 
+parse the \textit{JSON}s data provided by \textit{Transport for London}.
+
+\paragraph{Solution}
+We introduced a fourth class called \textit{Location} that is used in the 
+\textit{POJO}s where appropriate, in place of the driver's native types.
+
+\lstinputlisting[firstline=5,language=Java]
+{../../src/libCommon/src/main/java/londonSafeTravel/schema/Location.java}
+
+\paragraph{Interoperability}
+To ease conversions between those four representation a \textit{GeoFactory} 
+class was added, it contains utility methods to convert from a format to 
+another the most common geometries used in the application.
+
+\lstinputlisting[firstline=10,language=Java]
+{../../src/libCommon/src/main/java/londonSafeTravel/schema/GeoFactory.java}
+
+\section{Maven build system}
+
+The configuration file used to build the application:
+
+\lstinputlisting[firstline=10,language=XML]
+{../../src/libCommon/pom.xml}
+
 \chapter{Queries on graph database}
 
 In this chapter are presented the relevant queries for the
