@@ -1,0 +1,141 @@
+[
+  {
+    "$clusterTime": {
+      "clusterTime": {"$timestamp": {"t": 1674558644, "i": 1}},
+      "signature": {
+        "hash": {"$binary": {"base64": "AAAAAAAAAAAAAAAAAAAAAAAAAAA=", "subType": "00"}},
+        "keyId": 0
+      }
+    },
+    "command": {
+      "find": "PointOfInterest",
+      "filter": {
+        "coordinates": {
+          "$geoWithin": {
+            "$geometry": {
+              "type": "Polygon",
+              "coordinates": [
+                [
+                  [-0.12784481048583984, 51.514888753097225],
+                  [-0.12355327606201172, 51.514888753097225],
+                  [-0.12355327606201172, 51.51714207529698],
+                  [-0.12784481048583984, 51.51714207529698],
+                  [-0.12784481048583984, 51.514888753097225]
+                ]
+              ]
+            }
+          }
+        }
+      },
+      "$db": "londonSafeTravel"
+    },
+    "executionStats": {
+      "executionSuccess": true,
+      "nReturned": 2,
+      "executionTimeMillis": 15,
+      "totalKeysExamined": 0,
+      "totalDocsExamined": 9197,
+      "executionStages": {
+        "stage": "COLLSCAN",
+        "filter": {
+          "coordinates": {
+            "$geoWithin": {
+              "$geometry": {
+                "type": "Polygon",
+                "coordinates": [
+                  [
+                    [-0.12784481048583984, 51.514888753097225],
+                    [-0.12355327606201172, 51.514888753097225],
+                    [-0.12355327606201172, 51.51714207529698],
+                    [-0.12784481048583984, 51.51714207529698],
+                    [-0.12784481048583984, 51.514888753097225]
+                  ]
+                ]
+              }
+            }
+          }
+        },
+        "nReturned": 2,
+        "executionTimeMillisEstimate": 2,
+        "works": 9199,
+        "advanced": 2,
+        "needTime": 9196,
+        "needYield": 0,
+        "saveState": 9,
+        "restoreState": 9,
+        "isEOF": 1,
+        "direction": "forward",
+        "docsExamined": 9197
+      }
+    },
+    "explainVersion": "1",
+    "ok": 1,
+    "operationTime": {"$timestamp": {"t": 1674558644, "i": 1}},
+    "queryPlanner": {
+      "namespace": "londonSafeTravel.PointOfInterest",
+      "indexFilterSet": false,
+      "parsedQuery": {
+        "coordinates": {
+          "$geoWithin": {
+            "$geometry": {
+              "type": "Polygon",
+              "coordinates": [
+                [
+                  [-0.12784481048583984, 51.514888753097225],
+                  [-0.12355327606201172, 51.514888753097225],
+                  [-0.12355327606201172, 51.51714207529698],
+                  [-0.12784481048583984, 51.51714207529698],
+                  [-0.12784481048583984, 51.514888753097225]
+                ]
+              ]
+            }
+          }
+        }
+      },
+      "queryHash": "4B4840EF",
+      "planCacheKey": "4B4840EF",
+      "maxIndexedOrSolutionsReached": false,
+      "maxIndexedAndSolutionsReached": false,
+      "maxScansToExplodeReached": false,
+      "winningPlan": {
+        "stage": "COLLSCAN",
+        "filter": {
+          "coordinates": {
+            "$geoWithin": {
+              "$geometry": {
+                "type": "Polygon",
+                "coordinates": [
+                  [
+                    [-0.12784481048583984, 51.514888753097225],
+                    [-0.12355327606201172, 51.514888753097225],
+                    [-0.12355327606201172, 51.51714207529698],
+                    [-0.12784481048583984, 51.51714207529698],
+                    [-0.12784481048583984, 51.514888753097225]
+                  ]
+                ]
+              }
+            }
+          }
+        },
+        "direction": "forward"
+      },
+      "rejectedPlans": []
+    },
+    "serverInfo": {
+      "host": "Profile2022LARGE25",
+      "port": 27017,
+      "version": "6.0.3",
+      "gitVersion": "f803681c3ae19817d31958965850193de067c516"
+    },
+    "serverParameters": {
+      "internalQueryFacetBufferSizeBytes": 104857600,
+      "internalQueryFacetMaxOutputDocSizeBytes": 104857600,
+      "internalLookupStageIntermediateDocumentMaxSizeBytes": 104857600,
+      "internalDocumentSourceGroupMaxMemoryBytes": 104857600,
+      "internalQueryMaxBlockingSortMemoryUsageBytes": 104857600,
+      "internalQueryProhibitBlockingMergeOnMongoS": 0,
+      "internalQueryMaxAddToSetBytes": 104857600,
+      "internalDocumentSourceSetWindowFieldsMaxMemoryBytes": 104857600
+    }
+  }
+]

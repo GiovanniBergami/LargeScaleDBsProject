@@ -1,0 +1,35 @@
+{
+  "winningPlan": {
+    "stage": "FETCH",
+    "filter": {
+      "coordinates": {
+        "$geoWithin": {
+          "$geometry": {
+            "type": "Polygon",
+            "coordinates": [...]
+          }
+        }
+      }
+    },
+    "inputStage": {
+      "stage": "IXSCAN",
+      "keyPattern": {
+        "coordinates": "2dsphere"
+      },
+      "indexName": "coordinates_2dsphere",
+      "isMultiKey": false,
+      "multiKeyPaths": {
+        "coordinates": [
+        ]
+      },
+      "isUnique": false,
+      "isSparse": false,
+      "isPartial": false,
+      "indexVersion": 2,
+      "direction": "forward",
+      "indexBounds": {
+        "coordinates": [...]
+      }
+    }
+  }
+}

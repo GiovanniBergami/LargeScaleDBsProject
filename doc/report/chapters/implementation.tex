@@ -455,7 +455,87 @@ The query plan was generate with the \texttt{EXPLAIN} Cypher \textit{SQL
 \includepdf[height=\textheight]{assets/plan_point_search_graph.pdf}
 
 \paragraph{Benchmark}
+To benchmark the query \ref{query:geosearch} we ran a thousand times the query 
+and took the \textit{minimum}, \textit{average} and \textit{maximum} execution 
+time.
+
+\lstinputlisting[language=Python,firstline=5]{../../queries/benchmark_point_search.py}
+
+We obtained the following results, figures in \textit{seconds}:
+
+\begin{tabular}{|c|c|c|c|}
+	\hline
+	index & min & max & avg \\
+	\hline
+	\hline
+	\texttt{yes} & $0.001$ & $0.307$ & $0.141$  \\
+	\hline
+	\texttt{no} & $4.909$ & $5.424$ & $4.932$  \\
+	\hline
+\end{tabular}
+
+\paragraph{Conclusion}
+We obtain a speed-up of circa forty times when using the geo-spatial index! 
+
+\chapter{MongoDB indexes}
+
+\section{Point of Interest}
+
+\paragraph{}
+To speed-up the queries on the document database a geo-spatial index was added 
+on the \textit{PointOfInterest} collection.
+
+\begin{tabular}{|c|c|}
+	\hline
+	key & name \\
+	\hline
+	\texttt{\{"coordinates": "2dsphere"\}} & \texttt{coordinates\_2dsphere} 
+	\\
+	\hline
+\end{tabular}
+
+\paragraph{Definition}
+A \texttt{2dsphere} index supports queries that calculate geometries on an 
+earth-like sphere. \texttt{2dsphere} index supports all MongoDB geo-spatial 
+queries: queries for \textit{inclusion}, \textit{intersection} and 
+\textit{proximity}.
+
+\paragraph{Usage}
+
+\paragraph{Planner}
+We can see that MongoDB query engine use the index to speed-up the calls to the 
+operator \texttt{\$geoWithin}, in the stage called \texttt{IXSCAN}.
+
+The planner estimates a reduction in the number of comparisons from circa 
+$10^3$ to circa $10$.
+
+\lstinputlisting{../../queries/poiplan.json}
+
+\paragraph{Benchmark}
+To benchmark the query \ref{query:poisearch} we ran one-hundred-fifty times the 
+query 
+and took the \textit{minimum}, \textit{average} and \textit{maximum} execution 
+time.
+
+\lstinputlisting{../../queries/benchmark_poi_search.js}
 
 
+We obtained the following results, figures in \textit{milliseconds}:
 
 
+\begin{tabular}{|c|c|c|c|}
+	\hline
+	index & min & max & avg \\
+	\hline
+	\hline
+	\texttt{no} & 13 & 15 & 13.58 \\
+	\hline
+	\texttt{yes} & 0 & 4 & 0.0333 \\
+	\hline
+\end{tabular}
+
+\paragraph{Conclusion}
+We obtain an impressive speed-up. Unfortunately the size of the data is not 
+large enough to make a meaningful comparison as \textit{mongosh} gives 
+executions in milliseconds as integer numbers, thus making fast queries appear 
+as having zero as execution time.

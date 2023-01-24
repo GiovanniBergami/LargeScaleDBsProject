@@ -3,7 +3,6 @@ import time
 import random
 
 driver = GraphDatabase.driver("bolt://localhost:7687", auth=("neo4j", "password"))
-
 session = driver.session()
 
 def make_query(typeV, lat, lng):
@@ -17,14 +16,13 @@ MATCH (p:Point)
 MATCH (p)-[w:CONNECTS]->(r:Point)
 WHERE point.distance(q, p.coord) < 100 AND
 CASE
-WHEN $typeV = 'foot' THEN w.crossTimeFoot <> Infinity
-WHEN $typeV = 'bicycle' THEN w.crossTimeBicycle <> Infinity
-WHEN $typeV = 'car' THEN w.crossTimeMotorVehicle <> Infinity
+	WHEN $typeV = 'foot' THEN w.crossTimeFoot <> Infinity
+	WHEN $typeV = 'bicycle' THEN w.crossTimeBicycle <> Infinity
+	WHEN $typeV = 'car' THEN w.crossTimeMotorVehicle <> Infinity
 END
 RETURN p, point.distance(q, p.coord)
 ORDER BY point.distance(q, p.coord) LIMIT 1
 """, typeV=typeV, lat=lat, lng=lng)
-	#print(res.single())
 
 MAX_LAT = 51.7314463;
 MIN_LAT = 51.2268448;
@@ -50,4 +48,4 @@ for i in range(1, 1000):
 	maxt = max(ext, maxt)
 	sumt = sumt + ext
 
-print(mint, maxt, (sumt/100))
+print(mint, maxt, (sumt/1000))
