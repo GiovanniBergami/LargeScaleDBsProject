@@ -196,6 +196,7 @@ The procedure \textit{lodonSafeTravel.route.anytime} has been implemented as sho
 %\end{figure} 
 
 \section{Point finding}
+\label{query:geosearch}
 
 \paragraph{}
 To ensure that the user selects a reachable point in the network given the user's transportation mode, we use \textit{connects} relationships between points in the graph to reduce the probability of selecting an unreachable point.
@@ -393,6 +394,7 @@ The same query wrote in Mongo Query Language:
 %	\caption{Time series' MongoDB query}
 %\end{figure}
 
+<<<<<<< HEAD
 \section{Find a place}
 \textit{Returns a list of Points of Interest (POIs) whose names contain a case-insensitive substring specified by the user in the query.}
 
@@ -411,3 +413,78 @@ The same query wrote in Mongo Query Language:
 	\end{lstlisting}
 	\caption{MongoDB query}
 \end{figure}
+=======
+
+\chapter{Neo4j indexes}
+
+\paragraph{}
+To speed-up the queries on graph, two indexes on the \textit{Point} nodes were added with the following DDL \textit{Cypher} query:
+
+\begin{lstlisting}
+CREATE POINT INDEX FOR (p:Point) ON (p.coord);
+CREATE INDEX FOR (p:Point) ON (p.id);
+\end{lstlisting}
+
+resulting in two indexes, one \textbf{geo-spatial} and one \textbf{on the id}.
+
+\begin{tabular}{|c|c|c|c|c|c|c|c|}
+	\hline
+	
+	id & state & popPercent & type & entityType & labels & properties & provider \\
+	
+	\hline
+	\hline
+	
+	3 & ONLINE & 100.0 & POINT & NODE & [Point] & [coord] & point-1.0 \\
+	
+	\hline
+	
+	4 & ONLINE & 100.0 & RANGE & NODE & [Point] & [id] & range-1.0 \\
+	
+	\hline
+\end{tabular}
+
+\section{Geo-spatial index}
+
+\paragraph{Definition}
+For point indexing, Neo4j uses space filling curves in 2D or 3D over an 
+underlying generalized \textit{B+Tree}. Points will be stored in up to four 
+different trees, one for each of the four coordinate reference systems. This 
+allows for both equality and range queries using exactly the same syntax and 
+behavior as for other property types. If two range predicates are used, which 
+define minimum and maximum points, this will effectively result in a bounding 
+box query. In addition, queries using the \texttt{distance} function can, under 
+the right conditions, also use the index.
+
+\paragraph{Usage}
+We use the index mainly for the following queries:
+
+\begin{itemize}
+	\item Locate the nearest point \ref{query:geosearch} given coordinates
+	
+	\item Insert operation of a disruption by \textit{TIMS} \ref{query:crud_dis}, to select the roads effected by such disruption
+\end{itemize}
+
+For \textbf{both} queries the index is used to accelerate the look-up via the 
+\texttt{point.distance()} built-in function. Here is how the query planner of 
+the \textit{DBMS} uses the index to find nearest point on the graph given a 
+pair of coordinates as input:
+
+\paragraph{Planner}
+We can see how the entire domain is immediately filter in 
+\texttt{NodeIndexSeekByRange@neo4j}, the first stage of the query, thus 
+reducing the cardinality of the 
+search domain from $~7 \times 10^6$ to a more manageable $~ 2 \times 10^3$.
+
+The query plan was generate with the \texttt{EXPLAIN} Cypher \textit{SQL 
+}command.
+
+
+\includepdf[height=\textheight]{assets/plan_point_search_graph.pdf}
+
+\paragraph{Benchmark}
+
+
+
+
+>>>>>>> origin/master

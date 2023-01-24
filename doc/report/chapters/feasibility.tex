@@ -27,10 +27,14 @@ information to be analyzed by our application. Those analyses become of
 particular interest when we consider that Transport for London provides 
 data with a great amount of detail, including things such as minor collisions 
 and broken traffic lights. In our particular case we collected data for circa a 
-month using TLF’s JSON API with a simple shell script that was being executed 
-automatically by a SystemD timer every ten minutes.
+month using \textit{Transport for London}’s JSON API with a simple shell script 
+that was being executed 
+automatically by a \textit{SystemD} timer every ten minutes.
 
-\paragraph{schema}
+\paragraph{Format}
+An example 
+
+\paragraph{Schema}
 The main challenge was to find a “schema” for the document database to store in 
 an unified way, that is to share the same MongoDB collection, between road 
 disruptions and public transportation disruptions; as it could be useful for 
@@ -47,13 +51,13 @@ waterways, trees, parks and so on.
 
 \paragraph{Schema}
 The main challenge was to find a good representation of OpenStreetMap’s data 
-for our chosen graph database (neo4j) because it has to represents facts like 
+for our chosen graph database (Neo4j) because it has to represents facts like 
 one ways streets, access restrictions and the elements’ geographical positions; 
 we iterate over several possible schemas for the graph database and over many 
 different ways to import the raw data into it.
 
 \begin{figure}[H]
-%	\lstinputlisting[lastline=5]{../../src/libCommon/examples/nodes.csv}
+	\lstinputlisting[lastline=5]{../../src/libCommon/examples/nodes.csv}
 	\caption{Example of intersections}
 \end{figure}
 
