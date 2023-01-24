@@ -219,6 +219,14 @@ The function \textit{nearestNode} in Java has been implemented as show below:
 %	\caption{implementation of the procedure}
 %\end{figure} 
 
+\section{Create and update disruptions}
+\paragraph{}
+Create a disruption 'd' and find all points 'p' that are within a specified radius. If necessary, create a relationship 'IS\_DISRUPTED' between 'p' and 'd'.
+\begin{figure}[H]
+	\lstinputlisting{../../queries/create_update_disruption.cypher}
+	\caption{Cypher query}
+\end{figure} 
+
 \chapter{Queries on Document database}
 In this chapter are presented the relevant queries for the
 MongoDB document database.
@@ -384,3 +392,22 @@ The same query wrote in Mongo Query Language:
 {../../query.js}
 %	\caption{Time series' MongoDB query}
 %\end{figure}
+
+\section{Find a place}
+\textit{Returns a list of Points of Interest (POIs) whose names contain a case-insensitive substring specified by the user in the query.}
+
+\lstinputlisting[linerange={124-133}, language=Java]
+{../../src/libCommon/src/main/java/londonSafeTravel/dbms/document/PointOfInterestDAO.java}
+\paragraph{}
+The same query wrote in Mongo Query Language:
+\begin{figure}[H]
+	\begin{lstlisting}
+	db.PointOfInterest.find(
+	{ "name": { 
+			$regex: name, $options: "i" 
+		} 
+	}
+	).limit(20)
+	\end{lstlisting}
+	\caption{MongoDB query}
+\end{figure}

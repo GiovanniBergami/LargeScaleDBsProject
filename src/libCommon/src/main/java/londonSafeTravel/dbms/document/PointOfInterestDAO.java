@@ -122,8 +122,7 @@ public class PointOfInterestDAO {
 
      */
     public Collection<PointOfInterest> findPlace(String name){
-        //Bson match = match(eq("name", name));
-        //Bson match = Filters.text(name, new TextSearchOptions().caseSensitive(false));
+
         ArrayList<PointOfInterest> results = new ArrayList<>();
         collection.find(
                 Filters.regex("name", Pattern.compile(name, Pattern.CASE_INSENSITIVE))
