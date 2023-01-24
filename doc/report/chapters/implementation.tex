@@ -37,3 +37,23 @@ For example, we in the user selects a pathway in a park and \textit{motor vehicl
 
 \paragraph{}
 As stated in the previous chapters, a restriction of access for a certain mode of transportation is represented in the graph as cross time of positive infinity.
+
+
+\section{DocumentDB CRUD operations}
+Here below are reported the principal CRUD operations.
+
+\paragraph{Disruption: Create and Update}
+The insertion operation in the DocumentDB is performed by a TIMS API. At regular intervals, every 10 minutes, the API is called and returns a list of disruption updates. The Set operation inserts a new disruption if the returned ID is not already present in the DB or updates it otherwise.
+\lstinputlisting[linerange={35-48}, language=Java]
+{../../src/libCommon/src/main/java/londonSafeTravel/dbms/document/ManageDisruption.java}
+
+\paragraph{Disruption: Read}
+The Get method must return a disruption when is invoked, given its ID as input.
+\lstinputlisting[linerange={31-33}, language=Java]
+{../../src/libCommon/src/main/java/londonSafeTravel/dbms/document/ManageDisruption.java}
+
+\paragraph{Point of interest: Create}
+To make the service usable, it was necessary to enter the POIs in the document database. A POI is entered using the following function:
+
+\lstinputlisting[linerange={79-81}, language=Java]
+{../../src/libCommon/src/main/java/londonSafeTravel/dbms/document/PointOfInterestDAO.java}

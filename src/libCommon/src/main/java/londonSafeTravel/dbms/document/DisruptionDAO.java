@@ -54,7 +54,6 @@ public class DisruptionDAO {
                 System.out.println(cursor.next().toJson());
             }
         }
-
     }
 
     /* Find the most common disruption in a given area (for each severity) */
