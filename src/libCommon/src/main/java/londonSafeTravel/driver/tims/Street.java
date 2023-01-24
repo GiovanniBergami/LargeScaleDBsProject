@@ -10,7 +10,7 @@ class Street {
     }
 
     public String name;
-    public boolean closure;
+    public String closure;
     public String directions;
     public List<Segment> segments;
 }

@@ -74,7 +74,7 @@ public class RoadDisruptionUpdate {
                 && roadDisruptionUpdate.geometry.type() != Geometry.Type.MULTI_POLYGON
                 && (roadDisruptionUpdate.geometry.type() == Geometry.Type.MULTI_POLYGON &&
                 !((MultiPolygon) roadDisruptionUpdate.geometry).polygons().iterator().hasNext()))) {
-            dg.radius = 15.0;
+            dg.radius = 150.0;
         } else {
 
             dg.radius = 15.0;
@@ -160,7 +160,7 @@ public class RoadDisruptionUpdate {
                     else
                         ds.segments = null;
 
-                    ds.closure = street.closure;
+                    ds.closure = street.closure != null && !"Open".equals(street.closure);
                     ds.name = street.name;
                     ds.direction = street.directions;
 
