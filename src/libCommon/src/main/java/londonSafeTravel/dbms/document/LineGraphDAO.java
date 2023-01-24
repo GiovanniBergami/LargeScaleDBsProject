@@ -29,72 +29,72 @@ public class LineGraphDAO {
 
 
         pipeline.addAll(Arrays.asList(
-                Aggregates.project(
-                        Projections.fields(
-                                new Document("start",
+        Aggregates.project(
+    Projections.fields(
+            new Document("start",
+                    new Document("$multiply",
+                            Arrays.asList(
+                                    new Document("$floor",
+                                            new Document("$divide",
+                                                    Arrays.asList(
+                                            new Document("$toLong", "$start"),
+                                                        3600000
+                                                            )
+                                                    )
+                                            ),
+                                            3600
+                                    )
+                            )
+                    ).append("end",
+                        new Document("$min",
+                                Arrays.asList(
                                         new Document("$multiply",
                                                 Arrays.asList(
-                                                        new Document("$floor",
-                                                                new Document("$divide",
-                                                                        Arrays.asList(
-                                                                                new Document("$toLong", "$start"),
-                                                                                3600000
-                                                                        )
+                                                new Document("$ceil",
+                                                    new Document("$divide",
+                                                            Arrays.asList(
+                                                        new Document("$toLong", "$end"),
+                                                                3600000
                                                                 )
+                                                            )
+                                                        ),
+                                                    3600
+                                                )
+                                            ),
+                                    new Document("$multiply",
+                                        Arrays.asList(
+                                        new Document("$ceil",
+                                        new Document("$divide",
+                                                Arrays.asList(
+                                                        new Date().getTime(),
+                                                                3600000
+                                                            )
+                                                        )
                                                         ),
                                                         3600
-                                                )
-                                        )
-                                ).append("end",
-                                        new Document("$min",
-                                                Arrays.asList(
-                                                        new Document("$multiply",
-                                                                Arrays.asList(
-                                                                        new Document("$ceil",
-                                                                                new Document("$divide",
-                                                                                        Arrays.asList(
-                                                                                                new Document("$toLong", "$end"),
-                                                                                                3600000
-                                                                                        )
-                                                                                )
-                                                                        ),
-                                                                        3600
-                                                                )
-                                                        ),
-                                                        new Document("$multiply",
-                                                                Arrays.asList(
-                                                                        new Document("$ceil",
-                                                                                new Document("$divide",
-                                                                                        Arrays.asList(
-                                                                                                new Date().getTime(),
-                                                                                                3600000
-                                                                                        )
-                                                                                )
-                                                                        ),
-                                                                        3600
-                                                                )
-                                                        )
-                                                )
-                                        )
-                                ),
-                                Projections.include("id"),
-                                Projections.include("category")
-                        )
-                ),
-                Aggregates.project(
-                        Projections.fields(
-                                Projections.computed("dates",
-                                        new Document("$map",
-                                                new Document("input",
-                                                        new Document("$range",
-                                                                Arrays.asList("$start", "$end", 3600)
-                                                        )
-                                                ).append("as", "i").append("in", "$$i")
-                                        )
-                                ),
-                                Projections.include("id"),
-                                Projections.include("category")
-                        )
+                                                    )
+                                            )
+                                    )
+                            )
+                    ),
+                    Projections.include("id"),
+                    Projections.include("category")
+            )
+    ),
+    Aggregates.project(
+            Projections.fields(
+                    Projections.computed("dates",
+                            new Document("$map",
+                                    new Document("input",
+                                            new Document("$range",
+                                Arrays.asList("$start", "$end", 3600)
+                                            )
+                                ).append("as", "i").append("in", "$$i")
+                            )
+                    ),
+                    Projections.include("id"),
+                    Projections.include("category")
+            )
 
                 ),
                 Aggregates.unwind("$dates"),
@@ -112,29 +112,29 @@ public class LineGraphDAO {
                 ),
                 Aggregates.project(
                         Projections.fields(
-                                Projections.computed("year", new Document("$year", "$date")),
-                                Projections.computed("dayOfYear", new Document("$dayOfYear", "$date")),
-                                Projections.computed("hour", new Document("$hour", "$date")),
-                                Projections.include("id"),
-                                Projections.include("category"
+Projections.computed("year", new Document("$year", "$date")),
+Projections.computed("dayOfYear", new Document("$dayOfYear", "$date")),
+Projections.computed("hour", new Document("$hour", "$date")),
+Projections.include("id"),
+Projections.include("category"
                         )
                 )),
                 Aggregates.match(
                         Filters.or(
-                                Filters.ne("category", "Works"),
-                                Filters.in("hour", Arrays.asList(7, 8, 9, 10, 11, 12, 13, 14, 15, 15+1, 17, 18))
-                        )
+Filters.ne("category", "Works"),
+Filters.in("hour", Arrays.asList(7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18))
+                    )
                 ),
                 Aggregates.group(
                         Projections.fields(
-                                Projections.computed("year", "$year"),
-                                Projections.computed("dayOfYear", "$dayOfYear"),
-                                Projections.computed("hour", "$hour")
+            Projections.computed("year", "$year"),
+            Projections.computed("dayOfYear", "$dayOfYear"),
+            Projections.computed("hour", "$hour")
                         ),
                         Accumulators.sum("count", 1L)
                 ),
-                Aggregates.group("$_id.hour", Accumulators.avg("count","$count")),
-                Aggregates.sort(Sorts.ascending("_id"))
+Aggregates.group("$_id.hour", Accumulators.avg("count","$count")),
+Aggregates.sort(Sorts.ascending("_id"))
         ));
 
         //pipeline.forEach(bson -> System.out.println(bson.toBsonDocument().toJson()));

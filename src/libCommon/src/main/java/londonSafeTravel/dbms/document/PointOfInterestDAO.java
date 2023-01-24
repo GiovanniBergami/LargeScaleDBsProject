@@ -86,7 +86,9 @@ public class PointOfInterestDAO {
         return collection.find(match).first();
     }
 
-    public List<PointOfInterest> selectPOIsInArea(double minLong, double maxLong, double minLat, double maxLat)
+    public List<PointOfInterest> selectPOIsInArea(double minLong,
+                                                  double maxLong, double minLat,
+                                                  double maxLat)
     {
         assert (minLong < maxLong);
         assert (minLat < maxLat);
