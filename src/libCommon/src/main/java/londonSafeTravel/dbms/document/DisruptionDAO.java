@@ -116,16 +116,30 @@ public class DisruptionDAO {
     Build a heatmap of a certain class of disruption
      */
 
-    public Collection<Document> queryHeatmap(double lenLat, double lenLong, String classDisruption) {
+    public Collection<Document> queryHeatmap(
+            double lenLat,
+            double lenLong,
+            String classDisruption)
+    {
         Bson match = match(eq("category", classDisruption));
         Bson computeBuckets = new Document("$project", new Document()
-                .append("latB", new Document("$multiply", Arrays.asList(new Document("$floor", new Document("$divide", Arrays.asList(
-                        new Document("$arrayElemAt", Arrays.asList("$coordinates.coordinates", 1)),
-                        lenLat))), lenLat
+                .append("latB", new Document("$multiply", Arrays.asList(
+                        new Document("$floor", new Document("$divide", Arrays.asList(
+                            new Document("$arrayElemAt", Arrays.asList(
+                                    "$coordinates.coordinates",
+                                    1
+                            )),
+                            lenLat))),
+                        lenLat
                 )))
-                .append("lngB", new Document("$multiply", Arrays.asList(new Document("$floor", new Document("$divide", Arrays.asList(
-                        new Document("$arrayElemAt", Arrays.asList("$coordinates.coordinates", 0)),
-                        lenLong))), lenLong
+                .append("lngB", new Document("$multiply", Arrays.asList(
+                        new Document("$floor", new Document("$divide", Arrays.asList(
+                            new Document("$arrayElemAt", Arrays.asList(
+                                    "$coordinates.coordinates",
+                                    0
+                            )),
+                            lenLong))),
+                        lenLong
                 ))));
         Bson groupStage = Aggregates.group(
                 new Document("latB", "$latB").append("lngB", "$lngB"),
@@ -143,8 +157,8 @@ public class DisruptionDAO {
         List<Bson> pipeline = Arrays.asList(
                 match, computeBuckets, groupStage, project
         );
-
         pipeline.forEach(bson -> System.out.println(bson.toBsonDocument()));
+
 
         // Execute the aggregation
         return collection.aggregate(pipeline).map(document -> {

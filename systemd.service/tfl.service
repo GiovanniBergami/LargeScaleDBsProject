@@ -1,0 +1,12 @@
+[Unit]
+Description=Retrive data from the TfL API and pours them into lsmdb's application
+Wants=tfl.timer
+
+[Service]
+Type=oneshot
+User=duke
+Group=duke
+ExecStart=/home/duke/service/download.sh
+
+[Install]
+

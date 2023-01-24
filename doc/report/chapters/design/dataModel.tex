@@ -1,8 +1,25 @@
+\chapter{Databases design}
+
+%TODO INCLUDE PDF WHEN COMPILING
+%\includepdf[landscape=true,pagecommand=\thispagestyle{plain}]{assets/uml.pdf}
+
 \chapter{Data model}
 
-The data model section includes a description of the document collections, graph nodes and keys that are stored in the database. Two types of DBMSes have been selected for this purpose. 
-MongoDB has been chosen as the database management system for the document database part, which stores information about the Point Of Interest and the concluded disruptions.
-The decision to use a document database was based on its flexibility and ability to perform complex queries and works as a way to store an history of these informations.
+\paragraph{}
+The data model section includes a description of the document collections, 
+graph nodes and keys that are stored in the database. Two types of DBMSes have 
+been selected for this purpose. 
+
+\paragraph{Document DB}
+MongoDB has been chosen as the database management system for the document 
+database part, which stores information about the Point Of Interest and the 
+concluded disruptions.
+
+The decision to use a document database was based on its flexibility and 
+ability to perform complex queries and works as a way to store an history of 
+these informations.
+
+\paragraph{Graph DB}
 To manage the routing, where users can insert two points and the application will compute a travel route between them, a graph database managed using Neo4j has been selected to better support these features.
 
 \section{Document database}

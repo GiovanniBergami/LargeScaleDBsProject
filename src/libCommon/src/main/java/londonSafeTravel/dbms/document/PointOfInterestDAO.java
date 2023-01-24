@@ -2,6 +2,7 @@ package londonSafeTravel.dbms.document;
 
 import com.google.common.collect.Lists;
 import com.mongodb.DBObjectCodecProvider;
+import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
 import com.mongodb.client.MongoDatabase;
@@ -22,12 +23,14 @@ import org.bson.codecs.configuration.CodecRegistry;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 
+import javax.print.Doc;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.regex.Pattern;
 
+import static com.mongodb.client.model.Filters.eq;
 import static com.mongodb.client.model.Filters.geoWithin;
 
 public class PointOfInterestDAO {
@@ -71,15 +74,17 @@ public class PointOfInterestDAO {
     {
         PointOfInterestDAO poiDAO = new PointOfInterestDAO(new ConnectionMongoDB("mongodb://172.16.5.47:27017"));
 
-        var res = poiDAO.selectPOIsInArea(0, 10, -90, 90);
-
-        System.out.println(res.size());
+        System.out.println(poiDAO.getPOI("25507035").name);
     }
 
     public void insert(PointOfInterest poi) {
         collection.insertOne(poi);
     }
 
+    public PointOfInterest getPOI(String id) {
+        Bson match = eq("poiID", id);
+        return collection.find(match).first();
+    }
 
     public List<PointOfInterest> selectPOIsInArea(double minLong, double maxLong, double minLat, double maxLat)
     {
@@ -99,24 +104,9 @@ public class PointOfInterestDAO {
 
         collection.find(myMatch).forEach(results::add);
         return results;
+
     }
 
-    /*
-    public Location findPlace(String name){
-        //Bson match = match(eq("name", name));
-        //Bson match = Filters.text(name, new TextSearchOptions().caseSensitive(false));
-
-        PointOfInterest result = collection.find(
-                Filters.regex("name", Pattern.compile(name, Pattern.CASE_INSENSITIVE))
-        ).first();
-        if(result == null)
-            return null;
-
-        Location p = GeoFactory.fromMongo(result.coordinates);
-        return p;
-    }
-
-     */
     public Collection<PointOfInterest> findPlace(String name){
         //Bson match = match(eq("name", name));
         //Bson match = Filters.text(name, new TextSearchOptions().caseSensitive(false));

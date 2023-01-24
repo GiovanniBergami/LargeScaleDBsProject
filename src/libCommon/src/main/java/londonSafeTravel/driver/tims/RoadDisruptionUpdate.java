@@ -19,6 +19,7 @@ import java.io.*;
 import java.lang.reflect.Type;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.stream.Collectors;
 
 
 @SuppressWarnings("rawtypes,unused")
@@ -41,9 +42,14 @@ public class RoadDisruptionUpdate {
     Geometry geometry;
     String severity;
     boolean hasClosures;
+    List<Street> streets;
 
-    private static void addToGraph(RoadDisruptionUpdate roadDisruptionUpdate, Date t) {
+    private static londonSafeTravel.schema.graph.Disruption addToGraph(RoadDisruptionUpdate roadDisruptionUpdate, Date t,
+                                                                       HashMap<String, londonSafeTravel.schema.graph.Disruption> already
+    ) {
+        // New obj
         londonSafeTravel.schema.graph.Disruption dg = new londonSafeTravel.schema.graph.Disruption();
+        londonSafeTravel.schema.graph.Disruption ol = already.get(roadDisruptionUpdate.id);
 
         dg.id = roadDisruptionUpdate.id;
         dg.severity = roadDisruptionUpdate.severity;
@@ -68,34 +74,37 @@ public class RoadDisruptionUpdate {
                 && roadDisruptionUpdate.geometry.type() != Geometry.Type.MULTI_POLYGON
                 && (roadDisruptionUpdate.geometry.type() == Geometry.Type.MULTI_POLYGON &&
                 !((MultiPolygon) roadDisruptionUpdate.geometry).polygons().iterator().hasNext()))) {
-            dg.radius = 100.0;
-            manageDisruptionGraph.createClosure(dg);
-            return;
+            dg.radius = 15.0;
+        } else {
+
+            dg.radius = 15.0;
+            Polygon poly = roadDisruptionUpdate.geometry.type() == Geometry.Type.POLYGON ?
+                    (Polygon) roadDisruptionUpdate.geometry :
+                    ((MultiPolygon) roadDisruptionUpdate.geometry).polygons().iterator().next();
+
+            poly.linearRings().forEach(linearRing -> linearRing.points().forEach(point -> {
+                Location location = GeoFactory.fromFilosgangaToLocation(point);
+                var dist = location.metricNorm(dg.centrum);
+                if (dist > dg.radius)
+                    dg.radius = dist;
+            }));
+
+            dg.radius = Math.min(400, dg.radius);
         }
 
-        // @fixme wrong radius
-        dg.radius = 0.0;
-        Polygon poly = roadDisruptionUpdate.geometry.type() == Geometry.Type.POLYGON ?
-                (Polygon) roadDisruptionUpdate.geometry :
-                ((MultiPolygon) roadDisruptionUpdate.geometry).polygons().iterator().next();
-
-        poly.linearRings().forEach(linearRing -> linearRing.points().forEach(point -> {
-            Location location = GeoFactory.fromFilosgangaToLocation(point);
-            var dist = location.metricNorm(dg.centrum);
-            if (dist > dg.radius)
-                dg.radius = dist;
-        }));
-
-        dg.radius = Math.min(400, dg.radius);
-
-        manageDisruptionGraph.createClosure(dg);
+        if(ol != null && ol.equals(dg)) {
+            System.err.println("Skipping insert for " + ol.id + " on graphdb");
+            return null;
+        }
+        return dg;
     }
 
-    private static ProcessResult process(InputStreamReader fs, ProcessResult last, Date t) {
+    private static ProcessResult process(InputStreamReader fs, ProcessResult last, Date t) throws Exception {
         Type collectionType = new TypeToken<ArrayList<RoadDisruptionUpdate>>() {
         }.getType();
         Collection<RoadDisruptionUpdate> updates = new GsonBuilder()
                 .registerTypeAdapterFactory(new GeometryAdapterFactory())
+                .registerTypeAdapter(Street.Segment.class, new SegmentCodec())
                 .create().fromJson(fs, collectionType);
 
         HashSet<String> explored = new HashSet<>();
@@ -107,12 +116,22 @@ public class RoadDisruptionUpdate {
             throw new RuntimeException(
                     "I can only go forward in time! Current file was at " + t + " I can only go after " + last.time);
 
+        HashMap<String, londonSafeTravel.schema.graph.Disruption> activeDisInGraph = new HashMap<>(150);
+        List<londonSafeTravel.schema.graph.Disruption> toWrite = new ArrayList<>();
+        manageDisruptionGraph.findDisruption().forEach(disruption -> {
+            activeDisInGraph.put(disruption.id, disruption);
+        });
+
+        System.err.println("Ready to list!");
         updates.forEach(roadDisruptionUpdate -> {
             // Add this disruption to the explored set
             explored.add(roadDisruptionUpdate.id);
 
             // Graph db
-            addToGraph(roadDisruptionUpdate, t);
+            var x = addToGraph(roadDisruptionUpdate, t, activeDisInGraph);
+            if(x != null)
+                toWrite.add(x);
+
 
             Disruption d = manageDisruptionDocument.get(roadDisruptionUpdate.id);
             if (d == null)
@@ -126,6 +145,27 @@ public class RoadDisruptionUpdate {
             d.end = roadDisruptionUpdate.endDateTime;
 
             d.coordinates = GeoFactory.fromFilosgangaToMongo(roadDisruptionUpdate.geography);
+
+            // Streets
+            if(roadDisruptionUpdate.streets != null)
+                d.streets = roadDisruptionUpdate.streets.stream().map(street -> {
+                    Disruption.Street ds = new Disruption.Street();
+
+                    if(street.segments != null)
+                        ds.segments = street.segments.stream()
+                                .map(segment -> segment.lineString)
+                                .filter(Objects::nonNull)
+                                .map(GeoFactory::fromFilosgangaToMongo)
+                                .collect(Collectors.toList());
+                    else
+                        ds.segments = null;
+
+                    ds.closure = street.closure;
+                    ds.name = street.name;
+                    ds.direction = street.directions;
+
+                    return ds;
+                }).collect(Collectors.toList());
 
             if (roadDisruptionUpdate.geometry == null)
                 d.boundaries = null;
@@ -141,9 +181,10 @@ public class RoadDisruptionUpdate {
                 d.updates = new ArrayList<>();
 
             if (d.updates.isEmpty()
+                    || d.updates.get(d.updates.size() - 1).message == null
                     || !d.updates.get(d.updates.size() - 1).message.equals(roadDisruptionUpdate.currentUpdate)) {
                 Disruption.Update update = new Disruption.Update();
-                update.message = roadDisruptionUpdate.currentUpdate;
+                update.message = Objects.requireNonNullElse(roadDisruptionUpdate.currentUpdate, "");
                 update.start = roadDisruptionUpdate.currentUpdateDateTime;
                 update.end = roadDisruptionUpdate.currentUpdateDateTime;
 
@@ -163,10 +204,19 @@ public class RoadDisruptionUpdate {
         HashSet<String> frontier = new HashSet<>(last.processed);
         frontier.removeAll(explored);
 
+        System.err.println("Writing to graph...");
+        manageDisruptionGraph.createClosures(toWrite);
+
+        System.err.println("Closing up terminated disruptions...");
         frontier.forEach(terminatedDisruptionID -> {
             System.out.println("Closing disruption " + terminatedDisruptionID + " time " + t);
 
             Disruption toClose = manageDisruptionDocument.get(terminatedDisruptionID);
+            if(toClose == null) {
+                System.err.println(terminatedDisruptionID + " does not exists in mongo. Already deleted?");
+                return;
+            }
+
             toClose.end = t;
             manageDisruptionDocument.set(toClose);
 
@@ -222,12 +272,22 @@ public class RoadDisruptionUpdate {
                             filename.substring(pos + 1, ext) + " as date, using current date :P");
                     t = new Date();
                 }
-                var ret = process(new FileReader(filename), state, t);
-                if (ret != null)
-                    state = ret;
+
+                try {
+                    var ret = process(new FileReader(filename), state, t);
+                    if (ret != null)
+                        state = ret;
+                }
+                catch (Exception e) {
+                    System.err.println("Error processing file! " + filename);
+                    System.err.println(e.toString());
+                }
+
+                Thread.sleep(10);
             }
 
         // Save to disk
+        System.out.println("Writing to disk current state...");
         new ObjectOutputStream(new FileOutputStream("tims.roads.ser")).writeObject(state);
     }
 
