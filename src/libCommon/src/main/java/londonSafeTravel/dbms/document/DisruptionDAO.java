@@ -72,7 +72,8 @@ public class DisruptionDAO {
         This function will return a list witch contains the most common disruption in order to severity
     */
 
-    public Collection<Document> query2(double minLong, double maxLong, double minLat, double maxLat) {
+    public Collection<Document> query2(double minLong, double maxLong,
+                                       double minLat, double maxLat) {
         Polygon region = new Polygon(Arrays.asList(
                 new Position(minLong, minLat),
                 new Position(maxLong, minLat),
@@ -101,13 +102,16 @@ public class DisruptionDAO {
 
         // Projèct
 
-        Bson project = project(fields(excludeId(), include("severity", "type", "count")));
+        Bson project = project(fields(excludeId(), include("severity",
+                "type", "count")));
 
         // Combine the stages into a pipeline
-        List<Bson> pipeline = Arrays.asList(Aggregates.match(inSquare), groupStage, groupStage2, sortStage, project);
+        List<Bson> pipeline = Arrays.asList(Aggregates.match(inSquare),
+                groupStage, groupStage2, sortStage, project);
 
         // Execute the aggregation
-        Collection<Document> result = collection.aggregate(pipeline).into(new ArrayList<>());
+        Collection<Document> result = collection
+                .aggregate(pipeline).into(new ArrayList<>());
 
         return result;
 

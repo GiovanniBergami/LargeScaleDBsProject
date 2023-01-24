@@ -220,6 +220,14 @@ The function \textit{nearestNode} in Java has been implemented as show below:
 %	\caption{implementation of the procedure}
 %\end{figure} 
 
+\section{Create and update disruptions}
+\paragraph{}
+Create a disruption 'd' and find all points 'p' that are within a specified radius. If necessary, create a relationship 'IS\_DISRUPTED' between 'p' and 'd'.
+\begin{figure}[H]
+	\lstinputlisting{../../queries/create_update_disruption.cypher}
+	\caption{Cypher query}
+\end{figure}
+
 \chapter{Queries on Document database}
 In this chapter are presented the relevant queries for the
 MongoDB document database.
@@ -387,6 +395,26 @@ The same query wrote in Mongo Query Language:
 %\end{figure}
 
 
+\section{Find a place}
+\textit{Returns a list of Points of Interest (POIs) whose names contain a case-insensitive substring specified by the user in the query.}
+
+\lstinputlisting[linerange={124-133}, language=Java]
+{../../src/libCommon/src/main/java/londonSafeTravel/dbms/document/PointOfInterestDAO.java}
+\paragraph{}
+The same query wrote in Mongo Query Language:
+\begin{figure}[H]
+	\begin{lstlisting}
+	db.PointOfInterest.find(
+	{ "name": {
+			$regex: name, $options: "i"
+		}
+	}
+	).limit(20)
+	\end{lstlisting}
+	\caption{MongoDB query}
+\end{figure}
+
+
 \chapter{Neo4j indexes}
 
 \paragraph{}
@@ -455,8 +483,8 @@ The query plan was generate with the \texttt{EXPLAIN} Cypher \textit{SQL
 \includepdf[height=\textheight]{assets/plan_point_search_graph.pdf}
 
 \paragraph{Benchmark}
-To benchmark the query \ref{query:geosearch} we ran a thousand times the query 
-and took the \textit{minimum}, \textit{average} and \textit{maximum} execution 
+To benchmark the query \ref{query:geosearch} we ran a thousand times the query
+and took the \textit{minimum}, \textit{average} and \textit{maximum} execution
 time.
 
 \lstinputlisting[language=Python,firstline=5]{../../queries/benchmark_point_search.py}
@@ -475,53 +503,51 @@ We obtained the following results, figures in \textit{seconds}:
 \end{tabular}
 
 \paragraph{Conclusion}
-We obtain a speed-up of circa forty times when using the geo-spatial index! 
+We obtain a speed-up of circa forty times when using the geo-spatial index!
 
 \chapter{MongoDB indexes}
 
 \section{Point of Interest}
 
 \paragraph{}
-To speed-up the queries on the document database a geo-spatial index was added 
+To speed-up the queries on the document database a geo-spatial index was added
 on the \textit{PointOfInterest} collection.
 
 \begin{tabular}{|c|c|}
 	\hline
 	key & name \\
 	\hline
-	\texttt{\{"coordinates": "2dsphere"\}} & \texttt{coordinates\_2dsphere} 
+	\texttt{\{"coordinates": "2dsphere"\}} & \texttt{coordinates\_2dsphere}
 	\\
 	\hline
 \end{tabular}
 
 \paragraph{Definition}
-A \texttt{2dsphere} index supports queries that calculate geometries on an 
-earth-like sphere. \texttt{2dsphere} index supports all MongoDB geo-spatial 
-queries: queries for \textit{inclusion}, \textit{intersection} and 
+A \texttt{2dsphere} index supports queries that calculate geometries on an
+earth-like sphere. \texttt{2dsphere} index supports all MongoDB geo-spatial
+queries: queries for \textit{inclusion}, \textit{intersection} and
 \textit{proximity}.
 
 \paragraph{Usage}
 
 \paragraph{Planner}
-We can see that MongoDB query engine use the index to speed-up the calls to the 
+We can see that MongoDB query engine use the index to speed-up the calls to the
 operator \texttt{\$geoWithin}, in the stage called \texttt{IXSCAN}.
 
-The planner estimates a reduction in the number of comparisons from circa 
+The planner estimates a reduction in the number of comparisons from circa
 $10^3$ to circa $10$.
 
 \lstinputlisting{../../queries/poiplan.json}
 
 \paragraph{Benchmark}
-To benchmark the query \ref{query:poisearch} we ran one-hundred-fifty times the 
-query 
-and took the \textit{minimum}, \textit{average} and \textit{maximum} execution 
+To benchmark the query \ref{query:poisearch} we ran one-hundred-fifty times the
+query
+and took the \textit{minimum}, \textit{average} and \textit{maximum} execution
 time.
 
 \lstinputlisting{../../queries/benchmark_poi_search.js}
 
-
 We obtained the following results, figures in \textit{milliseconds}:
-
 
 \begin{tabular}{|c|c|c|c|}
 	\hline
@@ -535,7 +561,7 @@ We obtained the following results, figures in \textit{milliseconds}:
 \end{tabular}
 
 \paragraph{Conclusion}
-We obtain an impressive speed-up. Unfortunately the size of the data is not 
-large enough to make a meaningful comparison as \textit{mongosh} gives 
-executions in milliseconds as integer numbers, thus making fast queries appear 
+We obtain an impressive speed-up. Unfortunately the size of the data is not
+large enough to make a meaningful comparison as \textit{mongosh} gives
+executions in milliseconds as integer numbers, thus making fast queries appear
 as having zero as execution time.

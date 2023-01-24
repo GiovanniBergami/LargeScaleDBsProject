@@ -132,7 +132,10 @@ ORDER BY index DESCENDING
 
     public Point nearestNode(double lat, double lng, String type){
         try(var session = driver.session()){
-            var p = session.run(NEAREST_NODE.withParameters(parameters("lat",lat,"lng", lng, "type", type)));
+            var p = session.run(
+                    NEAREST_NODE.withParameters(
+                            parameters("lat",lat,
+                                    "lng", lng, "type", type)));
             if(!p.hasNext())
                 return null;
 
