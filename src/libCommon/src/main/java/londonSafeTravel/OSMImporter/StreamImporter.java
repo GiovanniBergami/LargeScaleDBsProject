@@ -1,28 +1,16 @@
 package londonSafeTravel.OSMImporter;
 
 
-import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
-import javax.xml.stream.events.XMLEvent;
 import java.io.*;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import javax.xml.parsers.*;
-
-import londonSafeTravel.dbms.graph.ManagePoint;
-import londonSafeTravel.dbms.graph.ManageWay;
-import londonSafeTravel.schema.Location;
 import londonSafeTravel.schema.graph.Point;
 import londonSafeTravel.schema.graph.Way;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-import org.xml.sax.SAXException;
 
 public class StreamImporter {
 

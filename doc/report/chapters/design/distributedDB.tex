@@ -4,7 +4,19 @@ The distributed database's design is suggested by requirements of the applicatio
 
 \section{Replica set}
 
-\paragraph{MongoDB}In order to ensure that all servers have the same data and to improve performance by allowing multiple servers to process queries, and can also provide a level of fault tolerance, as data can be retrieved from a replica server if the primary server goes down we decided to have three virual replicas with on each one a MongoDB instance hosted.
+\paragraph{MongoDB}In order to ensure that all servers have the same data and 
+to improve performance by allowing multiple servers to process queries, and can 
+also provide a level of fault tolerance, as data can be retrieved from a 
+replica server if the primary server goes down we decided to have three virual 
+replicas with on each one a MongoDB instance hosted.
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.8\linewidth]{assets/replicaServerReades}
+	\caption{}
+	\label{fig:replicaserverreades}
+\end{figure}
+
 
 \paragraph{Neo4J}Regarding the Neo4J part, it is present only on one replica.
 
@@ -53,13 +65,43 @@ rsconf = {
 	}]
 };
 
-
 rs.initiate(rsconf);
 \end{lstlisting}
 
 \paragraph{}
-After careful consideration, it was determined that the virtual machine with the IP address 172.16.4.43 should be given the highest priority and will serve as the primary replica, unless any unforeseen issues arise. As previously noted in regards to the handling of the CAP theorem, the application in question has a high ratio of read to write operations. Thus, in order to guarantee high availability and protection against partitioning, it was decided to adopt the Eventual Consistency paradigm. It should be noted, however, that in the event of partitioning, there may be instances where data returned may not be the most recent version.
+After careful consideration, it was determined that the virtual machine with 
+the IP address 172.16.4.43 should be given the highest priority and will serve 
+as the primary replica, unless any unforeseen issues arise. As previously noted 
+in regards to the handling of the CAP theorem, the application in question has 
+a high ratio of read to write operations. Thus, in order to guarantee high 
+availability and protection against partitioning, it was decided to adopt the 
+Eventual Consistency paradigm. It should be noted, however, that in the event 
+of partitioning, there may be instances where data returned may not be the most 
+recent version.
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.66\linewidth]{assets/replicaServerWrites}
+	\caption{}
+	\label{fig:replicaserverwrites}
+\end{figure}
+
 
 \section{Replica crash}
 
-\paragraph{Crash}In the event of failure of the primary node, the responsibility of primary role will be transferred to one of the two secondary replicas. As priorities have been assigned to each replica, it has been predetermined which of the secondary replicas will assume the role of primary. In this specific implementation, should the primary node become unavailable, the virtual machine with the IP address 172.16.4.47 will be designated as the new primary node. 
+\paragraph{Crash}In the event of failure of the primary node, the 
+responsibility of primary role will be transferred to one of the two secondary 
+replicas. As priorities have been assigned to each replica, it has been 
+predetermined which of the secondary replicas will assume the role of primary. 
+In this specific implementation, should the primary node become unavailable, 
+the virtual machine with the IP address 172.16.4.47 will be designated as the 
+new primary node. 
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.88\linewidth]{assets/newPrimary}
+	\caption{}
+	\label{fig:newprimary}
+\end{figure}
+
+

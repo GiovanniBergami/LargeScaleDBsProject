@@ -8,12 +8,17 @@ as a building system to handle all the dependencies used in the project.
 
 \section{Source tree}
 
+\paragraph{Version Control}
+We used \textit{git} as the version control software to develop our system. The 
+reader can find the public repository on \textit{GitHub} at following URL: 
+\url{https://github.com/scarburato/LargeScaleDBsProject}
+
 \paragraph{}
 All the code is stored into the \textit{londonSafeTravel} package
 
 This is the source tree of the Java packages:
 
-%\lstinputlisting[numbers=none]{assets/tree}
+\lstinputlisting[numbers=none]{assets/tree}
 
 \subsection{Packages}
 The most relevant packages:
@@ -177,14 +182,15 @@ The configuration file used to build the application:
 Here below are reported the principal CRUD operations.
 
 \section{Disruption: Create and Update}
+\label{query:crud_dis}
 The insert operation in the DocumentDB is performed by the TIMS API. At regular intervals, every 10 minutes, the API is called and returns a list of disruption updates. The Set operation inserts a new disruption if the returned ID is not already present in the DB or updates it otherwise. Here below there is the Java code:
 \lstinputlisting[linerange={35-48}, language=Java]
-{../../src/libCommon/src/main/java/londonSafeTravel/dbms/document/ManageDisruption.java}
+{../../src/libCommon/src/main/java/londonSafeTravel/dbms/document/DisruptionDAO.java}
 
 \section{Disruption: Read}
 The Get method must return a disruption when invoked, given its ID as input.
 \lstinputlisting[linerange={31-33}, language=Java]
-{../../src/libCommon/src/main/java/londonSafeTravel/dbms/document/ManageDisruption.java}
+{../../src/libCommon/src/main/java/londonSafeTravel/dbms/document/DisruptionDAO.java}
 
 \section{Point of interest: Create}
 To make the service usable, it was necessary to enter the POIs in the document database. A POI is entered using the following function:
@@ -193,6 +199,7 @@ To make the service usable, it was necessary to enter the POIs in the document d
 {../../src/libCommon/src/main/java/londonSafeTravel/dbms/document/PointOfInterestDAO.java}
 
 \section{Point of Interest: Read}
+\label{query:poisearch}
 We have two types of POI searches; regarding the former, it is useful to have a function that returns the data of a given POI given its ID.
 For the operation of the application it is also useful to have a function that given as parameters:
 \begin{itemize}
@@ -214,27 +221,27 @@ Since the transaction manager of Neo4j is not able to cope with huge amount of d
 \section{Point: Create}
 To insert a Point in the graph database the following code is used:
 \lstinputlisting[linerange={19-30}, language=Java]
-{../../src/libCommon/src/main/java/londonSafeTravel/dbms/graph/ManagePoint.java}
+{../../src/libCommon/src/main/java/londonSafeTravel/dbms/graph/PointDAO.java}
 
 \section{Way: Create}
 To insert a Way in the graph database the following code is used:
 \lstinputlisting[linerange={35-76}, language=Java]
-{../../src/libCommon/src/main/java/londonSafeTravel/dbms/graph/ManageWay.java}
+{../../src/libCommon/src/main/java/londonSafeTravel/dbms/graph/WayDAO.java}
 
 \section{Disruption: Create and Update}
 The code below is used both for create and update a disruption. If the relative ID is already present in the DB, we simply update the data, otherwise we insert a new disruption.
 \lstinputlisting[linerange={74-106}, language=Java]
-{../../src/libCommon/src/main/java/londonSafeTravel/dbms/graph/ManageDisruption.java}
+{../../src/libCommon/src/main/java/londonSafeTravel/dbms/graph/DisruptionDAO.java}
 
 \section{Disruption: Read}
 To find informations about active disruptions, the following code is used:
 \lstinputlisting[linerange={126-149}, language=Java]
-{../../src/libCommon/src/main/java/londonSafeTravel/dbms/graph/ManageDisruption.java}
+{../../src/libCommon/src/main/java/londonSafeTravel/dbms/graph/DisruptionDAO.java}
 
 \section{Disruption: Delete}
 When a disruption is no longer active, we need to remove it from graph database. To perform this, the following code is used:
 \lstinputlisting[linerange={108-122}, language=Java]
-{../../src/libCommon/src/main/java/londonSafeTravel/dbms/graph/ManageDisruption.java}
+{../../src/libCommon/src/main/java/londonSafeTravel/dbms/graph/DisruptionDAO.java}
 
 \chapter{Queries on graph database}
 
@@ -280,7 +287,7 @@ As stated in the previous chapters, a restriction of access for a certain mode o
 The function \textit{nearestNode} in Java has been implemented as show below:
 %\begin{figure}[H]
 \lstinputlisting[linerange={130-147}, language=Java]
-{../../src/libCommon/src/main/java/londonSafeTravel/dbms/graph/ManageRouting.java}
+{../../src/libCommon/src/main/java/londonSafeTravel/dbms/graph/RoutingDAO.java}
 %	\caption{implementation of the procedure}
 %\end{figure} 
 
@@ -332,15 +339,15 @@ The same query wrote in Mongo Query Language:
 \textit{Build a heatmap of a certain class of disruption.}
 
 %\begin{figure}[H]
-\lstinputlisting[linerange={120-161}, language=Java]
-{../../src/libCommon/src/main/java/londonSafeTravel/dbms/document/DisruptionDAO.java}
+\lstinputlisting[linerange={80-140}, language=Java]
+{../../src/libCommon/src/main/java/londonSafeTravel/dbms/document/DisruptionStatsDAO.java}
 %	\caption{implementation of the procedure}
 %\end{figure} 
 
 \paragraph{}
 The same query wrote in Mongo Query Language:
-\begin{figure}[H]
-	\begin{lstlisting}
+
+\begin{lstlisting}
 db.Disruption.aggregate([
 { $match: { category: classDisruption } },
 { 
@@ -379,67 +386,63 @@ db.Disruption.aggregate([
 }
 ])
 \end{lstlisting}
-\caption{Heatmap MongoDB query}
-\end{figure}
 
 \section{The most common disruptions}
 \textit{Return a list witch contains the most common disruption in order to severity.}
 
 %\begin{figure}[H]
-\lstinputlisting[linerange={75-114}, language=Java]
-{../../src/libCommon/src/main/java/londonSafeTravel/dbms/document/DisruptionDAO.java}
+\lstinputlisting[linerange={40-82}, language=Java]
+{../../src/libCommon/src/main/java/londonSafeTravel/dbms/document/DisruptionStatsDAO.java}
 %	\caption{implementation of the procedure}
 %\end{figure} 
 
 \paragraph{}
 The same query wrote in Mongo Query Language:
-\begin{figure}[H]
-	\begin{lstlisting}
-		db.Disruption.aggregate([
-		{
-			$match: {
-				coordinates: {
-					$geoWithin: {
-						$polygon: [
-						[minLong, minLat],
-						[maxLong, minLat],
-						[maxLong, maxLat],
-						[minLong, maxLat],
-						[minLong, minLat]
-						]
-					}
+
+\begin{lstlisting}
+	db.Disruption.aggregate([
+	{
+		$match: {
+			coordinates: {
+				$geoWithin: {
+					$polygon: [
+					[minLong, minLat],
+					[maxLong, minLat],
+					[maxLong, maxLat],
+					[minLong, maxLat],
+					[minLong, minLat]
+					]
 				}
 			}
-		},
-		{
-			$group: {
-				_id: { severity: "$severity", category: "$category" },
-				count: { $sum: 1 }
-			}
-		},
-		{
-			$group: {
-				_id: "$_id.severity",
-				count: { $max: "$count" },
-				type: { $first: "$_id.category" },
-				severity: { $first: "$_id.severity" }
-			}
-		},
-		{
-			$sort: { count: -1 }
-		},
-		{
-			$project: {
-				_id: 0,
-				severity: 1,
-				type: 1,
-				count: 1
-			}
 		}
-		])
-	\end{lstlisting}
-	\caption{Common disruptions' MongoDB query}
-\end{figure}
+	},
+	{
+		$group: {
+			_id: { severity: "$severity", category: "$category" },
+			count: { $sum: 1 }
+		}
+	},
+	{
+		$group: {
+			_id: "$_id.severity",
+			count: { $max: "$count" },
+			type: { $first: "$_id.category" },
+			severity: { $first: "$_id.severity" }
+		}
+	},
+	{
+		$sort: { count: -1 }
+	},
+	{
+		$project: {
+			_id: 0,
+			severity: 1,
+			type: 1,
+			count: 1
+		}
+	}
+	])
+\end{lstlisting}
 
 \section{Time series}
 \textit{Returns, for each hour of the day, the average number of disruptions that were active at that time of day. Optionally the user can filter by disruption class to produce a graph relative only the specified class.}
@@ -629,3 +632,37 @@ We obtain an impressive speed-up. Unfortunately the size of the data is not
 large enough to make a meaningful comparison as \textit{mongosh} gives
 executions in milliseconds as integer numbers, thus making fast queries appear
 as having zero as execution time.
+
+\chapter{TIMS client}
+
+\section{Implementation}
+The driver's implementation can be found in the class 
+\texttt{driver.tims.RoadDisruptionUpdate}. Here's a small snapshot of the 
+source code where the \textit{Gson} library parses the incoming \textit{JSON}:
+
+\lstinputlisting[linerange={102-127}]
+{../../src/libCommon/src/main/java/londonSafeTravel/driver/tims/RoadDisruptionUpdate.java}
+
+Then the program continues with the appropriate \textit{CRUD} operations for 
+each disruption update...
+
+\section{Configuration}
+\paragraph{User}
+The TIMS driver client is a user of our application, its mission is to retrieve 
+the current disruption from \textit{Transport for London}'s \textit{API}. It 
+automatically executed by a \textit{SystemD} timer every ten minutes.
+
+\paragraph{SystemD}
+The unit file describing the \textit{one-shot} service to launch the driver:
+
+\lstinputlisting{../../systemd.service/tfl.service}
+
+The unit file describing the periodic timer:
+
+\lstinputlisting{../../systemd.service/tfl.timer}
+
+\paragraph{Launcher script}
+The following shell script downloads the data from the \textit{API} and feeds 
+them to the driver 
+
+\lstinputlisting{../../systemd.service/download.sh}

@@ -1,18 +1,17 @@
 package londonSafeTravel.server;
 
-import com.google.gson.Gson;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import londonSafeTravel.dbms.document.ConnectionMongoDB;
-import londonSafeTravel.dbms.document.DisruptionDAO;
+import londonSafeTravel.dbms.document.DisruptionStatsDAO;
 import org.apache.hc.core5.net.URIBuilder;
 
 import java.io.IOException;
 
 public class QueryStatTableHandler implements HttpHandler{
-    DisruptionDAO tableDis;
+    DisruptionStatsDAO tableDis;
     public QueryStatTableHandler(ConnectionMongoDB connenction){
-        tableDis = new DisruptionDAO(connenction);
+        tableDis = new DisruptionStatsDAO(connenction);
     }
 
     public void handle(HttpExchange exchange) throws IOException {
@@ -30,7 +29,7 @@ public class QueryStatTableHandler implements HttpHandler{
         double latBottomRight = Double.parseDouble(uriParsed.getFirstQueryParam("latBottomRight").getValue());
         double longBottomRight = Double.parseDouble(uriParsed.getFirstQueryParam("longBottomRight").getValue());
 
-        var ress = tableDis.query2(longTopLeft,longBottomRight,latBottomRight,latTopLeft);
+        var ress = tableDis.commonDisruptionInArea(longTopLeft,longBottomRight,latBottomRight,latTopLeft);
         StringBuilder jsonBuilder = new StringBuilder("[");
         for(var doc : ress){
             jsonBuilder.append(doc.toJson()).append(",");

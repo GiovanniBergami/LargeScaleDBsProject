@@ -1,90 +1,92 @@
 src/libCommon/src/main/java/londonSafeTravel/
-├── client
-│   ├── gui
-│   │   ├── AdministrationDialog.form
-│   │   ├── AdministrationDialog.java
-│   │   ├── AnalyticsMap.form
-│   │   ├── AnalyticsMap.java
-│   │   ├── DisruptionDialog.form
-│   │   ├── DisruptionDialog.java
-│   │   ├── DisruptionWaypoint.java
-│   │   ├── GlobalPainter.java
-│   │   ├── GraphLine.java
-│   │   ├── HeatmapPainter.java
-│   │   ├── MainApp.form
-│   │   ├── MainApp.java
-│   │   ├── POIDialog.form
-│   │   ├── POIDialog.java
-│   │   ├── POIEventHandler.java
-│   │   ├── POIRenderer.java
-│   │   └── POIWaypoint.java
-│   └── net
-│       ├── DisruptionsRequest.java
-│       ├── HeatmapRequest.java
-│       ├── LineGraphRequest.java
-│       ├── POIRequest.java
-│       ├── QueryPointRequest.java
-│       ├── RoutingRequest.java
-│       ├── SearchRequest.java
-│       └── StatTableRequest.java
-├── dbms
-│   ├── bsonCodecs
-│   │   └── POICodec.java
-│   ├── document
-│   │   ├── ConnectionMongoDB.java
-│   │   ├── DisruptionDAO.java
-│   │   ├── LineGraphDAO.java
-│   │   ├── ManageDisruption.java
-│   │   ├── PointOfInterestDAO.java
-│   │   └── TransitStopDAO.java
-│   └── graph
-│       ├── ManageDisruption.java
-│       ├── ManagePoint.java
-│       ├── ManageRouting.java
-│       └── ManageWay.java
-├── driver
-│   └── tims
-│       └── RoadDisruptionUpdate.java
-├── gsonUtils
-│   ├── gsonCodecs
-│   │   ├── MongoGeometryCodec.java
-│   │   ├── POICodec.java
-│   │   └── POIOSMCodec.java
-│   └── GsonFactory.java
-├── OSMImporter
-│   ├── POI
-│   │   ├── POIFactory.java
-│   │   ├── POI.java
-│   │   ├── Point.java
-│   │   └── Way.java
-│   ├── StreamImporter.java
-│   └── WaysFactory.java
-├── schema
-│   ├── document
-│   │   ├── Disruption.java
-│   │   ├── HeatmapComputation.java
-│   │   ├── LineGraphEntry.java
-│   │   └── poi
-│   │       ├── PointOfInterest.java
-│   │       └── PointOfInterestOSM.java
-│   ├── GeoFactory.java
-│   ├── graph
-│   │   ├── Disruption.java
-│   │   ├── Point.java
-│   │   ├── RoutingHop.java
-│   │   └── Way.java
-│   └── Location.java
-└── server
-    ├── ExceptionTester.java
-    ├── Handler.java
-    ├── HeatmapHandler.java
-    ├── LineGraphHandler.java
-    ├── POIHandler.java
-    ├── QueryDisruptionHandler.java
-    ├── QueryPointHandler.java
-    ├── QueryStatTableHandler.java
-    ├── RoutingHandler.java
-    ├── SearchHandler.java
-    └── Server.java
++-- client
+|   +-- gui
+|   |   +-- AdministrationDialog.form
+|   |   +-- AdministrationDialog.java
+|   |   +-- AnalyticsMap.form
+|   |   +-- AnalyticsMap.java
+|   |   +-- DisruptionDialog.form
+|   |   +-- DisruptionDialog.java
+|   |   +-- DisruptionWaypoint.java
+|   |   +-- GlobalPainter.java
+|   |   +-- GraphLine.java
+|   |   +-- HeatmapPainter.java
+|   |   +-- MainApp.form
+|   |   +-- MainApp.java
+|   |   +-- POIDialog.form
+|   |   +-- POIDialog.java
+|   |   +-- POIEventHandler.java
+|   |   +-- POIRenderer.java
+|   |   +-- POIWaypoint.java
+|   +-- net
+|       +-- DisruptionsRequest.java
+|       +-- HeatmapRequest.java
+|       +-- LineGraphRequest.java
+|       +-- POIRequest.java
+|       +-- QueryPointRequest.java
+|       +-- RoutingRequest.java
+|       +-- SearchRequest.java
+|       +-- StatTableRequest.java
++-- dbms
+|   +-- bsonCodecs
+|   |   +-- POICodec.java
+|   +-- document
+|   |   +-- ConnectionMongoDB.java
+|   |   +-- DisruptionStatsDAO.java
+|   |   +-- LineGraphDAO.java
+|   |   +-- DisruptionDAO.java
+|   |   +-- PointOfInterestDAO.java
+|   |   +-- TransitStopDAO.java
+|   +-- graph
+|       +-- DisruptionDAO.java
+|       +-- PointDAO.java
+|       +-- RoutingDAO.java
+|       +-- WayDAO.java
++-- driver
+|   +-- tims
+|       +-- RoadDisruptionUpdate.java
++-- gsonUtils
+|   +-- gsonCodecs
+|   |   +-- MongoGeometryCodec.java
+|   |   +-- POICodec.java
+|   |   +-- POIOSMCodec.java
+|   +-- GsonFactory.java
++-- OSMImporter
+|   +-- POI
+|   |   +-- POIFactory.java
+|   |   +-- POI.java
+|   |   +-- Point.java
+|   |   +-- Way.java
+|   +-- StreamImporter.java
+|   +-- WaysFactory.java
++-- schema
+|   +-- document
+|   |   +-- Disruption.java
+|   |   +-- HeatmapComputation.java
+|   |   +-- LineGraphEntry.java
+|   |   +-- poi
+|   |       +-- PointOfInterest.java
+|   |       +-- PointOfInterestOSM.java
+|   +-- GeoFactory.java
+|   +-- graph
+|   |   +-- Disruption.java
+|   |   +-- Point.java
+|   |   +-- RoutingHop.java
+|   |   +-- Way.java
+|   +-- Location.java
++-- server
+    +-- ExceptionTester.java
+    +-- Handler.java
+    +-- HeatmapHandler.java
+    +-- LineGraphHandler.java
+    +-- POIHandler.java
+    +-- QueryDisruptionHandler.java
+    +-- QueryPointHandler.java
+    +-- QueryStatTableHandler.java
+    +-- RoutingHandler.java
+    +-- SearchHandler.java
+    +-- Server.java
 
-19 directories, 69 files
+
+
+.

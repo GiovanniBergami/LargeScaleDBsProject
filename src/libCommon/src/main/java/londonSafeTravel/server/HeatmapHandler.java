@@ -2,17 +2,17 @@ package londonSafeTravel.server;
 
 import com.sun.net.httpserver.HttpExchange;
 import londonSafeTravel.dbms.document.ConnectionMongoDB;
-import londonSafeTravel.dbms.document.DisruptionDAO;
+import londonSafeTravel.dbms.document.DisruptionStatsDAO;
 import org.apache.hc.core5.net.URIBuilder;
 
 public class HeatmapHandler extends Handler {
-    DisruptionDAO heatmapDAO;
+    DisruptionStatsDAO heatmapDAO;
     public HeatmapHandler() {
-        heatmapDAO = new DisruptionDAO();
+        heatmapDAO = new DisruptionStatsDAO();
     }
 
     public HeatmapHandler(ConnectionMongoDB connection) {
-        heatmapDAO = new DisruptionDAO(connection);
+        heatmapDAO = new DisruptionStatsDAO(connection);
     }
 
     @Override

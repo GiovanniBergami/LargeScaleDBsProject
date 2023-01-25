@@ -2,23 +2,23 @@ package londonSafeTravel.server;
 
 import com.google.gson.Gson;
 import com.sun.net.httpserver.HttpExchange;
-import londonSafeTravel.dbms.graph.ManageDisruption;
+import londonSafeTravel.dbms.graph.DisruptionDAO;
 import org.neo4j.driver.Driver;
 
 public class QueryDisruptionHandler extends Handler {
-    ManageDisruption manageDisruption;
+    DisruptionDAO disruptionDAO;
 
     public QueryDisruptionHandler(Driver driver) {
-        manageDisruption = new ManageDisruption(driver);
+        disruptionDAO = new DisruptionDAO(driver);
     }
 
     public QueryDisruptionHandler() {
-        manageDisruption = new ManageDisruption("neo4j://localhost:7687", "neo4j", "pass");
+        disruptionDAO = new DisruptionDAO("neo4j://localhost:7687", "neo4j", "pass");
     }
 
     @Override
     public void handleRequest(HttpExchange exchange) throws Exception {
-        var disruptions = manageDisruption.findDisruption();
+        var disruptions = disruptionDAO.findDisruption();
         String json = new Gson().toJson(disruptions);
 
         exchange.getResponseHeaders().set("Content-Type", "application/json");

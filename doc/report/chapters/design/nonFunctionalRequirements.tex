@@ -1,1 +1,42 @@
 \chapter{Not functional requirements}
+
+\begin{itemize}
+	\item To solve a routing problem in an acceptable amount of time
+	
+	\item A cache for queries to have a better response time for frequent 
+	queries
+	
+	\item To find a good approximation of the optimal route, finding a good 
+	balance between the optimal result and execution time of the procedure on 
+	the server
+	
+	\item Respect the access constraints on the graph, such as oneway streets 
+	and other access restrictions imposed by the highway's authority
+	
+	\item Use a routing algorithm that uses an heuristic function to compute a 
+	path, such as \textit{A*}, to avoid excessive exploration of the hypothesis 
+	space, 
+	since those algorithms are always exponential in the graph's dimension
+	
+	\item Define a good heuristic to guide the algorithm on its visit on the 
+	graph, considering features such as the road's classification, speed limit, 
+	the geographical distance between the vertices.
+	
+	\item To ensure availability of the data and partition tolerance
+	
+	\item Define appropriate requests by the application to minimize the data 
+	exchange between the client and the server over the network, in particular 
+	to reduce latency of the application when retrieving the \textit{Point of 
+	Interest}s
+	
+	\item Define appropriate auxiliary data structure to speed-up the queries 
+	on the geographical data
+
+	\item Define appropriate redundancies to allow the user to quickly access 
+	information regarding the currently active disruptions. So we have to avoid 
+	to access useless information from the archived data
+	
+	\item Ensure that in the event of a problem in the TIMS' logic or in the 
+	\textit{Transport for London}'s \textit{API}s the active 
+	disruptions will remain active after their programmed expiration date
+\end{itemize}

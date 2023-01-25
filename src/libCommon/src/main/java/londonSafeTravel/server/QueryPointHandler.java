@@ -2,7 +2,7 @@ package londonSafeTravel.server;
 
 import com.google.gson.Gson;
 import com.sun.net.httpserver.HttpExchange;
-import londonSafeTravel.dbms.graph.ManageRouting;
+import londonSafeTravel.dbms.graph.RoutingDAO;
 
 import londonSafeTravel.schema.graph.Point;
 import org.apache.hc.core5.net.URIBuilder;
@@ -10,13 +10,13 @@ import org.neo4j.driver.Driver;
 
 class QueryPointHandler extends Handler {
 
-    ManageRouting manageRouting;
+    RoutingDAO routingDAO;
 
     public QueryPointHandler(Driver driver) {
-        manageRouting = new ManageRouting(driver);
+        routingDAO = new RoutingDAO(driver);
     }
     public QueryPointHandler() {
-        manageRouting = new ManageRouting("neo4j://localhost:7687", "neo4j", "pass");
+        routingDAO = new RoutingDAO("neo4j://localhost:7687", "neo4j", "pass");
     }
 
     @Override
@@ -34,7 +34,7 @@ class QueryPointHandler extends Handler {
         String type = uriParsed.getFirstQueryParam("type") != null ?
                 uriParsed.getFirstQueryParam("type").getValue() : "car";
 
-        Point target = manageRouting.nearestNode(lat, lon, type);
+        Point target = routingDAO.nearestNode(lat, lon, type);
         String json = new Gson().toJson(target);
 
         exchange.getResponseHeaders().set("Content-Type", "application/json");

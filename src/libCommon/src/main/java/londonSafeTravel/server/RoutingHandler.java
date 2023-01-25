@@ -2,19 +2,19 @@ package londonSafeTravel.server;
 
 import com.google.gson.Gson;
 import com.sun.net.httpserver.HttpExchange;
-import londonSafeTravel.dbms.graph.ManageRouting;
+import londonSafeTravel.dbms.graph.RoutingDAO;
 import org.apache.hc.core5.net.URIBuilder;
 import org.neo4j.driver.Driver;
 
 public class RoutingHandler extends Handler {
-    ManageRouting manageRouting;
+    RoutingDAO routingDAO;
 
     public RoutingHandler(Driver driver) {
-        manageRouting = new ManageRouting(driver);
+        routingDAO = new RoutingDAO(driver);
     }
 
     public RoutingHandler() {
-        manageRouting = new ManageRouting("neo4j://localhost:7687", "neo4j", "pass");
+        routingDAO = new RoutingDAO("neo4j://localhost:7687", "neo4j", "pass");
     }
     @Override
     public void handleRequest(HttpExchange exchange) throws Exception {
@@ -31,7 +31,7 @@ public class RoutingHandler extends Handler {
 
         // @TODO Handle errors here
         System.out.println(start + "\t" + end);
-        var route = manageRouting.route1(start, end, type, dis);
+        var route = routingDAO.route1(start, end, type, dis);
         String json = new Gson().toJson(route);
 
         exchange.getResponseHeaders().set("Content-Type", "application/json");

@@ -11,7 +11,7 @@ import londonSafeTravel.schema.GeoFactory;
 import londonSafeTravel.schema.Location;
 import londonSafeTravel.dbms.document.ConnectionMongoDB;
 import londonSafeTravel.schema.document.Disruption;
-import londonSafeTravel.dbms.document.ManageDisruption;
+import londonSafeTravel.dbms.document.DisruptionDAO;
 import org.neo4j.driver.AuthTokens;
 import org.neo4j.driver.GraphDatabase;
 
@@ -24,8 +24,8 @@ import java.util.stream.Collectors;
 
 @SuppressWarnings("rawtypes,unused")
 public class RoadDisruptionUpdate {
-    private static ManageDisruption manageDisruptionDocument;
-    private static londonSafeTravel.dbms.graph.ManageDisruption manageDisruptionGraph;
+    private static DisruptionDAO disruptionDAODocument;
+    private static londonSafeTravel.dbms.graph.DisruptionDAO disruptionDAOGraph;
 
     String id;
     String category;
@@ -118,7 +118,7 @@ public class RoadDisruptionUpdate {
 
         HashMap<String, londonSafeTravel.schema.graph.Disruption> activeDisInGraph = new HashMap<>(150);
         List<londonSafeTravel.schema.graph.Disruption> toWrite = new ArrayList<>();
-        manageDisruptionGraph.findDisruption().forEach(disruption -> {
+        disruptionDAOGraph.findDisruption().forEach(disruption -> {
             activeDisInGraph.put(disruption.id, disruption);
         });
 
@@ -133,7 +133,7 @@ public class RoadDisruptionUpdate {
                 toWrite.add(x);
 
 
-            Disruption d = manageDisruptionDocument.get(roadDisruptionUpdate.id);
+            Disruption d = disruptionDAODocument.get(roadDisruptionUpdate.id);
             if (d == null)
                 d = new Disruption();
 
@@ -195,7 +195,7 @@ public class RoadDisruptionUpdate {
                 update.end = roadDisruptionUpdate.currentUpdateDateTime;
             }
 
-            manageDisruptionDocument.set(d);
+            disruptionDAODocument.set(d);
         });
 
         // Now we close disruptions that haven't been updated.
@@ -205,23 +205,23 @@ public class RoadDisruptionUpdate {
         frontier.removeAll(explored);
 
         System.err.println("Writing to graph...");
-        manageDisruptionGraph.createClosures(toWrite);
+        disruptionDAOGraph.createClosures(toWrite);
 
         System.err.println("Closing up terminated disruptions...");
         frontier.forEach(terminatedDisruptionID -> {
             System.out.println("Closing disruption " + terminatedDisruptionID + " time " + t);
 
-            Disruption toClose = manageDisruptionDocument.get(terminatedDisruptionID);
+            Disruption toClose = disruptionDAODocument.get(terminatedDisruptionID);
             if(toClose == null) {
                 System.err.println(terminatedDisruptionID + " does not exists in mongo. Already deleted?");
                 return;
             }
 
             toClose.end = t;
-            manageDisruptionDocument.set(toClose);
+            disruptionDAODocument.set(toClose);
 
             // Drop it from graph database
-            manageDisruptionGraph.deleteClosure(terminatedDisruptionID);
+            disruptionDAOGraph.deleteClosure(terminatedDisruptionID);
         });
 
         ProcessResult r = new ProcessResult();
@@ -233,8 +233,8 @@ public class RoadDisruptionUpdate {
 
     public static void main(String[] argv) throws Exception {
         // Open connections to DBs 172.16.5.47
-        manageDisruptionDocument = new ManageDisruption(new ConnectionMongoDB("mongodb://172.16.5.47:27017"));
-        manageDisruptionGraph = new londonSafeTravel.dbms.graph.ManageDisruption(
+        disruptionDAODocument = new DisruptionDAO(new ConnectionMongoDB("mongodb://172.16.5.47:27017"));
+        disruptionDAOGraph = new londonSafeTravel.dbms.graph.DisruptionDAO(
                 GraphDatabase.driver(
                         "bolt://172.16.5.47",
                         AuthTokens.basic("neo4j", "password")));
