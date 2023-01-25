@@ -36,70 +36,50 @@ for our use case, such as indexes and a powerful query engine.
 	\item Disruptions
 \end{itemize}
 
+\subsubsection{Point of Interest}
 The POIs collection looks like this:
-\begin{lstlisting}
-{
-	"_id":
-	"name":
-	"type":
-	"coordinates": {
-		"type": "Point",
-		"coordinates": [0.0, 0.0] // lat 'n lon
-	}
-}
-\end{lstlisting}
 
+\lstinputlisting{../../schema/example.poi.json}
+
+Where the map \textit{tags} has not a particular structure, but it stores the 
+\textit{OpenStreetMap}'s tag for that particular POI. It might store 
+information such as its website, its opening hours, its physical dimensions, if 
+it is accessible in a wheelchair etc...
+
+\paragraph{Main fields}
+\begin{itemize}
+	\item \texttt{coordinates} a \textit{GeoJson} document of type 
+	\texttt{Point} representing the geographical location of the object
+	
+	\item \texttt{name} the name of the object, if any
+\end{itemize}
+
+\subsubsection{Disruption}
 The disruption collection is organized in the following structure:
-\begin{lstlisting}
-{
-	"idDisruption":
-	"type":
-	"startTime":
-	"endTime":
-	"coordinates": {
-		"type": "Point",
-		"coordinates": [0.0, 0.0] // lat 'n lon
-	},
-	"boundaries": {
-		"type": "Polygon",
-		"coordinates": [
-		[
-		[100.0, 0.0],
-		[101.0, 0.0],
-		[101.0, 1.0],
-		[100.0, 1.0],
-		[100.0, 0.0]
-		]
-		]
-	}
+
+\lstinputlisting{../../schema/example.disruption.json}
+
+This representation might allow in the future to store additional optional 
+values for certain kinds of POIs if the need arises, without any compatibility 
+issue for the existing code; for example one might want to store a restaurant’s 
+opening hours or the accessibility level for wheelchair users in a certain 
+building.
+
+\paragraph{Main fields}
+\begin{itemize}
+	\item \texttt{boundaries} a \textit{GeoJson} document that could be both of 
+	class \texttt{Polygon} or \texttt{Multipolygon}, it represents the effected 
+	area. It might not be present in all documents.
 	
-	,
+	\item \texttt{coordinates} the main point effected by the disruption, that 
+	is where the application is supposed to draw the sign.
 	
-	"category":
-	"subcategory":
-	"severity":
-	"updates": [{
-		"startTime":
-		"endTime":
-		"message":
-	},
+	\item \texttt{streets} a list of streets effected by the disruptions and if 
+	are closed or not to the traffic
 	
-	]
-	"streets": [{
-		"name":
-		"closure":
-	},
-	{
-		"name":
-		"closure":
-	},
-	..
-	]
-	"closure":
-	
-}
-\end{lstlisting}
-This representation might allow in the future to store additional optional values for certain kinds of POIs if the need arises, without any compatibility issue for the existing code; for example one might want to store a restaurant’s opening hours or the accessibility level for wheelchair users in a certain building.
+	\item \texttt{updates} an archive of updates that \textit{Transport for 
+	London} has published
+\end{itemize}
 
 \section{Graph database}
 
@@ -112,16 +92,66 @@ handle the graph database was \textit{Neo4j}, since it can easly handle a huge a
 \paragraph{Schema}For the map side of things we store one class of node and one class of relationship:
 
 \begin{itemize}
-	\item \textbf{Intersection }(due to a mistake it is actually called Point in the database) represents the connection between one or more ways, it is a \textit{vertex} of the graph
-	\item \textbf{Connects} represents the connection between two Insersection. It stores informations like its name and the cost of traversing it and eventual access restrictions, like one way streets or motor-only roads
+	\item \textbf{Intersection }(due to a mistake it is actually called Point 
+	in the database) represents the connection between one or more ways, it is 
+	a \textit{vertex} of the graph
+	
+	\lstinputlisting{../../schema/example.point}
+	
+	\begin{itemize}
+		\item \texttt{coord} Those are the geographical coordinates of the 
+		node
+	\end{itemize}
+	
+	\item \textbf{Connects} represents the connection between two Insersection. 
+	It stores informations like its name and the cost of traversing it and 
+	eventual access restrictions, like one way streets or motor-only roads
+	
+	\lstinputlisting{../../schema/example.connects}
+	
+	\begin{itemize}
+		\item \texttt{maxspeed} It is the maximum speed on that stretch of road 
+		expressed in meters per second
+		
+		\item \texttt{crossTime} It is the estimated crossing time of the edge 
+		for each transportation mode. If the cross time is $\infty
+		$ then it means 
+		that the road has an access restriction in that direction, such has no 
+		entry signs.
+		
+		It was used to use with the \textit{GDS}' implementation of 
+		\textit{A*}, since we have implemented our version of \textit{A*} we 
+		only check for $\infty$
+		
+		\item \texttt{class} The road class in the hierarchy where 
+		\textit{motorway} is at the top.
+	\end{itemize}
 	
 \end{itemize}
 
 For the disruption handling we have the following nodes and relationships:
 
 \begin{itemize}
-	\item \textbf{Disruption} a node in the graph containing all the informations about an active disruption
-	\item \textbf{isDisrupted} is a relation between a Point and a Disruption, telling that the road is being affected by a disruption
+	\item \textbf{Disruption} a node in the graph containing all the 
+	informations about an active disruption
+	
+	\lstinputlisting{../../schema/example.disruption}
+	
+	We save in this edge all the information that could be of immediate help to 
+	the user, to avoid making another query to the other databases when 
+	requesting a preview of the data. In particular we store:
+	
+	\begin{itemize}
+		\item \texttt{ttl} It is the \textit{Time to live}, that is the number 
+		of seconds that remains to programmed end of the disruption, so that if 
+		there are problems in the \textit{driver TIMS} the \textit{DBMS} can 
+		drop it
+	\end{itemize}
+	
+	\item \textbf{isDisrupted} is a relation between a Point and a Disruption, 
+	telling that the road is being affected by a disruption.
+	
+	We don't store any information on those edges.
 
 \end{itemize}
 	
@@ -131,4 +161,6 @@ For the disruption handling we have the following nodes and relationships:
 	\caption{A possible portion of graph}
 	\label{fig:schemaneo4j}
 \end{figure}
+
+
 
