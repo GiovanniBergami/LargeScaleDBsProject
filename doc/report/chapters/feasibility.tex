@@ -34,12 +34,16 @@ automatically by a \textit{SystemD} timer every ten minutes.
 \paragraph{Format}
 An example 
 
+%\paragraph{Schema}
+%The main challenge was to find a ``schema'' for the document database to store 
+%in 
+%an unified way, that is to share the same MongoDB collection, between road 
+%disruptions and public transportation disruptions; as it could be useful for 
+%certain operations to have an unified view of such data.
+
 \paragraph{Schema}
 The main challenge was to find a ``schema'' for the document database to store 
-in 
-an unified way, that is to share the same MongoDB collection, between road 
-disruptions and public transportation disruptions; as it could be useful for 
-certain operations to have an unified view of such data.
+terminated disruption to make possible to execute fast analytics on them.
 
 \paragraph{Sources}
 It is possible to access the documentation of the \textit{API} from here: 

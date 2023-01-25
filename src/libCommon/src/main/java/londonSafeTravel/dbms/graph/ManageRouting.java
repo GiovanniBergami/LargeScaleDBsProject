@@ -113,17 +113,18 @@ ORDER BY index DESCENDING
     //e vogliamo stabilire nodo di partenza e di arrivo.
     private final Query NEAREST_NODE = new Query(
             """
-                    WITH point({latitude: $lat, longitude: $lng}) AS q
-                    MATCH (p:Point)
-                    MATCH (p)-[w:CONNECTS]->(r:Point)
-                    WHERE point.distance(q, p.coord) < 100 AND
-                    CASE
-                        WHEN $type = 'foot' THEN w.crossTimeFoot <> Infinity
-                        WHEN $type = 'bicycle' THEN w.crossTimeBicycle <> Infinity
-                        WHEN $type = 'car' THEN w.crossTimeMotorVehicle <> Infinity
-                    END
-                    RETURN p, point.distance(q, p.coord)
-                    ORDER BY point.distance(q, p.coord) LIMIT 1"""
+WITH point({latitude: $lat, longitude: $lng}) AS q
+MATCH (p:Point)
+MATCH (p)-[w:CONNECTS]->(r:Point)
+WHERE point.distance(q, p.coord) < 100 AND
+CASE
+    WHEN $type = 'foot' THEN w.crossTimeFoot <> Infinity
+    WHEN $type = 'bicycle' THEN w.crossTimeBicycle <> Infinity
+    WHEN $type = 'car' THEN w.crossTimeMotorVehicle <> Infinity
+END
+RETURN p, point.distance(q, p.coord)
+ORDER BY point.distance(q, p.coord) LIMIT 1
+"""
     );
 
     public Point nearestNode(double lat, double lng){
