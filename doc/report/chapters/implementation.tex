@@ -173,6 +173,69 @@ The configuration file used to build the application:
 \lstinputlisting[firstline=10,language=XML]
 {../../src/libCommon/pom.xml}
 
+\chapter{DocumentDB CRUD operations}
+Here below are reported the principal CRUD operations.
+
+\section{Disruption: Create and Update}
+The insert operation in the DocumentDB is performed by the TIMS API. At regular intervals, every 10 minutes, the API is called and returns a list of disruption updates. The Set operation inserts a new disruption if the returned ID is not already present in the DB or updates it otherwise. Here below there is the Java code:
+\lstinputlisting[linerange={35-48}, language=Java]
+{../../src/libCommon/src/main/java/londonSafeTravel/dbms/document/ManageDisruption.java}
+
+\section{Disruption: Read}
+The Get method must return a disruption when invoked, given its ID as input.
+\lstinputlisting[linerange={31-33}, language=Java]
+{../../src/libCommon/src/main/java/londonSafeTravel/dbms/document/ManageDisruption.java}
+
+\section{Point of interest: Create}
+To make the service usable, it was necessary to enter the POIs in the document database. A POI is entered using the following function:
+
+\lstinputlisting[linerange={80-82}, language=Java]
+{../../src/libCommon/src/main/java/londonSafeTravel/dbms/document/PointOfInterestDAO.java}
+
+\section{Point of Interest: Read}
+We have two types of POI searches; regarding the former, it is useful to have a function that returns the data of a given POI given its ID.
+For the operation of the application it is also useful to have a function that given as parameters:
+\begin{itemize}
+	\item Maximum latitude
+	\item Minimum latitude
+	\item Maximum longitude
+	\item Minimum longitude
+\end{itemize}
+returns the list of POIs in the area described by the previous values. The functions are the following:
+\lstinputlisting[linerange={84-109}, language=Java]
+{../../src/libCommon/src/main/java/londonSafeTravel/dbms/document/PointOfInterestDAO.java}
+
+\chapter{Graph Database CRUD operations}
+\section{Bootstrap}
+Since the transaction manager of Neo4j is not able to cope with huge amount of data, it was necessary to insert the data into the database when the DBMS was halted, in a sort of cold insert, using the bundled utility \textit{neo4j-admin} with the following shell script:
+
+\lstinputlisting[language=bash]
+{../../schema/importlondon.sh}
+\section{Point: Create}
+To insert a Point in the graph database the following code is used:
+\lstinputlisting[linerange={19-30}, language=Java]
+{../../src/libCommon/src/main/java/londonSafeTravel/dbms/graph/ManagePoint.java}
+
+\section{Way: Create}
+To insert a Way in the graph database the following code is used:
+\lstinputlisting[linerange={35-76}, language=Java]
+{../../src/libCommon/src/main/java/londonSafeTravel/dbms/graph/ManageWay.java}
+
+\section{Disruption: Create and Update}
+The code below is used both for create and update a disruption. If the relative ID is already present in the DB, we simply update the data, otherwise we insert a new disruption.
+\lstinputlisting[linerange={74-106}, language=Java]
+{../../src/libCommon/src/main/java/londonSafeTravel/dbms/graph/ManageDisruption.java}
+
+\section{Disruption: Read}
+To find informations about active disruptions, the following code is used:
+\lstinputlisting[linerange={126-149}, language=Java]
+{../../src/libCommon/src/main/java/londonSafeTravel/dbms/graph/ManageDisruption.java}
+
+\section{Disruption: Delete}
+When a disruption is no longer active, we need to remove it from graph database. To perform this, the following code is used:
+\lstinputlisting[linerange={108-122}, language=Java]
+{../../src/libCommon/src/main/java/londonSafeTravel/dbms/graph/ManageDisruption.java}
+
 \chapter{Queries on graph database}
 
 In this chapter are presented the relevant queries for the
@@ -186,6 +249,7 @@ Our routing query is used to compute a suboptimal path between two points on the
 	\lstinputlisting{../../queries/routing.cypher}
 	\caption{Cypher query}
 \end{figure} 
+
 
 The procedure \textit{lodonSafeTravel.route.anytime} has been implemented as show below:
 

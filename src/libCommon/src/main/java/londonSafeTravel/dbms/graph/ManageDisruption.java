@@ -140,10 +140,8 @@ public class ManageDisruption {
                 d.subCategory = record.get("d").get("severity").asString();
                 d.comment = record.get("d").get("comment").asString();
                 d.update = record.get("d").get("update").asString();
-                // @fixme figure this shit out
                 d.updateTime = java.sql.Timestamp.valueOf(record.get("d").get("updateTime").asLocalDateTime());
                 d.closed = record.get("d").get("closed").asBoolean(false);
-
                 disruptions.add(d);
             });
         }

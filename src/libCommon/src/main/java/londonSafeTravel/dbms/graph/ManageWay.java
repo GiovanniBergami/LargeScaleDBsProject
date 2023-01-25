@@ -55,7 +55,7 @@ public class ManageWay {
                             "ON CREATE SET p1.lat = $lat1 " +
                             "ON CREATE SET p1.lon = $lon1 " +
                             "ON CREATE SET p2.coord = point({longitude: $lon2, latitude: $lat2})" +
-                            "ON CREATE SET p2.lat = $lat2, p2.lon = $lon2", // @TODO Se oneway=yes and foot=no allora non serve l'inverso!
+                            "ON CREATE SET p2.lat = $lat2, p2.lon = $lon2",
                     parameters(
                             "id1", way.p1.getId(),
                             "lat1", way.p1.getLocation().getLatitude(),
@@ -73,20 +73,5 @@ public class ManageWay {
                     )
             );
         });
-    }
-
-    private Collection<Way> elementsInGivenArea(double maxLat, double maxLon, double minLat, double minLon) {
-        try (Session session = driver.session()) {
-            return session.executeRead((TransactionCallback<List<Way>>) tx -> {
-                Result result = tx.run("WITH" +
-                        "  point({longitude: $minLon, latitude: $minLat}) AS lowerLeft, " +
-                        "  point({longitude: $maxLon, latitude: $maxLat}) AS upperRight " +
-                        "MATCH (p:Point) " +
-                        "WHERE point.withinBBox(p.coord, lowerLeft, upperRight) " +
-                        "MATCH(p)-[w]->(q:Point) " +
-                        "RETURN p,q,w", parameters("minLon", minLon, "minLat", minLat, "maxLon", maxLon, "maxLat", maxLat));
-                return null;
-            });
-        }
     }
 }
