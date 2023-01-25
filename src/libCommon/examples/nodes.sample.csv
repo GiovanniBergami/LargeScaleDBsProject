@@ -1,0 +1,7 @@
+id:ID,latitude:double,longitude:double,coord:point{crs:WGS-84},:LABEL
+78112,51.526976,-0.1457924,"{latitude:51.526976, longitude:-0.1457924}","Point"
+99878,51.524358,-0.1529847,"{latitude:51.524358, longitude:-0.1529847}","Point"
+99879,51.5248246,-0.1532934,"{latitude:51.5248246, longitude:-0.1532934}","Point"
+99880,51.5250847,-0.1535802,"{latitude:51.5250847, longitude:-0.1535802}","Point"
+99882,51.52565,-0.1541197,"{latitude:51.52565, longitude:-0.1541197}","Point"
+99883,51.5259685,-0.1541164,"{latitude:51.5259685, longitude:-0.1541164}","Point"

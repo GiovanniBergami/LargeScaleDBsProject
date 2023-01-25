@@ -3,11 +3,11 @@
 \part{Feasibility}
 \chapter{Data sources}
 
-We’re combining data from three sources and two organizations:
+We’re combining data from two organizations:
 
 \begin{itemize}
 	\item Transport for London TIMS
-	\item Transport for London public disruptions API
+%	\item Transport for London public disruptions API
 	\item OpenStreetMap
 \end{itemize}
 
@@ -35,10 +35,15 @@ automatically by a \textit{SystemD} timer every ten minutes.
 An example 
 
 \paragraph{Schema}
-The main challenge was to find a “schema” for the document database to store in 
+The main challenge was to find a ``schema'' for the document database to store 
+in 
 an unified way, that is to share the same MongoDB collection, between road 
 disruptions and public transportation disruptions; as it could be useful for 
 certain operations to have an unified view of such data.
+
+\paragraph{Sources}
+It is possible to access the documentation of the \textit{API} from here: 
+\url{https://api-portal.tfl.gov.uk/}
 
 \section{OpenStreetMap}
 
@@ -52,12 +57,28 @@ waterways, trees, parks and so on.
 \paragraph{Schema}
 The main challenge was to find a good representation of OpenStreetMap’s data 
 for our chosen graph database (Neo4j) because it has to represents facts like 
-one ways streets, access restrictions and the elements’ geographical positions; 
-we iterate over several possible schemas for the graph database and over many 
+one ways streets, access restrictions and the elements' geographical positions; 
+we iterated over several possible schemas for the graph database and over many 
 different ways to import the raw data into it.
 
+\paragraph{Format}
+Data is provided in an \textit{XML} format, after some processing we obtained 
+two \textit{CSV}s one containing all the intersection in the network and the 
+other all the highway's stretches, that is the edges between intersections, in 
+the network.
+
 \begin{figure}[H]
-%	\lstinputlisting[lastline=5]{../../src/libCommon/examples/nodes.csv}
+	\lstinputlisting[lastline=5]{../../src/libCommon/examples/nodes.sample.csv}
 	\caption{Example of intersections}
 \end{figure}
+
+\begin{figure}[H]
+	\lstinputlisting[lastline=5]{../../src/libCommon/examples/ways.sample.csv}
+	\caption{Example of intersections}
+\end{figure}
+
+\paragraph{Sources}
+We imported the map's data from an \textit{XML} file provided by Geofrabik from 
+here: 
+\url{https://download.geofabrik.de/europe/great-britain/england/greater-london.html}
 

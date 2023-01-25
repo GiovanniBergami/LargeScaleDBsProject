@@ -17,28 +17,26 @@ In conclusion, the use of a graph and document database in our application has n
 
 \textit{For each class of public transportation disruption, find the top 3  lines that are most affected.}
 
-\begin{figure}[H]
-	\begin{lstlisting}
-	db.Disruption.aggregate([
-	{
-		$match: {
-			typeDisruption: "PUBLIC_TRANSPORT"
-		}
-	},
-	{
-		$group: {
-			_id: "$terminatedDisruption.category",
-			count: { $sum: 1 },
-			line: { $first: "$routes.line" }
-		}
-	},
-	{
-		$sort: { count: -1 }
-	},
-	{
-		$limit: 3
+
+\begin{lstlisting}
+db.Disruption.aggregate([
+{
+	$match: {
+		typeDisruption: "PUBLIC_TRANSPORT"
 	}
-	])
-	\end{lstlisting}
-	\caption{Top 3 public transportation disruption in MongoDB query}
-\end{figure}
+},
+{
+	$group: {
+		_id: "$terminatedDisruption.category",
+		count: { $sum: 1 },
+		line: { $first: "$routes.line" }
+	}
+},
+{
+	$sort: { count: -1 }
+},
+{
+	$limit: 3
+}
+])
+\end{lstlisting}

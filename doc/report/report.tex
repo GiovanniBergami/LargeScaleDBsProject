@@ -23,10 +23,17 @@
 \renewcommand{\ttdefault}{pcr}
 
 \lstset{
+	% wrap long lines on new line
+	postbreak=\mbox{\textcolor{red}{$\hookrightarrow$}\space},
+	breaklines=true, 
+	columns=fullflexible,
+	% tab and fonts
 	tabsize=2,
 	basicstyle=\ttfamily\small,
+	% theme
 	numbers=left,
-	rulecolor=\color{black!30},
+	rulecolor=\color{black!30},	
+	% UTF8 and escape
 	escapeinside={\%TEX}{\^^M},
 	inputencoding=utf8,
 	extendedchars=true,
