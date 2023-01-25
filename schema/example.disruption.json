@@ -1,0 +1,39 @@
+{
+  "boundaries": {
+    "type": "Polygon",
+    "coordinates": [[
+        [-0.2941527354, 51.4913972513], [-0.2941144636, 51.4911846774],
+        ..., [-0.2941527354, 51.4913972513]
+      ]]
+  },
+  "category": "Works",
+  "coordinates": {
+    "type": "Point",
+    "coordinates": [-0.27671, 51.489055]
+  },
+  "end": {"$date": "2023-01-31T23:59:00.000Z"},
+  "id": "TIMS-265653",
+  "severity": "Moderate",
+  "start": {"$date": "2022-03-07T22:00:00.000Z"},
+  "streets": [
+    {
+      "closure": false,
+      "direction": "All Directions",
+      "name": "[A3000] Wellesley Road (W4)",
+      "segments": [
+        {
+          "type": "LineString",
+          "coordinates": [[-0.279577, 51.490059], [-0.279417, 51.490084]]
+        },...
+      ]
+    }
+  ],
+  "subCategory": "TfL",
+  "updates": [
+    {
+      "end": {"$date": "2022-12-09T14:04:53.000Z"},
+      "message": "",
+      "start": {"$date": "2022-12-09T13:08:54.000Z"}
+    }, ...
+  ]
+}

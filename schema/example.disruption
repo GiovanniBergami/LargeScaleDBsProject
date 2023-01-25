@@ -1,0 +1,13 @@
+(:Disruption {
+	severity: "Moderate",
+	subCategory: "TfL",
+	centrum: point({srid:4326, x:-0.27671, y:51.489055}),
+	closed: FALSE,
+	update: "Delays are possible.",
+	comment: "....",
+	updateTime: 2023-01-25T07:40:25,
+	id: "TIMS-265653",
+	category: "Works",
+	radius: 123.0,
+	ttl: 575979
+})

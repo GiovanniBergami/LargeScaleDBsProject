@@ -1,0 +1,9 @@
+[:CONNECTS {
+	name: "Ballards Lane",
+	maxspeed: 13.411,
+	id: 74,
+	crossTimeBicycle: 3.638,
+	crossTimeFoot: 14.553,
+	crossTimeMotorVehicle: Infinity,
+	class: "pedestrian",
+}]

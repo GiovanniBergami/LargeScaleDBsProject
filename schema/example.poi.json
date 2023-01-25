@@ -1,0 +1,14 @@
+{
+  "name": "",
+  "coordinates": {
+    "type": "Point",
+    "coordinates": [-0.1558246, 51.530421]
+  },
+  "poiID": "388826",
+  "tags": {
+    "board_type": "wildlife",
+    "tourism": "information",
+    "information": "board"
+  },
+  "type": "OSM-POI"
+}
