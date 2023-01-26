@@ -79,7 +79,7 @@ public class ConnectionDialog extends JDialog {
         label1.setText("Server Addres");
         panel3.add(label1, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         uriField = new JTextField();
-        uriField.setText("localhost:8080");
+        uriField.setText("172.16.5.42:8080");
         uriField.setToolTipText("Address in format hostname:port");
         panel3.add(uriField, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
     }
@@ -90,4 +90,5 @@ public class ConnectionDialog extends JDialog {
     public JComponent $$$getRootComponent$$$() {
         return contentPane;
     }
+
 }

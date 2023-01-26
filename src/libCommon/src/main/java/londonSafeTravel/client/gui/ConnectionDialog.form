@@ -64,7 +64,7 @@
               </grid>
             </constraints>
             <properties>
-              <text value="localhost:8080"/>
+              <text value="172.16.5.42:8080"/>
               <toolTipText value="Address in format hostname:port"/>
             </properties>
           </component>

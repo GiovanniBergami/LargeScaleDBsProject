@@ -126,7 +126,7 @@ public class DisruptionStatsDAO {
         List<Bson> pipeline = Arrays.asList(
                 match, computeBuckets, groupStage, project
         );
-        pipeline.forEach(bson -> System.out.println(bson.toBsonDocument()));
+        //pipeline.forEach(bson -> System.out.println(bson.toBsonDocument()));
 
 
         // Execute the aggregation
