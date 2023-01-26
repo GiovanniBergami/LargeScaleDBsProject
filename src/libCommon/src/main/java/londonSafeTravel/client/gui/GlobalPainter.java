@@ -18,13 +18,19 @@ import java.util.stream.Collectors;
 
 public class GlobalPainter extends AbstractPainter<JXMapViewer> {
     private final Map<String, POIRenderer> POIRenderes = new HashMap<>(){{
-        put("museum", new POIRenderer(new File("assets/pois/museum.png")));
-        put("landmark", new POIRenderer(new File("assets/pois/landmark.png")));
-        put("gallery", new POIRenderer(new File("assets/pois/gallery.png")));
+        put("museum", new POIRenderer(
+                getClass().getClassLoader().getResourceAsStream("assets/pois/museum.png")));
+        put("landmark", new POIRenderer(
+                getClass().getClassLoader().getResourceAsStream("assets/pois/landmark.png")));
+        put("gallery", new POIRenderer(
+                getClass().getClassLoader().getResourceAsStream("assets/pois/gallery.png")));
         //put("memorial", new POIRenderer(new File("assets/pois/memorial.png")));
-        put("monument", new POIRenderer(new File("assets/pois/monument.png")));
-        put("big_wheel", new POIRenderer(new File("assets/pois/big_wheel.png")));
-        put("clock", new POIRenderer(new File("assets/pois/clock.png")));
+        put("monument", new POIRenderer(
+                getClass().getClassLoader().getResourceAsStream("assets/pois/monument.png")));
+        put("big_wheel", new POIRenderer(
+                getClass().getClassLoader().getResourceAsStream("assets/pois/big_wheel.png")));
+        put("clock", new POIRenderer(
+                getClass().getClassLoader().getResourceAsStream("assets/pois/clock.png")));
     }};
 
     private final Color ROUTE_COLOR = Color.RED;
@@ -35,21 +41,29 @@ public class GlobalPainter extends AbstractPainter<JXMapViewer> {
     private DefaultWaypoint routeStart;
     private DefaultWaypoint routeEnd;
 
-    private final POIRenderer routeStartRenderer = new POIRenderer(new File("assets/start.png"));
-    private final POIRenderer routeEndRenderer = new POIRenderer(new File("assets/end.png"));
+    private final POIRenderer routeStartRenderer = new POIRenderer(
+            getClass().getClassLoader().getResourceAsStream("assets/start.png"));
+    private final POIRenderer routeEndRenderer = new POIRenderer(
+            getClass().getClassLoader().getResourceAsStream("assets/end.png"));
 
     private List<PointOfInterest> pois2;
 
     private final DefaultWaypointRenderer renderer =  new DefaultWaypointRenderer();
-    private final POIRenderer poiRenderer = new POIRenderer(new File("assets/pois/generic.png"));
+    private final POIRenderer poiRenderer = new POIRenderer(
+            getClass().getClassLoader().getResourceAsStream("assets/pois/generic.png"));
     private final Set<DisruptionWaypoint> disruptions = new HashSet<>();
 
     private final HashMap<String, POIRenderer> disruptionsRenderer = new HashMap<>() {{
-        put("unknown", new POIRenderer(new File("assets/disruptions/default.png")));
-        put("Minimal", new POIRenderer(new File("assets/disruptions/minimal.png")));
-        put("Moderate", new POIRenderer(new File("assets/disruptions/moderate.png")));
-        put("Serious", new POIRenderer(new File("assets/disruptions/serious.png")));
-        put("Severe", new POIRenderer(new File("assets/disruptions/severe.png")));
+        put("unknown", new POIRenderer(
+                getClass().getClassLoader().getResourceAsStream("assets/disruptions/default.png")));
+        put("Minimal", new POIRenderer(
+                getClass().getClassLoader().getResourceAsStream("assets/disruptions/minimal.png")));
+        put("Moderate", new POIRenderer(
+                getClass().getClassLoader().getResourceAsStream("assets/disruptions/moderate.png")));
+        put("Serious", new POIRenderer(
+                getClass().getClassLoader().getResourceAsStream("assets/disruptions/serious.png")));
+        put("Severe", new POIRenderer(
+                getClass().getClassLoader().getResourceAsStream("assets/disruptions/severe.png")));
     }};
 
     private final Set<POIWaypoint> pois = new HashSet<>();
@@ -60,10 +74,12 @@ public class GlobalPainter extends AbstractPainter<JXMapViewer> {
     private double oldCenterY = -1;
 
     private final POIEventHandler poiEventHandler;
+    private final String serverURI;
 
 
 
-    public GlobalPainter(POIEventHandler poiEventHandler) throws IOException {
+    public GlobalPainter(POIEventHandler poiEventHandler, String URI) throws IOException {
+        this.serverURI = URI;
         this.poiEventHandler = poiEventHandler;
     }
 
@@ -205,7 +221,7 @@ public class GlobalPainter extends AbstractPainter<JXMapViewer> {
                 ArrayList<PointOfInterest> pois = null;
                 try {
                     pois = new POIRequest(
-                            "localhost:8080",
+                            serverURI,
                             pointTopLeft.getLatitude(), pointTopLeft.getLongitude(),
                             pointBottomRight.getLatitude(), pointBottomRight.getLongitude()
                     ).getPOIs();

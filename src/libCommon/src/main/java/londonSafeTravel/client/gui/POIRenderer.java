@@ -5,6 +5,7 @@ import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 
 import javax.imageio.ImageIO;
 
@@ -15,6 +16,10 @@ import org.jxmapviewer.viewer.WaypointRenderer;
 public class POIRenderer implements WaypointRenderer<Waypoint>
 {
     private BufferedImage img = null;
+
+    public POIRenderer(InputStream image) throws IOException {
+        img = ImageIO.read(image);
+    }
 
 
     public POIRenderer(File imageFile) throws IOException {
