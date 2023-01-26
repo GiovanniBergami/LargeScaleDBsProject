@@ -1,0 +1,11 @@
+[Unit]
+Description=SERVER WEB PER PROGETTO DI LARGE SCALE
+
+[Service]
+Type=simple
+User=duke
+Group=duke
+ExecStart=/home/duke/service/www.sh
+
+[Install]
+WantedBy=multi-user.target

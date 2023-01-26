@@ -1,0 +1,46 @@
+%\chapter{Sharding proposal}
+%
+%\paragraph{}
+%Our sharding proposal for this application, which is concurrent with data replication,
+%would allow for load-balancing purposes, in order to achieve better performances.
+%To implement the sharding, we thought about selecting two different sharding
+%keys, one for each collection of our document database:
+%
+%\begin{itemize}
+%	\item \textit{Disruption} collection, we could use the key \texttt{id} which is unique
+%	
+%	\item \textit{Point of Interest} collection, we could use the key \texttt{id} which is unique
+%\end{itemize}
+%
+%\paragraph{Balancing}
+%We chose as a sharding partitioning method the hashing, so to ensure a good load balance among servers. The hash function returns an hash value to determine where to place a document, resulting in evenly distributed data among the shards.
+
+\chapter{Sharding proposal}
+
+\paragraph{}
+Our sharding proposal for this application is designed to work in conjunction with data replication, in order to achieve optimal performance and scalability. The main purpose of sharding is to distribute the data across multiple servers, in order to handle the increased load and provide better performance.
+
+\paragraph{Key selection}
+In order to implement sharding, we have considered two different sharding keys, one for each collection in our document database:
+
+\begin{itemize}
+	\item For the \textit{Disruption} collection, we propose using the \texttt{id} field as the sharding key. This field is unique for each document in the collection and will allow for efficient and even distribution of the data among the shards.
+	
+	\item For the \textit{Point of Interest} collection, we also propose using the \texttt{id} field as the sharding key. This field is unique for each document in the collection and will allow for efficient and even distribution of the data among the shards.
+	
+\end{itemize}
+
+\paragraph{Balancing method}
+We have chosen to use the hashing method as the partitioning technique for our sharding implementation. This method utilizes a hash function to determine the location of a document in the sharded cluster, resulting in evenly distributed data among the shards. This will allow for a more efficient load balancing among servers and will ensure that the system can handle large amounts of data and traffic.
+
+\paragraph{Implementation}
+The implementation of sharding will involve setting up a sharded cluster with multiple servers, each hosting a subset of the data. The shard key will be used to determine which server should store a specific document. Additionally, we will also have to configure the mongos router, which will handle the distribution of queries among the shards.
+
+\paragraph{Benefits}
+With this sharding proposal, we will be able to handle a large amount of data and traffic, and provide better performance and scalability.
+
+\paragraph{Downsides}
+It should be noted that sharding also comes with some downsides. It can make certain queries or updates more complicated and it increases the complexity of the system. Additionally, it requires additional resources for managing the shard servers and mongos router.
+
+\paragraph{Conclusion}
+Since our application makes a lot of update and create queries on MongoDB, it is not advisable to use sharding on the University's cluster since the computational power allocated to the three virtual machines might not be sufficient to handle such load.

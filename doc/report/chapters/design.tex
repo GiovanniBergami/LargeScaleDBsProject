@@ -73,18 +73,9 @@ The application will allow its users to perform the following tasks:
 \input{chapters/design/nonFunctionalRequirements.tex}
 
 \input{chapters/design/capTheorem.tex}
-
-In order to optimize performance for the anticipated high volume of read operations, it is essential to prioritize both high availability and low latency in the design of this application. Additionally, it is crucial that the system remains functional in the event of a partition.According to the CAP theorem, the design of this application should prioritize \textbf{Availability (A)} and \textbf{Partition Tolerance (P)} over Consistency (C). This means that the application is more focused on maintaining access to the system and tolerating partitioning rather than ensuring complete consistency of data.
-\begin{figure}[H]
-	\centering
-	\includegraphics[width=0.4\linewidth]{assets/CAP_Theorem_Venn_Diagram}
-	\caption{CAP theorem Venn diagram}
-	\label{fig:captheoremvenndiagram}
-\end{figure}
 \input{chapters/design/useCases.tex}
 \input{chapters/design/dataModel.tex}
-
-
 \input{chapters/design/distributedDB.tex}
+\input{chapters/design/sharding.tex}
 \input{chapters/design/platArch.tex}
 \input{chapters/design/frameworks.tex}

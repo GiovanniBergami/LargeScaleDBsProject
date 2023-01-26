@@ -263,7 +263,7 @@ seconds. So the algorithm tries to minimize the travel time when planning a
 journey.
 
 We used the following cost function to order the heap, where $n$ is a vertex of 
-the graph:
+the graph and $\omega \in [1, +\infty)$ is a parameter:
 
 \[ 
 f(n) = g(n) + \omega \cdot h(n)
@@ -721,3 +721,20 @@ The following shell script downloads the data from the \textit{API} and feeds
 them to the driver 
 
 \lstinputlisting{../../systemd.service/download.sh}
+
+\chapter{Web server}
+\paragraph{}
+The web server application main logic is located into the class \texttt{londonSafeTravel.server.Server}
+
+\paragraph{Parameters}
+The \textit{DBMS}es \textit{IP} address are hard-coded into the source code for simplicity. The same holds true for the \textbf{port}, the server binds itself to the network address \texttt{0.0.0.0:8080}
+
+\paragraph{Launcher script}
+The following shell script starts the server
+
+\lstinputlisting{../../systemd.service/www.sh}
+
+\paragraph{SystemD}
+The unit file describing the \textit{simple} service to launch the driver:
+
+\lstinputlisting{../../systemd.service/londonSafeTravel.service}
