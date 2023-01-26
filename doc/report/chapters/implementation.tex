@@ -141,7 +141,7 @@ represented by the \textit{POJO} class \textit{Way}
 
 \subsubsection{Neo4j data access objects for queries}
 
-\paragraph{Routing}
+\paragraph{gg}
 A routing hop in the path computed by the routing procedure is represented by 
 the class \textit{RoutingHop}
 
@@ -257,11 +257,66 @@ Our routing query is used to compute a suboptimal path between two points on the
 	\caption{Cypher query}
 \end{figure} 
 
+\paragraph{Algorithm}
+As a cost function we used an estimation of the \textbf{travel time} in 
+seconds. So the algorithm tries to minimize the travel time when planning a 
+journey.
 
-The procedure \textit{lodonSafeTravel.route.anytime} has been implemented as show below:
+We used the following cost function to order the heap, where $n$ is a vertex of 
+the graph:
+
+\[ 
+f(n) = g(n) + \omega \cdot h(n)
+\]
+
+Let $v^\text{max}_\text{mode}$ be the \textbf{maximum speed} for a mode of 
+transportation and $t$ the \textbf{target node}, then the heuristic function is 
+defined 
+as:
+
+\[
+h(n) = \dfrac{\left| t - n \right|}{v^\text{max}_\text{mode}}
+\]
+
+We define the $g(n)$ as the \textbf{cost function} from $s$, the \textbf{start 
+node}, to $n$. Let $m$ be the \textbf{predecessor} of $n$ then:
+
+\[
+g(n) = g(m) + c(m, n)
+\]
+
+We then define $c(a, b)$ as the \textbf{cost of traversing a way}:
+
+\[
+\forall{b} \; c(s, b) = 0\texttt{s}
+\]
+
+$$
+c(a,b) =
+\begin{cases}
+	+ \infty & \text{if access restriction for mode in way} (a,b) \\
+	
+	p(b) \cdot 
+	\dfrac{\left| a - b \right|}{\min\left\{
+		v^\text{max}_\text{mode}, 
+		v^\text{speed limit}_{a,b}
+	\right\}} + p_2(b) & \text{otherwise}
+		
+\end{cases}
+$$
+
+Finally we define $p(b) \in [1, +\infty)$ as a \textbf{penalty} function that 
+increases in value when the route passes through an active 
+\textit{disruption} and/or a low \textit{road class} in the highways' 
+hierarchy; and $p_2(b) \in \left\{5\texttt{s}, 0\right\}$ as a penalty cost 
+that adds five seconds to the path each time we traverse an 
+\textit{intersection}.
+
+\paragraph{Implementation} The procedure \textit{lodonSafeTravel.route.anytime} 
+has been implemented as show below:
 
 %\begin{figure}[H]
-\lstinputlisting[linerange={50,163}, language=Java]
+\lstinputlisting[firstline=12, language=Java]
 	{../../routingNeo4jProcedure/src/main/java/londonSafeTravel/RoutingAStart.java}
 %	\caption{implementation of the procedure}
 %\end{figure} 
@@ -400,48 +455,48 @@ db.Disruption.aggregate([
 The same query wrote in Mongo Query Language:
 
 \begin{lstlisting}
-	db.Disruption.aggregate([
-	{
-		$match: {
-			coordinates: {
-				$geoWithin: {
-					$polygon: [
-					[minLong, minLat],
-					[maxLong, minLat],
-					[maxLong, maxLat],
-					[minLong, maxLat],
-					[minLong, minLat]
-					]
-				}
+db.Disruption.aggregate([
+{
+	$match: {
+		coordinates: {
+			$geoWithin: {
+				$polygon: [
+				[minLong, minLat],
+				[maxLong, minLat],
+				[maxLong, maxLat],
+				[minLong, maxLat],
+				[minLong, minLat]
+				]
 			}
 		}
-	},
-	{
-		$group: {
-			_id: { severity: "$severity", category: "$category" },
-			count: { $sum: 1 }
-		}
-	},
-	{
-		$group: {
-			_id: "$_id.severity",
-			count: { $max: "$count" },
-			type: { $first: "$_id.category" },
-			severity: { $first: "$_id.severity" }
-		}
-	},
-	{
-		$sort: { count: -1 }
-	},
-	{
-		$project: {
-			_id: 0,
-			severity: 1,
-			type: 1,
-			count: 1
-		}
 	}
-	])
+},
+{
+	$group: {
+		_id: { severity: "$severity", category: "$category" },
+		count: { $sum: 1 }
+	}
+},
+{
+	$group: {
+		_id: "$_id.severity",
+		count: { $max: "$count" },
+		type: { $first: "$_id.category" },
+		severity: { $first: "$_id.severity" }
+	}
+},
+{
+	$sort: { count: -1 }
+},
+{
+	$project: {
+		_id: 0,
+		severity: 1,
+		type: 1,
+		count: 1
+	}
+}
+])
 \end{lstlisting}
 
 \section{Time series}
@@ -471,12 +526,12 @@ The same query wrote in Mongo Query Language:
 The same query wrote in Mongo Query Language:
 \begin{figure}[H]
 	\begin{lstlisting}
-	db.PointOfInterest.find(
-	{ "name": {
-			$regex: name, $options: "i"
-		}
+db.PointOfInterest.find(
+{ "name": {
+		$regex: name, $options: "i"
 	}
-	).limit(20)
+}
+).limit(20)
 	\end{lstlisting}
 	\caption{MongoDB query}
 \end{figure}
