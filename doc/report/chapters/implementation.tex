@@ -9,6 +9,7 @@ as a building system to handle all the dependencies used in the project.
 \section{Source tree}
 
 \paragraph{Version Control}
+\label{banana}
 We used \textit{git} as the version control software to develop our system. The 
 reader can find the public repository on \textit{GitHub} at following URL: 
 \url{https://github.com/scarburato/LargeScaleDBsProject}
@@ -258,10 +259,12 @@ Our routing query is used to compute a suboptimal path between two points on the
 \end{figure} 
 
 \paragraph{Algorithm}
-As a cost function we used an estimation of the \textbf{travel time} in 
+As a \textbf{cost function} we used an estimation of the \textbf{travel time} 
+in 
 seconds. So the algorithm tries to minimize the travel time when planning a 
 journey.
 
+\subparagraph{}
 We used the following cost function to order the heap, where $n$ is a vertex of 
 the graph and $\omega \in [1, +\infty)$ is a parameter:
 
@@ -269,6 +272,10 @@ the graph and $\omega \in [1, +\infty)$ is a parameter:
 f(n) = g(n) + \omega \cdot h(n)
 \]
 
+The greater is $\omega$ the faster is the procedure, but the path might be 
+sub-optimal.
+
+\subparagraph{}
 Let $v^\text{max}_\text{mode}$ be the \textbf{maximum speed} for a mode of 
 transportation and $t$ the \textbf{target node}, then the heuristic function is 
 defined 
@@ -278,6 +285,7 @@ as:
 h(n) = \dfrac{\left| t - n \right|}{v^\text{max}_\text{mode}}
 \]
 
+\subparagraph{}
 We define the $g(n)$ as the \textbf{cost function} from $s$, the \textbf{start 
 node}, to $n$. Let $m$ be the \textbf{predecessor} of $n$ then:
 
@@ -285,11 +293,8 @@ node}, to $n$. Let $m$ be the \textbf{predecessor} of $n$ then:
 g(n) = g(m) + c(m, n)
 \]
 
+\subparagraph{}
 We then define $c(a, b)$ as the \textbf{cost of traversing a way}:
-
-\[
-\forall{b} \; c(s, b) = 0\texttt{s}
-\]
 
 $$
 c(a,b) =
@@ -305,12 +310,18 @@ c(a,b) =
 \end{cases}
 $$
 
+\subparagraph{}
 Finally we define $p(b) \in [1, +\infty)$ as a \textbf{penalty} function that 
 increases in value when the route passes through an active 
 \textit{disruption} and/or a low \textit{road class} in the highways' 
 hierarchy; and $p_2(b) \in \left\{5\texttt{s}, 0\right\}$ as a penalty cost 
 that adds five seconds to the path each time we traverse an 
 \textit{intersection}.
+
+\subparagraph{Intersection}
+An \textbf{intersection} is defined, for the purposes of the routing, as a node 
+where at least three ways enter said node. For example a highway splitting in 
+three one way roads with no pedestrian access is not considered an intersection.
 
 \paragraph{Implementation} The procedure \textit{lodonSafeTravel.route.anytime} 
 has been implemented as show below:
@@ -567,6 +578,7 @@ resulting in two indexes, one \textbf{geo-spatial} and one \textbf{on the id}.
 \end{tabular}
 
 \section{Geo-spatial index}
+\label{geoindex}
 
 \paragraph{Definition}
 For point indexing, Neo4j uses space filling curves in 2D or 3D over an 

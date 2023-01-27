@@ -26,7 +26,22 @@ In order to implement sharding, we have considered two different sharding keys, 
 \begin{itemize}
 	\item For the \textit{Disruption} collection, we propose using the \texttt{id} field as the sharding key. This field is unique for each document in the collection and will allow for efficient and even distribution of the data among the shards.
 	
-	\item For the \textit{Point of Interest} collection, we also propose using the \texttt{id} field as the sharding key. This field is unique for each document in the collection and will allow for efficient and even distribution of the data among the shards.
+	\item For the \textit{Point of Interest} collection, we also propose using 
+	the \texttt{id} field as the sharding key. This field is unique for each 
+	document in the collection and will allow for efficient and even 
+	distribution of the data among the shards.
+	
+	\item For the \textit{Point of Interest} collection, we also propose using 
+	the \texttt{coordinates} field as the sharding key. This field contains the 
+	geographical position of each document and we are also planning a 
+	\textit{geo-spatial} 
+	index on it as described in the chapter \ref{geoindex}; so we could 
+	partition the geographical space in four rectangular areas with a common 
+	vertex in the centre of London, in such way we will ensure an even 
+	disruption 
+	of the documents among the servers. To access the data we would first test 
+	in which server the request's area lays in and then access it and finish 
+	the query with the \textit{geo-spatial} index.
 	
 \end{itemize}
 
