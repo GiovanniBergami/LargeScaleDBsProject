@@ -11,3 +11,8 @@ report.pdf
 *.out
 *.synctex.gz
 *.toc
+src/libCommon/examples/prova_osm4.json
+src/libCommon/examples/florida_osm.json
+src/libCommon/examples/prova_osm.json
+src/libCommon/examples/prova_osm2.json
+src/libCommon/examples/prova_osm3.json
