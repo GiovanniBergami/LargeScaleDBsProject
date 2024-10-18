@@ -62,6 +62,11 @@
 
   <dependencies>
     <dependency>
+      <groupId>com.google.code.gson</groupId>
+      <artifactId>gson</artifactId>
+      <version>2.10.1</version>
+    </dependency>
+    <dependency>
       <groupId>com.jetbrains.intellij.java</groupId>
       <artifactId>java-gui-forms-rt</artifactId>
       <version>203.7148.57</version>

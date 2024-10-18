@@ -1,5 +1,6 @@
 package londonSafeTravel.OSMImporter.POI;
 
+import com.google.gson.Gson;
 import londonSafeTravel.dbms.document.PointOfInterestDAO;
 import londonSafeTravel.schema.GeoFactory;
 import londonSafeTravel.schema.Location;
@@ -9,7 +10,7 @@ import londonSafeTravel.schema.document.poi.PointOfInterestOSM;
 
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamReader;
-import java.io.FileReader;
+import java.io.*;
 import java.util.*;
 
 public class POIFactory {
@@ -44,7 +45,7 @@ public class POIFactory {
 
     public static POI parse(XMLStreamReader reader, HashMap<Long, Location> map) throws Exception {
         String type = reader.getLocalName();
-        if(!type.equals("node") && !type.equals("way"))
+        if(!type.equals("node")) //&& !type.equals("way"))  //togliendo questa parte dovrebbe prendere solo i nodi
             return null;
 
         POI current = type.equals("node") ? new Point() : new Way();
@@ -55,13 +56,13 @@ public class POIFactory {
             final double lon = Double.parseDouble(reader.getAttributeValue(currentNamespace, "lon"));
             final long id = Long.parseLong(reader.getAttributeValue(currentNamespace, "id"));
 
-            map.put(id, new Location(lat, lon));
-            ((Point)current).setCentrum(new Location(lat, lon));
+            //map.put(id, new Location(lat, lon));
+            ((Point)current).setCentrum(new Location(lat, lon));  //current è il POI sul quale si sta lavorando. se è di tipo Point e non way, per usare il metodo setcentrum, lo si casta prima a Point
         }
 
         current.osmID = Long.parseLong(reader.getAttributeValue(currentNamespace, "id"));
 
-        List<Long> locations = new ArrayList<>();
+        List<Long> locations = new ArrayList<>(); //forse in questa parte si tira giù tutti i tag
         HashMap<String, String> tags = new HashMap<>();
         for(; !isEndTag(reader, type); reader.next()) {
             if (!reader.isStartElement() || !reader.hasName())
@@ -110,7 +111,7 @@ public class POIFactory {
         return current;
     }
 
-    private static final String filenameDefault = "examples/greater-london-latest.osm";
+    private static final String filenameDefault = "examples/florida-latest.osm";
 
     public static void main(String[] argv) throws Exception {
         XMLInputFactory factory = XMLInputFactory.newInstance();
@@ -120,9 +121,16 @@ public class POIFactory {
 
         HashMap<Long, Location> map = new HashMap<>();
 
-        ConnectionMongoDB mongoc = new ConnectionMongoDB("mongodb://172.16.5.47:27017");
-        PointOfInterestDAO poiDAO = new PointOfInterestDAO(mongoc);
+        //ConnectionMongoDB mongoc = new ConnectionMongoDB("mongodb://172.16.5.47:27017");
+        //PointOfInterestDAO poiDAO = new PointOfInterestDAO(mongoc);
 
+        System.out.println("qui"); //aggiunto io
+        String write_path = "examples/florida_osm.json";
+        FileWriter fileWriter= new FileWriter(write_path,true);
+        BufferedWriter writer = new BufferedWriter(fileWriter);
+        Gson gson = new Gson();
+
+        int i = 0;
         for (r.next(); r.hasNext(); r.next()) {
             if (!r.isStartElement())
                 continue;
@@ -131,11 +139,35 @@ public class POIFactory {
             if(poi == null)
                 continue;
 
-            poiDAO.insert(convertToMongo(poi));
+            //poiDAO.insert(convertToMongo(poi));
 
-            System.out.println(
-                    poi.osmID + "\t" + (poi instanceof Point) + "\t" +
-                           poi.className + "\t" + poi.name + "\t" + poi.getCentrum());
+
+            //if(i>5)
+            //    break;
+            String json = gson.toJson(poi);
+            json = json.replaceFirst("\"osmTags\":\\{","");
+            json = json.replaceFirst("}}","}");
+            json = json.replaceFirst("\"centrum\":\\{","");
+            json = json.replaceFirst("\\}","");
+            json = json.replaceAll("(?<!\"):","_");
+
+            if(poi.name!=null){
+                i++;
+//                System.out.println( //provare a printare altri campi di poi
+//                        poi.osmID + "\t" + (poi instanceof Point) + "\t" +
+//                                poi.className + "\t" + poi.name + "\t" + poi.getCentrum());
+//                System.out.println(poi.osmTags.toString());
+//                System.out.println(json);
+                writer.write(json);
+                writer.newLine();
+
+                if(i%100==0)
+                    System.out.println("siamo a "+i);
+            }
+            if(i==3963)
+                break;
         }
+        writer.close();
+        System.out.println("numero finale: "+ i);
     }
 }
